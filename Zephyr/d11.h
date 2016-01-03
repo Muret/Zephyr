@@ -59,6 +59,7 @@ struct RenderConstantsBuffer
 	D3DXVECTOR4 view_direction;
 	D3DXVECTOR4 camera_position;
 	D3DXVECTOR4 screen_texture_half_pixel;
+	D3DXVECTOR4 near_far_padding2;
 };
 
 struct LightingInfoBuffer

@@ -7,6 +7,8 @@
 #include "Camera.h"
 #include "Renderer.h"
 
+#include "SSR_Demo.h"
+
 extern HINSTANCE g_hinstance;
 extern int g_nCmdShow;
 
@@ -16,7 +18,7 @@ string ExePath();
 extern int frame_count;
 extern int sort_time;
 
-
+DemoBase *currentDemo;
 
 //we all love main.cpp's
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pScmdline, int iCmdshow)
@@ -33,10 +35,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pScmdline,
 	
 	renderer = new Renderer;
 	
-	init_demo_scene();
 	demo_camera.init_camera();
 	string path = ExePath();
 
+	currentDemo = new SSRDemo();
+	currentDemo->initialize();
 
 	MSG msg = {};
 	while (1)

@@ -95,11 +95,11 @@ void Renderer::main_render()
 
 void Renderer::post_render()
 {
-	//{
-	//	SetRenderViews(GetDefaultRenderTargetView(), GetDefaultDepthStencilView());
-	//	screen_texture->set_srv_to_shader(shader_type_pixel, 4);
-	//}
-	//
+	{
+		SetRenderViews(GetDefaultRenderTargetView(), GetDefaultDepthStencilView(), 0);
+		screen_texture->set_srv_to_shader(shader_type_pixel, 3);
+	}
+	
 	for (int i = 0; i < render_components.size(); i++)
 	{
 		render_components[i]->post_render();
@@ -200,9 +200,13 @@ void Renderer::full_deferred_rendering_pipeline()
 	SetViewPortToDefault();
 
 	SetBlendState(blend_state_enable_color_write);
-	//screen_texture->set_as_render_target(0);
-	SetRenderTargetView(GetDefaultRenderTargetView());
+	screen_texture->set_as_render_target(0);
 	clearScreen();
+
+	D3DXMATRIX matrix;
+	D3DXMatrixIdentity(&matrix);
+	render_constantsBuffer_cpu.WorldViewProjectionMatrix = matrix;
+	UpdateGlobalBuffers();
 
 	gbuffer_albedo_texture->set_srv_to_shader(shader_type_pixel,0);
 	gbuffer_normal_texture->set_srv_to_shader(shader_type_pixel, 1);
@@ -215,10 +219,5 @@ void Renderer::full_deferred_rendering_pipeline()
 	}
 
 	SetBlendState(blend_state_enable_color_write);
-
-	SetSRV(nullptr, shader_type_pixel, 0);
-	SetSRV(nullptr, shader_type_pixel, 1);
-	SetSRV(nullptr, shader_type_pixel, 2);
-
 }
 

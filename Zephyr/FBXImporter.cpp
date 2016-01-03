@@ -30,7 +30,7 @@ FBXImporter::FBXImporter(std::string file_name, vector<Mesh*> &meshes) : vector_
 
 
 	// Create a new scene so that it can be populated by the imported file.
-	FbxScene* lScene = FbxScene::Create(lSdkManager, "myScene");
+	lScene = FbxScene::Create(lSdkManager, "myScene");
 
 	// Import the contents of the file into the scene.
 	lImporter->Import(lScene);
@@ -238,6 +238,8 @@ void FBXImporter::read_mesh(FbxNode *pNode, FbxMesh* pMesh)
 
 	Mesh *new_mesh = new Mesh();
 	
+	new_mesh->set_name(pNode->GetName());
+
 	int polygonCount = pMesh->GetPolygonCount();
 	FbxVector4* controlPoints = pMesh->GetControlPoints();
 	int controlPointCount = pMesh->GetControlPointsCount();
@@ -264,6 +266,7 @@ void FBXImporter::read_mesh(FbxNode *pNode, FbxMesh* pMesh)
 
 			// Grab UVs
 			int uvElementCount = pMesh->GetElementUVCount();
+			int ctrlPointIndex = pMesh->GetPolygonVertex(polygon, polyVert);
 
 			for (int uvElement = 0; uvElement < uvElementCount; uvElement++)
 			{
@@ -319,6 +322,31 @@ void FBXImporter::read_mesh(FbxNode *pNode, FbxMesh* pMesh)
 
 				int directIndex = -1;
 
+				if (FbxGeometryElement::eByControlPoint == mapMode)
+				{ 
+					switch (geomElementNormal->GetReferenceMode())
+					{
+					case FbxGeometryElement::eDirect:
+					{
+						vertex.normal.x = static_cast<float>(geomElementNormal->GetDirectArray().GetAt(ctrlPointIndex).mData[0]);
+						vertex.normal.y = static_cast<float>(geomElementNormal->GetDirectArray().GetAt(ctrlPointIndex).mData[1]);
+						vertex.normal.z = static_cast<float>(geomElementNormal->GetDirectArray().GetAt(ctrlPointIndex).mData[2]);
+					}
+					break;
+
+					case FbxGeometryElement::eIndexToDirect:
+					{
+						int index = geomElementNormal->GetIndexArray().GetAt(ctrlPointIndex);
+						vertex.normal.x = static_cast<float>(geomElementNormal->GetDirectArray().GetAt(index).mData[0]);
+						vertex.normal.y = static_cast<float>(geomElementNormal->GetDirectArray().GetAt(index).mData[1]);
+						vertex.normal.z = static_cast<float>(geomElementNormal->GetDirectArray().GetAt(index).mData[2]);
+					}
+					break;
+
+					default:
+						throw std::exception("Invalid Reference");
+					}
+				}
 				if (FbxGeometryElement::eByPolygonVertex == mapMode)
 				{
 					if (FbxGeometryElement::eDirect == refMode)
@@ -329,15 +357,17 @@ void FBXImporter::read_mesh(FbxNode *pNode, FbxMesh* pMesh)
 					{
 						directIndex = geomElementNormal->GetIndexArray().GetAt(vertexID);
 					}
+
+					// If we got an index
+					if (directIndex != -1)
+					{
+						FbxVector4 norm = geomElementNormal->GetDirectArray().GetAt(directIndex);
+
+						vertex.normal = D3DXVECTOR4((float)norm.mData[0], (float)norm.mData[1], (float)norm.mData[2], 0);
+					}
 				}
 
-				// If we got an index
-				if (directIndex != 1)
-				{
-					FbxVector4 norm = geomElementNormal->GetDirectArray().GetAt(directIndex);
 
-					vertex.normal = D3DXVECTOR4 ((float)norm.mData[0], (float)norm.mData[1], (float)norm.mData[2], 0);
-				}
 			}
 
 			// grab tangents
@@ -412,6 +442,9 @@ void FBXImporter::read_mesh(FbxNode *pNode, FbxMesh* pMesh)
 		new_mesh->set_material(read_material(pNode, material));
 	}
 
+	get_transformation_matrix(pNode, new_mesh);
+	cout << "Read mesh : " << new_mesh->get_name() << "\n";
+
 }
 
 
@@ -477,4 +510,20 @@ Material* FBXImporter::read_material(FbxNode *pNode, FbxSurfaceMaterial* materia
 	}
 
 	return nullptr;
+}
+
+void FBXImporter::get_transformation_matrix(FbxNode * pNode, Mesh * new_mesh)
+{
+	FbxAMatrix tr_matrix = pNode->EvaluateGlobalTransform();
+	D3DXMATRIX matrix;
+	{
+		for (int i = 0; i < 4; i++)
+		{
+			for (int j = 0; j < 4; j++)
+			{
+				matrix.m[i][j] = tr_matrix[i][j];
+			}
+		}
+	}
+	new_mesh->set_frame(matrix);
 }

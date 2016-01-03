@@ -40,6 +40,9 @@ public:
 	void set_frame(D3DXMATRIX frame);
 
 	void rotate(float degree, D3DXVECTOR3 axis);
+	void set_name(const char* name);
+
+	string get_name() const;
 private:
 
 	Material *mesh_material_;
@@ -52,6 +55,8 @@ private:
 	//CPU side data
 	std::vector<Vertex> vertices_;
 	std::vector<int> indices_;
+
+	string name_;
 };
 
 

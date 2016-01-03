@@ -15,17 +15,12 @@
 std::vector<Mesh*> demo_meshes;
 Camera demo_camera;
 
-void init_demo_scene()
+DemoBase::DemoBase(string name)
 {
-	string fbx_path("..\\Resources\\Oilbarell\\oilbarrel.fbx");
-	FBXImporter importer(fbx_path, demo_meshes);
-
-	renderer->add_meshes_to_render(demo_meshes);
-
-	SSR *ssr_render_component = new SSR();
-	renderer->add_renderer_component(ssr_render_component);
-
-	lighting_InfoBuffer_cpu.light_direction = D3DXVECTOR4(0, 0, -1, 0);
-	lighting_InfoBuffer_cpu.light_color = D3DXVECTOR4(1, 1, 1, 1);
+	name_ = name;
 }
 
+DemoBase::~DemoBase()
+{
+
+}

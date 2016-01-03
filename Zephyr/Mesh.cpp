@@ -91,7 +91,7 @@ void Mesh::set_uniform_values() const
 	D3DXVECTOR3 up_vector = demo_camera.get_up_vector();
 	D3DXVECTOR3 right_vector = demo_camera.get_right_vector();
 
-	D3DXMATRIX view, projection, inverseViewProjection, inverseProjection;
+	D3DXMATRIX view, projection, inverseViewProjection, inverseProjection, worldMatrix;
 	D3DXVECTOR3 lookat = camera_position + view_direction;
 
 	D3DXMatrixLookAtRH(&view, &camera_position, &lookat, &up_vector);
@@ -101,6 +101,8 @@ void Mesh::set_uniform_values() const
 	float determinant;
 	D3DXMATRIX mWorldViewProjection = frame_ * view * projection;
 
+	worldMatrix = frame_;
+
 	D3DXMatrixInverse(&inverseViewProjection, &determinant, &mWorldViewProjection);
 	D3DXMatrixInverse(&inverseProjection, &determinant, &projection);
 
@@ -109,8 +111,11 @@ void Mesh::set_uniform_values() const
 	D3DXMatrixTranspose(&inverseViewProjection, &inverseViewProjection);
 	D3DXMatrixTranspose(&projection, &projection);
 	D3DXMatrixTranspose(&inverseProjection, &inverseProjection);
+	D3DXMatrixTranspose(&worldMatrix, &worldMatrix);
+	
 
 	render_constantsBuffer_cpu.WorldViewProjectionMatrix = mWorldViewProjection;
+	render_constantsBuffer_cpu.WorldMatrix = worldMatrix;
 	render_constantsBuffer_cpu.right_direction = D3DXVECTOR4(right_vector, 0);
 	render_constantsBuffer_cpu.up_direction = D3DXVECTOR4(up_vector, 0);
 	render_constantsBuffer_cpu.view_direction = D3DXVECTOR4(view_direction, 0);
@@ -119,6 +124,8 @@ void Mesh::set_uniform_values() const
 	render_constantsBuffer_cpu.inverseWorldViewProjectionMatrix = inverseViewProjection;
 	render_constantsBuffer_cpu.inverseProjectionMatrix = inverseProjection;
 	render_constantsBuffer_cpu.projectionMatrix = projection;
+
+	render_constantsBuffer_cpu.near_far_padding2 = D3DXVECTOR4(0.1f, 100.0f,0,0);
 
 	UpdateGlobalBuffers();
 }
@@ -134,6 +141,16 @@ void Mesh::rotate(float degree, D3DXVECTOR3 axis)
 void Mesh::set_frame(D3DXMATRIX frame)
 {
 	frame_ = frame;
+}
+
+void Mesh::set_name(const char* name)
+{
+	name_ = name;
+}
+
+std::string Mesh::get_name() const
+{
+	return name_;
 }
 
 

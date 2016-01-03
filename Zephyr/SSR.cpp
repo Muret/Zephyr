@@ -26,7 +26,7 @@ void SSR::post_render()
 {
 	//print_hi_z_depth_texture();
 
-	return;
+	//SetViewPortToDefault();
 
 	SetDepthStencilView(nullptr);
 	ssr_post_fx_pass->set_shaders();

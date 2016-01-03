@@ -125,6 +125,7 @@
     <ClCompile Include="RendererComponent.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="SSR.cpp" />
+    <ClCompile Include="SSR_Demo.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="TextureLoader.cpp" />
     <ClCompile Include="window.cpp" />
@@ -141,6 +142,7 @@
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="SSR.h" />
+    <ClInclude Include="SSR_Demo.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="TextureLoader.h" />
     <ClInclude Include="window.h" />
@@ -190,6 +192,7 @@
   <ItemGroup>
     <None Include="..\Shaders\Definitions.hlsli" />
     <None Include="..\Shaders\shared_functions.hlsli" />
+    <None Include="..\Shaders\ssr_helpers.hlsli" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

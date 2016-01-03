@@ -58,7 +58,14 @@ ID3DUserDefinedAnnotation *pPerf;
 
 ID3D11DepthStencilState *depth_states[number_of_depth_states];
 ID3D11BlendState *blend_states[number_of_blend_states];
-ID3D11SamplerState *sampler_state;
+
+enum SamplerType
+{
+	point = 0,
+	linear_mip_map,
+};
+
+ID3D11SamplerState *sampler_states[2];
 
 void UpdateGlobalBuffers()
 {
@@ -631,11 +638,20 @@ void CreateBlendStates()
 	
 }
 
-void CreateSamplerStates()
+ID3D11SamplerState* CreateSampler(SamplerType type)
 {
+	ID3D11SamplerState* sampler_state;
 	D3D11_SAMPLER_DESC desc;
 	// Create a texture sampler state description.
-	desc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
+	if (type == linear_mip_map)
+	{
+		desc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
+	}
+	if (type == point)
+	{
+		desc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	}
+
 	desc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
 	desc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
 	desc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
@@ -649,6 +665,14 @@ void CreateSamplerStates()
 	desc.MinLOD = 0;
 	desc.MaxLOD = D3D11_FLOAT32_MAX;
 	g_device->CreateSamplerState(&desc, &sampler_state);
+
+	return sampler_state;
+}
+
+void CreateSamplerStates()
+{
+	sampler_states[point] = CreateSampler(point);
+	sampler_states[linear_mip_map] = CreateSampler(linear_mip_map);
 }
 
 ID3D11Buffer* CreateFullScreenQuadVertexBuffer()
@@ -1299,7 +1323,7 @@ void setComputeConstantBuffer(ID3D11Buffer* buffer, int index)
 
 void SetSamplerState()
 {
-	g_deviceContext->PSSetSamplers(0, 1, &sampler_state);
+	g_deviceContext->PSSetSamplers(0, 2, sampler_states);
 	//g_deviceContext->PSSetSamplers(1, 1, &sampler_state);
 }
 
