@@ -21,6 +21,7 @@ void get_ss_hit_pos_ray_dir(in float2 tex_coord, out float3 screen_space_positio
 	//convert all those to screen space
 
 	float4 cameraRay = float4(tex_coord * 2.0 - 1.0, 1.0, 1.0);
+	cameraRay.y *= -1;
 	cameraRay = mul(cameraRay, inverseProjectionMatrix);
 	cameraRay = cameraRay / cameraRay.w;
 	cameraRay.w = 0;
@@ -35,8 +36,11 @@ void get_ss_hit_pos_ray_dir(in float2 tex_coord, out float3 screen_space_positio
 	screen_space_position = screen_space_position_temp.xyz;;
 	screen_space_position.xy = screen_space_position.xy * 0.5 + 0.5;
 
-	float3 view_space_normal = normalize(normal_texture.SampleLevel(PointSampler, tex_coord, 0));
-	float3 view_space_view_dir = float3(cameraRay.xy, hit_linear_depth);
+	float3 world_space_normal = normal_texture.SampleLevel(PointSampler, tex_coord, 0);
+	world_space_normal = normalize(world_space_normal * 2.0f - 1.0f);
+	float3 view_space_normal = normalize(mul(float4(world_space_normal, 0), viewMatrix));
+
+	float3 view_space_view_dir = normalize(view_space_position);
 	float3 view_space_reflected_ray_dir = normalize(reflect(view_space_view_dir, view_space_normal));
 
 	float4 screen_space_reflected_position = mul(float4(view_space_position + view_space_reflected_ray_dir, 1), projectionMatrix);
@@ -125,8 +129,8 @@ float3 do_hiz_ss_ray_trace(float3 p, float3 v)
 		// intersect only if ray depth is below the minimum depth plane
 		float3 tmpRay = intersectDepthPlane(o, d, max(ray.z, minZ));
 
-			// get the new cell number as well
-			const float2 newCellIdx = getCell(tmpRay.xy, cellCount);
+		// get the new cell number as well
+		const float2 newCellIdx = getCell(tmpRay.xy, cellCount);
 
 		// if the new cell number is different from the old cell number, a cell was crossed
 		if (crossedCellBoundary(oldCellIdx, newCellIdx))

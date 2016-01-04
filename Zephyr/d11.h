@@ -53,6 +53,7 @@ struct RenderConstantsBuffer
 	D3DXMATRIX inverseWorldViewProjectionMatrix;
 	D3DXMATRIX inverseProjectionMatrix;
 	D3DXMATRIX projectionMatrix;
+	D3DXMATRIX viewMatrix;
 
 	D3DXVECTOR4 right_direction;
 	D3DXVECTOR4 up_direction;

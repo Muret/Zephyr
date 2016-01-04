@@ -11,6 +11,7 @@ cbuffer MatrixBuffer : register (b0)
 	matrix inverseWorldViewProjectionMatrix;
 	matrix inverseProjectionMatrix;
 	matrix projectionMatrix;
+	matrix viewMatrix;
 
 	float4 right_direction;
 	float4 up_direction;

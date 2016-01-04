@@ -112,8 +112,8 @@ void Mesh::set_uniform_values() const
 	D3DXMatrixTranspose(&projection, &projection);
 	D3DXMatrixTranspose(&inverseProjection, &inverseProjection);
 	D3DXMatrixTranspose(&worldMatrix, &worldMatrix);
+	D3DXMatrixTranspose(&view, &view);
 	
-
 	render_constantsBuffer_cpu.WorldViewProjectionMatrix = mWorldViewProjection;
 	render_constantsBuffer_cpu.WorldMatrix = worldMatrix;
 	render_constantsBuffer_cpu.right_direction = D3DXVECTOR4(right_vector, 0);
@@ -124,7 +124,8 @@ void Mesh::set_uniform_values() const
 	render_constantsBuffer_cpu.inverseWorldViewProjectionMatrix = inverseViewProjection;
 	render_constantsBuffer_cpu.inverseProjectionMatrix = inverseProjection;
 	render_constantsBuffer_cpu.projectionMatrix = projection;
-
+	render_constantsBuffer_cpu.viewMatrix = view;
+	
 	render_constantsBuffer_cpu.near_far_padding2 = D3DXVECTOR4(0.1f, 100.0f,0,0);
 
 	UpdateGlobalBuffers();
