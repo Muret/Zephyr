@@ -8,8 +8,8 @@ Texture2D hi_z_depth_texture : register(t4);
 #define texelWidth (1.0f / 1024.0f)
 #define texelHeight (1.0f / 1024.0f)
 
-static const float HIZ_START_LEVEL = 2.0f;
-static const float HIZ_STOP_LEVEL = 2.0f;
+static const float HIZ_START_LEVEL = 0.0f;
+static const float HIZ_STOP_LEVEL = 0.0f;
 static const float HIZ_MAX_LEVEL = float(cb_mipCount);
 static const float2 HIZ_CROSS_EPSILON = float2(texelWidth, texelHeight); // maybe need to be smaller or larger? this is mip level 0 texel size
 static const uint MAX_ITERATIONS = 64u;
@@ -29,6 +29,11 @@ void get_ss_hit_pos_ray_dir(in float2 tex_coord, out float3 screen_space_positio
 
 	float hit_hw_depth = hi_z_depth_texture.SampleLevel(PointSampler, tex_coord, 0);
 	float hit_linear_depth = hw_depth_to_linear_depth(hit_hw_depth);
+
+	if (hit_hw_depth == 1.0f)
+	{
+		clip(-1);
+	}
 
 	float3 view_space_position = cameraRay * hit_linear_depth;
 	float4 screen_space_position_temp = mul(float4(view_space_position, 1), projectionMatrix);

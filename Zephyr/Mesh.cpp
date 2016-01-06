@@ -96,7 +96,7 @@ void Mesh::set_uniform_values() const
 
 	D3DXMatrixLookAtRH(&view, &camera_position, &lookat, &up_vector);
 
-	D3DXMatrixPerspectiveFovRH(&projection, PI * 0.25, float(g_screenWidth) / float(g_screenHeight), 0.1f, 100.0f);
+	D3DXMatrixPerspectiveFovRH(&projection, PI * 0.25, float(g_screenWidth) / float(g_screenHeight), 0.1f, 1000.0f);
 
 	float determinant;
 	D3DXMATRIX mWorldViewProjection = frame_ * view * projection;

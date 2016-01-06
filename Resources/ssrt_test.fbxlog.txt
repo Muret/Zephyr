@@ -1,0 +1,6 @@
+<node name= reflectorPlane
+	<attribute type= mesh name=  />
+</node>
+<node name= ReflectedPlane
+	<attribute type= mesh name=  />
+</node>

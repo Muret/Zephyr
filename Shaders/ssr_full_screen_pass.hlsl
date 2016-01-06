@@ -19,6 +19,8 @@ float4 main(PixelInputType input) : SV_TARGET
 	float3 normal = normal_texture.Sample(PointSampler, input.tex_coord.xy);
 	float3 screen_color = screen_texture.Sample(PointSampler, input.tex_coord.xy);
 
+	float3 final_color = screen_color * 0.4;
+
 	if (check_if_reflected(normal))
 	{
 		return float4(screen_color,1);
@@ -30,12 +32,14 @@ float4 main(PixelInputType input) : SV_TARGET
 	float3 final_position = do_hiz_ss_ray_trace(screen_space_position, screen_space_ray_dir);
 
 	float3 reflection_color = 0;
-	if (final_position.x < 1.0f && final_position.x > 0.0f &&
-		final_position.y < 1.0f && final_position.y > 0.0f)
+	if (final_position.x > 1.0f && final_position.x < 0.0f &&
+		final_position.y > 1.0f && final_position.y < 0.0f)
 	{
 		return float4(1,0,1,1);
 	}
 
-	return screen_texture.Sample(PointSampler, final_position.xy) * 0.5;
+	final_color += screen_texture.Sample(PointSampler, float2(final_position.x, 1.0f - final_position.y)).rgb * 0.6;
+
+	return float4(final_color,1);
 
 }
