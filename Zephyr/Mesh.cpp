@@ -120,7 +120,7 @@ void Mesh::set_uniform_values() const
 	render_constantsBuffer_cpu.up_direction = D3DXVECTOR4(up_vector, 0);
 	render_constantsBuffer_cpu.view_direction = D3DXVECTOR4(view_direction, 0);
 	render_constantsBuffer_cpu.camera_position = D3DXVECTOR4(camera_position, 0);
-	render_constantsBuffer_cpu.screen_texture_half_pixel = D3DXVECTOR4((1.0f / float(g_screenWidth)), (1.0f / float(g_screenHeight)), -1, 0);
+	render_constantsBuffer_cpu.screen_texture_half_pixel_forced_mipmap = D3DXVECTOR4((1.0f / float(g_screenWidth)), (1.0f / float(g_screenHeight)), -1, 0);
 	render_constantsBuffer_cpu.inverseWorldViewProjectionMatrix = inverseViewProjection;
 	render_constantsBuffer_cpu.inverseProjectionMatrix = inverseProjection;
 	render_constantsBuffer_cpu.projectionMatrix = projection;

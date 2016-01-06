@@ -59,7 +59,7 @@ struct RenderConstantsBuffer
 	D3DXVECTOR4 up_direction;
 	D3DXVECTOR4 view_direction;
 	D3DXVECTOR4 camera_position;
-	D3DXVECTOR4 screen_texture_half_pixel;
+	D3DXVECTOR4 screen_texture_half_pixel_forced_mipmap;
 	D3DXVECTOR4 near_far_padding2;
 };
 
@@ -237,7 +237,7 @@ void UnMapBuffer(ID3D11Buffer *buffer);
 
 UINT64 GetQueryData(ID3D11Query *query_object);
 
-void SetViewPort(int width, int height);
+void SetViewPort(int w_start, int h_start, int width, int height);
 void SetViewPortToDefault();
 
 void SetVertexBuffer(ID3D11Buffer *  vertex_buffer, int vertex_size);
@@ -295,6 +295,7 @@ void Flush();
 void OutputTextureToScreen(Texture* texture, D3DXVECTOR4 pos, D3DXVECTOR4 scale, int forced_lod = -1 , ID3D11PixelShader *enforced_pixel_shader = nullptr);
 void OutputTextureToScreen(ID3D11ShaderResourceView* texture, D3DXVECTOR4 pos, D3DXVECTOR4 scale, int forced_lod = -1, ID3D11PixelShader *enforced_pixel_shader = nullptr);
 
+void invalidate_srv(shaderType shader_type);
 
 extern ID3D11Buffer* render_constantsBuffer;
 extern ID3D11Buffer* lighting_InfoBuffer;

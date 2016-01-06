@@ -14,7 +14,10 @@ SSR::SSR()
 	assert(g_screenWidth == g_screenHeight);
 	mipmap_count_ = log2(g_screenWidth);
 
-	hi_z_depth_texture = new Texture(g_screenWidth, g_screenHeight, nullptr, DXGI_FORMAT_R32G32B32A32_FLOAT, mipmap_count_ + 1);
+	hi_z_depth_texture_ping_pong[0] = new Texture(g_screenWidth, g_screenHeight, nullptr, DXGI_FORMAT_R32G32B32A32_FLOAT, mipmap_count_ + 1);
+	hi_z_depth_texture_ping_pong[1] = new Texture(g_screenWidth, g_screenHeight, nullptr, DXGI_FORMAT_R32G32B32A32_FLOAT, mipmap_count_ + 1);
+	
+	hi_z_depth_texture = hi_z_depth_texture_ping_pong[0];
 }
 
 void SSR::pre_render()
@@ -49,11 +52,17 @@ void SSR::generate_depth_mipmap_textures()
 	D3DXMatrixIdentity(&matrix);
 
 	render_constantsBuffer_cpu.WorldViewProjectionMatrix = matrix;
-	render_constantsBuffer_cpu.screen_texture_half_pixel.z = -1;
+	render_constantsBuffer_cpu.screen_texture_half_pixel_forced_mipmap.z = -1;
 
 	UpdateGlobalBuffers();
 
 	int render_count = mipmap_count_;
+
+	Texture *currentOutput = hi_z_depth_texture_ping_pong[0];
+	Texture *currentInput = hi_z_depth_texture_ping_pong[1];
+
+	invalidate_srv(shader_type_pixel);
+
 	int res = g_screenWidth;
 	for (int i = 0; i < render_count; i++)
 	{
@@ -61,20 +70,44 @@ void SSR::generate_depth_mipmap_textures()
 		{
 			ID3D11ShaderResourceView *view = GetDepthTextureSRV();
 			SetSRV(&view, 1, shaderType::shader_type_pixel, 0);
-			hi_z_depth_texture->set_as_render_target(0);
+			currentOutput->set_as_render_target(0);
 			depth_root_copy_shader->set_shaders();
 		}
 		else
 		{
-			hi_z_depth_texture->set_as_render_target(0,i);
-			hi_z_depth_texture->set_srv_to_shader(shader_type_pixel, 0, i - 1);
+			ID3D11ShaderResourceView *null_srv = nullptr;
+			SetSRV(&null_srv, 1, shaderType::shader_type_pixel, 0);
+
+			currentOutput->set_as_render_target(0, i);
+			currentInput->set_srv_to_shader(shader_type_pixel, 0, i - 1);
+
 			hi_z_depth_gen_shader->set_shaders();
 		}
-
-		SetViewPort(res, res);
+		SetViewPort(0 , 0, res, res);
 		RenderFullScreenQuad();
 		res = res >> 1;
+
+		Texture *temp = currentOutput;
+		currentOutput = currentInput;
+		currentInput = temp;
 	}
+
+	currentOutput = hi_z_depth_texture_ping_pong[0];
+	currentInput = hi_z_depth_texture_ping_pong[1];
+
+	res = g_screenWidth >> 1;
+	for (int i = 1; i < render_count; i += 2)
+	{
+		currentOutput->set_as_render_target(0, i);
+		currentInput->set_srv_to_shader(shader_type_pixel, 0, i);
+
+		depth_root_copy_shader->set_shaders();
+
+		SetViewPort(0, 0, res, res);
+		RenderFullScreenQuad();
+		res = res >> 2;
+	}
+
 }
 
 bool SSR::uses_postfx() const

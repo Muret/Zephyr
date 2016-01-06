@@ -18,7 +18,7 @@ Texture::Texture(int w, int h, void *data, DXGI_FORMAT format, int mipmap_count 
 void Texture::create(int w, int h, void *data, DXGI_FORMAT format, int mipmap_count /*= 1*/)
 {
 	texture_object_ = CreateTexture(w, h, data, format, mipmap_count);
-	texture_srv_ = CreateTextureResourceView(texture_object_, format, 0, 1);
+	texture_srv_ = CreateTextureResourceView(texture_object_, format, 0, mipmap_count);
 	texture_rt_ = CreateRenderTargetView(texture_object_);
 
 	width_ = w;

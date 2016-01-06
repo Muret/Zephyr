@@ -1078,7 +1078,7 @@ ID3D11ShaderResourceView * CreateTextureResourceView(ID3D11Texture2D *text, DXGI
 	srvDesc.Format = format;
 	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 	srvDesc.Texture2D.MostDetailedMip = mip_map_start;
-	srvDesc.Texture2D.MipLevels = 1;
+	srvDesc.Texture2D.MipLevels = mip_map_count;
 	g_device->CreateShaderResourceView(text, &srvDesc, &srV);
 
 	return srV;
@@ -1186,14 +1186,14 @@ UINT64 GetQueryData(ID3D11Query *query_object)
 	return StartTime;
 }
 
-void SetViewPort(int width, int height)
+void SetViewPort(int w_start, int h_start, int width, int height)
 {
 	// Set the viewport
 	D3D11_VIEWPORT viewport;
 	ZeroMemory(&viewport, sizeof(D3D11_VIEWPORT));
 
-	viewport.TopLeftX = 0;
-	viewport.TopLeftY = 0;
+	viewport.TopLeftX = w_start;
+	viewport.TopLeftY = h_start;
 	viewport.Width = width;
 	viewport.Height = height;
 	viewport.MinDepth = 0;
@@ -1204,8 +1204,8 @@ void SetViewPort(int width, int height)
 	float dx = 0.5f / width;
 	float dy = 0.5f / height;
 
-	render_constantsBuffer_cpu.screen_texture_half_pixel.x = dx;
-	render_constantsBuffer_cpu.screen_texture_half_pixel.y = dy;
+	render_constantsBuffer_cpu.screen_texture_half_pixel_forced_mipmap.x = dx;
+	render_constantsBuffer_cpu.screen_texture_half_pixel_forced_mipmap.y = dy;
 	UpdateGlobalBuffers();
 }
 
@@ -1472,7 +1472,16 @@ void SetViewTargetsAux()
 
 void SetViewPortToDefault()
 {
-	SetViewPort(g_screenWidth, g_screenHeight);
+	SetViewPort(0,0,g_screenWidth, g_screenHeight);
+}
+
+void invalidate_srv(shaderType shader_type)
+{
+	static const int max_srv_used = 5;
+
+	ID3D11ShaderResourceView *nullsrv[max_srv_used];
+	memset(nullsrv, 0, max_srv_used * sizeof(ID3D11ShaderResourceView *));
+	SetSRV(nullsrv, max_srv_used, shader_type_pixel, 0);
 }
 
 void TextureOutputToScreenFunctionality::OutputTextureToScreen(ID3D11ShaderResourceView* texture, D3DXVECTOR4 pos, D3DXVECTOR4 scale, int forced_lod, ID3D11PixelShader *enforced_pixel_shader)
@@ -1493,7 +1502,7 @@ void TextureOutputToScreenFunctionality::OutputTextureToScreen(ID3D11ShaderResou
 	matrix._44 = 1;
 
 	render_constantsBuffer_cpu.WorldViewProjectionMatrix = matrix;
-	render_constantsBuffer_cpu.screen_texture_half_pixel.z = -1;
+	render_constantsBuffer_cpu.screen_texture_half_pixel_forced_mipmap.z = -1;
 
 	UpdateGlobalBuffers();
 

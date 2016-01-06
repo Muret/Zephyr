@@ -49,6 +49,8 @@ void Renderer::pre_render()
 
 void Renderer::gbuffer_render()
 {
+	invalidate_srv(shaderType::shader_type_pixel);
+
 	gbuffer_albedo_texture->set_as_render_target(0);
 	gbuffer_normal_texture->set_as_render_target(1);
 	gbuffer_specular_texture->set_as_render_target(2);

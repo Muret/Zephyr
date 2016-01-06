@@ -14,9 +14,10 @@ bool check_if_reflected(float3 normal)
 
 float4 main(PixelInputType input) : SV_TARGET
 {
+	//return pow(float4(hi_z_depth_texture.SampleLevel(PointSampler, input.tex_coord.xy, 2).rrr, 1), 2);
+
 	float3 normal = normal_texture.Sample(PointSampler, input.tex_coord.xy);
 	float3 screen_color = screen_texture.Sample(PointSampler, input.tex_coord.xy);
-	//return abs(float4(normal * 2.0f - 1.0f, 1));
 
 	if (check_if_reflected(normal))
 	{

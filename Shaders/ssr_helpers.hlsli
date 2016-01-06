@@ -45,6 +45,7 @@ void get_ss_hit_pos_ray_dir(in float2 tex_coord, out float3 screen_space_positio
 
 	float4 screen_space_reflected_position = mul(float4(view_space_position + view_space_reflected_ray_dir, 1), projectionMatrix);
 	screen_space_reflected_position = screen_space_reflected_position / screen_space_reflected_position.w;
+	screen_space_reflected_position.xy = screen_space_reflected_position.xy * 0.5 + 0.5;
 	screen_space_ray_dir = screen_space_reflected_position.xyz - screen_space_position.xyz;
 }
 
@@ -59,11 +60,13 @@ float2 getCell(float2 ray, float2 cellCount)
 	return floor(ray * cellCount);
 }
 
+static const float2 hiZSize = 1024; // not sure if correct - this is mip level 0 size
+
 float2 getCellCount(float level, float rootLevel)
 {
 	// not sure why we need rootLevel for this
-	float2 div = level == 0.0f ? 1.0f : exp2(level);
-		return 1 / div;
+	float2 div = exp2(level);
+	return hiZSize / div;
 }
 
 float3 intersectCellBoundary(float3 o, float3 d, float2 cellIndex, float2 cellCount, float2 crossStep, float2 crossOffset)
@@ -79,8 +82,7 @@ float3 intersectCellBoundary(float3 o, float3 d, float2 cellIndex, float2 cellCo
 
 float getMinimumDepthPlane(float2 ray, float level, float rootLevel)
 {
-	// not sure why we need rootLevel for this
-	return hi_z_depth_texture.SampleLevel(PointSampler, ray.xy, level).r;
+	return hi_z_depth_texture.SampleLevel(PointSampler, float2(ray.x, 1.0f - ray.y), level).r;
 }
 
 bool crossedCellBoundary(float2 cellIdxOne, float2 cellIdxTwo)
@@ -89,7 +91,6 @@ bool crossedCellBoundary(float2 cellIdxOne, float2 cellIdxTwo)
 }
 
 
-static const float2 hiZSize = 1; // not sure if correct - this is mip level 0 size
 
 float3 do_hiz_ss_ray_trace(float3 p, float3 v)
 {
@@ -114,7 +115,8 @@ float3 do_hiz_ss_ray_trace(float3 p, float3 v)
 	float3 o = intersectDepthPlane(p, d, -p.z);
 
 	// cross to next cell to avoid immediate self-intersection
-	float2 rayCell = getCell(ray.xy, hiZSize.xy);
+	const float2 cellCount = getCellCount(level, rootLevel);
+	float2 rayCell = getCell(ray.xy, cellCount);
 	ray = intersectCellBoundary(o, d, rayCell.xy, hiZSize.xy, crossStep.xy, crossOffset.xy);
 
 	while (level >= HIZ_STOP_LEVEL && iterations < MAX_ITERATIONS)
