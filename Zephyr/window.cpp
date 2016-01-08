@@ -31,13 +31,13 @@ void openWindow()
 	wc.hCursor = LoadCursor(NULL, IDC_ARROW);
 	wc.hbrBackground = (HBRUSH) (COLOR_WINDOW + 1);
 	wc.lpszMenuName = NULL;
-	wc.lpszClassName = L"Demo";
+	wc.lpszClassName = "Demo";
 	wc.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
 
 	// Register the window class.
 	if (!RegisterClassEx(&wc))
 	{
-		MessageBox(NULL, L"Window Registration Failed!", L"Error!",
+		MessageBox(NULL, "Window Registration Failed!", "Error!",
 			MB_ICONEXCLAMATION | MB_OK);
 		return;
 	}
@@ -58,8 +58,8 @@ void openWindow()
 
 	// Create the window with the screen settings and get the handle to it.
 	g_hwnd = CreateWindowEx(	0,
-								L"Demo",    // name of the window class
-								L"Muret Demo",   // title of the window
+								"Demo",    // name of the window class
+								"Muret Demo",   // title of the window
 								WS_OVERLAPPEDWINDOW,    // window style
 								posX,    // x-position of the window
 								posY,    // y-position of the window

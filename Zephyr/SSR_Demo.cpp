@@ -3,6 +3,7 @@
 
 #include "Renderer.h"
 #include "SSR.h"
+#include "ResourceManager.h"
 
 SSRDemo::SSRDemo() : DemoBase("SSR")
 {
@@ -17,9 +18,7 @@ SSRDemo::~SSRDemo()
 void SSRDemo::initialize()
 {
 	vector<Mesh*> meshes;
-	string fbx_path("..\\Resources\\ssrt_test.fbx");
-	FBXImporter importer(fbx_path, meshes);
-
+	resource_manager.get_meshes_with_filter("sponza", meshes);
 	renderer->add_meshes_to_render(meshes);
 
 	ssr_component = new SSR();

@@ -62,7 +62,7 @@ void Renderer::gbuffer_render()
 	gbuffer_shader->set_shaders();
 	SetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-	for (int i = 0; i < meshes_to_render.size(); i++)
+	for (int i = 2; i < 4; i++)
 	{
 		Mesh *mesh_to_render = meshes_to_render[i];
 		mesh_to_render->get_material()->set_textures();

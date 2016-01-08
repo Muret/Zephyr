@@ -30,7 +30,7 @@
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v120</PlatformToolset>
-    <CharacterSet>Unicode</CharacterSet>
+    <CharacterSet>NotSet</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -128,6 +128,8 @@
     <ClCompile Include="SSR_Demo.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="TextureLoader.cpp" />
+    <ClCompile Include="ResourceManager.cpp" />
+    <ClCompile Include="Utilities.cpp" />
     <ClCompile Include="window.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -145,6 +147,8 @@
     <ClInclude Include="SSR_Demo.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="TextureLoader.h" />
+    <ClInclude Include="ResourceManager.h" />
+    <ClInclude Include="Utilities.h" />
     <ClInclude Include="window.h" />
   </ItemGroup>
   <ItemGroup>

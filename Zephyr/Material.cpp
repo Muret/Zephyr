@@ -1,8 +1,11 @@
+#include "includes.h"
+#include <iostream>
 
 #include "Texture.h"
 #include "Material.h"
 #include "d11.h"
-#include "TextureLoader.h"
+#include "ResourceManager.h"
+#include "Utilities.h"
 
 Material::Material()
 {
@@ -21,9 +24,14 @@ void Material::create_from_file(std::string texture_names[mtt_count])
 
 		if (texture_names_[i] != "")
 		{
-			std::string file_path = texture_names_[i];
-			TextureLoader loader(file_path);
-			textures_[i] = loader.create_texture_from_file();
+			string direct_name = Utilities::get_file_name_from_path(texture_names_[i]);
+			Texture *t = resource_manager.get_texture(direct_name);
+			if (t == nullptr)
+			{
+				cout << "Could not find texture : " << direct_name << " for material : " << name_ << endl;
+			}
+
+			textures_[i] = t;
 		}
 	}
 }

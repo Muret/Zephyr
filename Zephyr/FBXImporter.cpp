@@ -407,20 +407,20 @@ void FBXImporter::read_mesh(FbxNode *pNode, FbxMesh* pMesh)
 			size_t size = vertices.size();
 			size_t i;
 
-			for (i = 0; i < size; i++)
-			{
-				if (vertex == vertices[i])
-				{
-					break;
-				}
-			}
+			//for (i = 0; i < size; i++)
+			//{
+			//	if (vertex == vertices[i])
+			//	{
+			//		break;
+			//	}
+			//}
 
-			if (i == size)
+			//if (i == size)
 			{
 				vertices.push_back(vertex);
 			}
 
-			indices.push_back(i);
+			indices.push_back(size);
 			++vertexID;
 		}
 

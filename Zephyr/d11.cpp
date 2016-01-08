@@ -536,7 +536,7 @@ void OutputShaderErrorMessage(ID3D10Blob* errorMessage, HWND hwnd)
 	errorMessage = 0;
 
 	// Pop a message up on the screen to notify the user to check the text file for compile errors.
-	MessageBox(hwnd, (LPCWSTR)compileErrors, L"", MB_OK);
+	MessageBox(hwnd, compileErrors, "", MB_OK);
 
 	return;
 }

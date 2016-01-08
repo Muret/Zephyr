@@ -6,6 +6,7 @@
 #include "Demo.h"
 #include "Camera.h"
 #include "Renderer.h"
+#include "ResourceManager.h"
 
 #include "SSR_Demo.h"
 
@@ -35,6 +36,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pScmdline,
 	
 	renderer = new Renderer;
 	
+	resource_manager.init_resources("..\\Resources");
+
 	demo_camera.init_camera();
 	string path = ExePath();
 
@@ -93,7 +96,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pScmdline,
 
 string ExePath() {
 	char buffer[MAX_PATH];
-	GetModuleFileName(NULL, (LPWSTR)buffer, MAX_PATH);
+	GetModuleFileName(NULL, buffer, MAX_PATH);
 	string::size_type pos = string(buffer).find_last_of("\\/");
 	return string(buffer).substr(0, pos);
 }
