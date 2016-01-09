@@ -17,9 +17,8 @@ SSRDemo::~SSRDemo()
 
 void SSRDemo::initialize()
 {
-	vector<Mesh*> meshes;
-	resource_manager.get_meshes_with_filter("sponza", meshes);
-	renderer->add_meshes_to_render(meshes);
+	Scene *scene = resource_manager.get_scene("cornell_centered_light_middle");
+	renderer->set_scene_to_render(scene);
 
 	ssr_component = new SSR();
 	renderer->add_renderer_component(ssr_component);

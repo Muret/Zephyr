@@ -116,8 +116,9 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="d11.cpp" />
     <ClCompile Include="Demo.cpp" />
-    <ClCompile Include="FBXImporter.cpp" />
+    <ClCompile Include="FBXSceneImporter.cpp" />
     <ClCompile Include="globals.cpp" />
+    <ClCompile Include="Light.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="Mesh.cpp" />
@@ -136,8 +137,9 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="d11.h" />
     <ClInclude Include="Demo.h" />
-    <ClInclude Include="FBXImporter.h" />
+    <ClInclude Include="FBXSceneImporter.h" />
     <ClInclude Include="includes.h" />
+    <ClInclude Include="Light.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="RenderComponent.h" />

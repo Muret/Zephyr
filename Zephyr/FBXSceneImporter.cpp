@@ -1,11 +1,14 @@
 
 #include <assert.h>
 
-#include "FBXImporter.h"
+#include "FBXSceneImporter.h"
 #include "Mesh.h"
 #include "Material.h"
+#include "Light.h"
+#include "ResourceManager.h"
+#include "Utilities.h"
 
-FBXImporter::FBXImporter(std::string file_name, vector<Mesh*> &meshes) : vector_to_fill(meshes)
+FBXSceneImporter::FBXSceneImporter(std::string file_name)
 {
 	std::string log_file_name = file_name;
 	log_file_name.append("log.txt");
@@ -28,7 +31,6 @@ FBXImporter::FBXImporter(std::string file_name, vector<Mesh*> &meshes) : vector_
 		exit(-1);
 	}
 
-
 	// Create a new scene so that it can be populated by the imported file.
 	lScene = FbxScene::Create(lSdkManager, "myScene");
 
@@ -38,10 +40,11 @@ FBXImporter::FBXImporter(std::string file_name, vector<Mesh*> &meshes) : vector_
 	// The file is imported, so get rid of the importer.
 	lImporter->Destroy();
 
-
 	FbxGeometryConverter converter(lSdkManager);
 	converter.Triangulate(lScene, true);
 
+	scene_to_fill = new Scene(Utilities::get_file_name_from_path_wo_extension(file_name));
+	resource_manager.add_scene(scene_to_fill);
 
 	// Print the nodes of the scene and their attributes recursively.
 	// Note that we are not printing the root node because it should
@@ -73,7 +76,7 @@ FBXImporter::FBXImporter(std::string file_name, vector<Mesh*> &meshes) : vector_
 /**
 * Print a node, its attributes, and all its children recursively.
 */
-void FBXImporter::PrintNode(FbxNode* pNode)
+void FBXSceneImporter::PrintNode(FbxNode* pNode)
 {
 	PrintTabs();
 	const char* nodeName = pNode->GetName();
@@ -100,14 +103,14 @@ void FBXImporter::PrintNode(FbxNode* pNode)
 	myfile << "</node>\n" ;
 }
 
-void FBXImporter::PrintTabs()
+void FBXSceneImporter::PrintTabs()
 {
 	for (int i = 0; i < numTabs; i++)
 		myfile << "\t";
 }
 
 
-FbxString FBXImporter::GetAttributeTypeName(FbxNodeAttribute::EType type)
+FbxString FBXSceneImporter::GetAttributeTypeName(FbxNodeAttribute::EType type)
 {
 	switch (type) 
 	{
@@ -135,7 +138,7 @@ FbxString FBXImporter::GetAttributeTypeName(FbxNodeAttribute::EType type)
 	}
 }
 
-void FBXImporter::PrintAttribute(FbxNodeAttribute* pAttribute)
+void FBXSceneImporter::PrintAttribute(FbxNodeAttribute* pAttribute)
 {
 	if (!pAttribute)
 	{
@@ -149,7 +152,7 @@ void FBXImporter::PrintAttribute(FbxNodeAttribute* pAttribute)
 	myfile << "<attribute type= " << typeName.Buffer() << " name= " << attrName.Buffer() << " />\n";
 }
 
-void FBXImporter::read_node(FbxNode* pNode)
+void FBXSceneImporter::read_node(FbxNode* pNode)
 {
 	for (int i = 0; i < pNode->GetNodeAttributeCount(); i++)
 	{
@@ -160,6 +163,11 @@ void FBXImporter::read_node(FbxNode* pNode)
 		{
 			FbxMesh* pMesh = (FbxMesh*)pAttribute;
 			read_mesh(pNode, pMesh);
+		}
+		else if (attribute_type == FbxNodeAttribute::eLight)
+		{
+			FbxLight* pLight = (FbxLight*)pAttribute;
+			read_light(pNode, pLight);
 		}
 	}
 
@@ -229,7 +237,7 @@ void FBXImporter::read_node(FbxNode* pNode)
 	//vector_to_fill.push_back(new_mesh);
 //}
 
-void FBXImporter::read_mesh(FbxNode *pNode, FbxMesh* pMesh)
+void FBXSceneImporter::read_mesh(FbxNode *pNode, FbxMesh* pMesh)
 {
 	std::vector<Mesh::Vertex> vertices;
 	std::vector<int> indices;
@@ -275,52 +283,61 @@ void FBXImporter::read_mesh(FbxNode *pNode, FbxMesh* pMesh)
 				FbxLayerElement::EMappingMode mapMode = geomElementUV->GetMappingMode();
 				FbxLayerElement::EReferenceMode refMode = geomElementUV->GetReferenceMode();
 
-				int directIndex = -1;
-
 				if (FbxGeometryElement::eByControlPoint == mapMode)
 				{
+					switch (geomElementUV->GetReferenceMode())
+					{
+					case FbxGeometryElement::eDirect:
+					{
+						vertex.texture_coord.x = static_cast<float>(geomElementUV->GetDirectArray().GetAt(ctrlPointIndex).mData[0]);
+						vertex.texture_coord.y = static_cast<float>(geomElementUV->GetDirectArray().GetAt(ctrlPointIndex).mData[1]);
+					}
+					break;
+
+					case FbxGeometryElement::eIndexToDirect:
+					{
+						int index = geomElementUV->GetIndexArray().GetAt(ctrlPointIndex);
+						vertex.texture_coord.x = static_cast<float>(geomElementUV->GetDirectArray().GetAt(index).mData[0]);
+						vertex.texture_coord.y = static_cast<float>(geomElementUV->GetDirectArray().GetAt(index).mData[1]);
+					}
+					break;
+
+					default:
+						throw std::exception("Invalid Reference");
+					}
+				}
+				if (FbxGeometryElement::eByPolygonVertex == mapMode)
+				{
+					int directIndex = -1;
 					if (FbxGeometryElement::eDirect == refMode)
 					{
-						directIndex = cpIndex;
+						directIndex = vertexID;
 					}
 					else if (FbxGeometryElement::eIndexToDirect == refMode)
 					{
-						directIndex = geomElementUV->GetIndexArray().GetAt(cpIndex);
+						directIndex = geomElementUV->GetIndexArray().GetAt(vertexID);
 					}
-				}
-				else if (FbxGeometryElement::eByPolygonVertex == mapMode)
-				{
-					if (FbxGeometryElement::eDirect == refMode || FbxGeometryElement::eIndexToDirect == refMode)
+
+					// If we got an index
+					if (directIndex != -1)
 					{
-						directIndex = pMesh->GetTextureUVIndex(polygon, polyVert);
+						FbxVector4 texture_coord = geomElementUV->GetDirectArray().GetAt(directIndex);
+
+						vertex.texture_coord = D3DXVECTOR4((float)texture_coord.mData[0], (float)texture_coord.mData[1], 0, 0);
 					}
-
-				}
-
-				// If we got a UV index
-				if (directIndex != -1)
-				{
-					FbxVector2 uv = geomElementUV->GetDirectArray().GetAt(directIndex);
-
-					vertex.texture_coord = D3DXVECTOR4((float)uv.mData[0], (float)uv.mData[1], 0 , 0);
-				}
-				else
-				{
-					vertex.texture_coord = D3DXVECTOR4(0, 0, 0, 0);
 				}
 			}
 
 			// Grab normals
 			int normElementCount = pMesh->GetElementNormalCount();
 
-			for (int tangentElement = 0; tangentElement < normElementCount; tangentElement++)
+			for (int normalElement = 0; normalElement < normElementCount; normalElement++)
 			{
-				FbxGeometryElementNormal* geomElementNormal = pMesh->GetElementNormal(tangentElement);
+				FbxGeometryElementNormal* geomElementNormal = pMesh->GetElementNormal(normalElement);
 
 				FbxLayerElement::EMappingMode mapMode = geomElementNormal->GetMappingMode();
 				FbxLayerElement::EReferenceMode refMode = geomElementNormal->GetReferenceMode();
 
-				int directIndex = -1;
 
 				if (FbxGeometryElement::eByControlPoint == mapMode)
 				{ 
@@ -349,6 +366,7 @@ void FBXImporter::read_mesh(FbxNode *pNode, FbxMesh* pMesh)
 				}
 				if (FbxGeometryElement::eByPolygonVertex == mapMode)
 				{
+					int directIndex = -1;
 					if (FbxGeometryElement::eDirect == refMode)
 					{
 						directIndex = vertexID;
@@ -373,9 +391,9 @@ void FBXImporter::read_mesh(FbxNode *pNode, FbxMesh* pMesh)
 			// grab tangents
 			int tangentElementCount = pMesh->GetElementTangentCount();
 
-			for (int tangentElement = 0; tangentElement < tangentElementCount; tangentElement++)
+			for (int normalElement = 0; normalElement < tangentElementCount; normalElement++)
 			{
-				FbxGeometryElementTangent* geomElementTangent = pMesh->GetElementTangent(tangentElement);
+				FbxGeometryElementTangent* geomElementTangent = pMesh->GetElementTangent(normalElement);
 
 				FbxLayerElement::EMappingMode mapMode = geomElementTangent->GetMappingMode();
 				FbxLayerElement::EReferenceMode refMode = geomElementTangent->GetReferenceMode();
@@ -433,12 +451,11 @@ void FBXImporter::read_mesh(FbxNode *pNode, FbxMesh* pMesh)
 	int materialCount = pNode->GetSrcObjectCount<FbxSurfaceMaterial>();
 
 	new_mesh->create_from_fbx(vertices, indices);
-	vector_to_fill.push_back(new_mesh);
+	scene_to_fill->add_mesh(new_mesh);
 
 	if (materialCount > 0)
 	{
 		FbxSurfaceMaterial* material = (FbxSurfaceMaterial*)pNode->GetSrcObject<FbxSurfaceMaterial>(0);
-
 		new_mesh->set_material(read_material(pNode, material));
 	}
 
@@ -447,8 +464,7 @@ void FBXImporter::read_mesh(FbxNode *pNode, FbxMesh* pMesh)
 
 }
 
-
-Material* FBXImporter::read_material(FbxNode *pNode, FbxSurfaceMaterial* material)
+Material* FBXSceneImporter::read_material(FbxNode *pNode, FbxSurfaceMaterial* material)
 {
 	std::string texture_names[Material::mtt_count];
 
@@ -504,15 +520,24 @@ Material* FBXImporter::read_material(FbxNode *pNode, FbxSurfaceMaterial* materia
 			}
 		}
 
+		//diffuse color
+		D3DXVECTOR4 diffuse_color = D3DXVECTOR4(1, 1, 1, 1);
+		if (material->GetClassId().Is(FbxSurfaceLambert::ClassId))
+		{
+			FbxSurfaceLambert *lambert_material = (FbxSurfaceLambert *)material;
+			FbxDouble3 diffuse = lambert_material->Diffuse.Get();
+			diffuse_color = D3DXVECTOR4(diffuse[0], diffuse[1], diffuse[2], 1);
+		}
+
 		Material *new_material= new Material;
-		new_material->create_from_file(texture_names);
+		new_material->create_from_file(texture_names, diffuse_color);
 		return new_material;
 	}
 
 	return nullptr;
 }
 
-void FBXImporter::get_transformation_matrix(FbxNode * pNode, Mesh * new_mesh)
+void FBXSceneImporter::get_transformation_matrix(FbxNode * pNode, Mesh * new_mesh)
 {
 	FbxAMatrix tr_matrix = pNode->EvaluateGlobalTransform();
 	D3DXMATRIX matrix;
@@ -526,4 +551,22 @@ void FBXImporter::get_transformation_matrix(FbxNode * pNode, Mesh * new_mesh)
 		}
 	}
 	new_mesh->set_frame(matrix);
+}
+
+void FBXSceneImporter::read_light(FbxNode *pNode, FbxLight* pLight)
+{
+	FbxDouble3 color = pLight->Color.Get();
+	FbxAMatrix tr_matrix = pNode->EvaluateGlobalTransform();
+	
+	D3DXVECTOR4 position = D3DXVECTOR4(tr_matrix[3][0], tr_matrix[3][1], tr_matrix[3][2], 1);
+	D3DXVECTOR4 light_color = D3DXVECTOR4(color[0], color[1], color[2], 1);
+
+	Light *new_light = new Light();
+	new_light->create_from_file(pLight->GetName(), light_color, position);
+	scene_to_fill->add_light(new_light);
+}
+
+const vector<Mesh*> FBXSceneImporter::get_scene_meshes() const
+{
+	return scene_to_fill->get_meshes();
 }

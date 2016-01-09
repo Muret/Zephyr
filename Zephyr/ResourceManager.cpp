@@ -2,7 +2,7 @@
 #include "ResourceManager.h"
 #include "Utilities.h"
 #include "TextureLoader.h"
-#include "FBXImporter.h"
+#include "FBXSceneImporter.h"
 #include "Mesh.h"
 
 ResourceManager::ResourceManager()
@@ -70,9 +70,9 @@ void ResourceManager::init_meshes(string resource_folder)
 
 	for (int i = 0; i < names.size(); i++)
 	{
-		vector<Mesh*> meshes;
 		string fbx_path(resource_folder + "/" + names[i]);
-		FBXImporter importer(fbx_path, meshes);
+		FBXSceneImporter importer(fbx_path);
+		const vector<Mesh*> &meshes = importer.get_scene_meshes();
 
 		string filter_name_wo_extension = Utilities::get_file_name_from_path_wo_extension(names[i]);
 
@@ -108,4 +108,69 @@ void ResourceManager::get_meshes_with_filter(string name, vector<Mesh*> &meshes)
 	}
 }
 
+void ResourceManager::add_scene(Scene *new_scene)
+{
+	scenes_[new_scene->get_name()] = new_scene;
+}
+
+Scene* ResourceManager::get_scene(string name) const
+{
+	auto it = scenes_.find(name);
+	if (it != scenes_.end())
+	{
+		return it->second->create_copy();
+	}
+
+	return nullptr;
+}
+
 ResourceManager resource_manager;
+
+Scene::Scene(string name) : name_(name)
+{
+}
+
+Scene::~Scene()
+{
+
+}
+
+void Scene::add_mesh(Mesh *new_mesh)
+{
+	meshes_.push_back(new_mesh);
+}
+
+void Scene::add_light(Light *new_light)
+{
+	lights_.push_back(new_light);
+}
+
+const vector<Mesh*> Scene::get_meshes() const
+{
+	return meshes_;
+}
+
+const vector<Light*> Scene::get_lights() const
+{
+	return lights_;
+}
+
+Scene * Scene::create_copy() const
+{
+	Scene *new_scene = new Scene(name_);
+	for (int i = 0; i < meshes_.size(); i++)
+	{
+		new_scene->add_mesh(meshes_[i]);
+	}
+	for (int i = 0; i < lights_.size(); i++)
+	{
+		new_scene->add_light(lights_[i]);
+	}
+
+	return new_scene;
+}
+
+std::string Scene::get_name() const
+{
+	return name_;
+}

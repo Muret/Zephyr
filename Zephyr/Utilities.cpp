@@ -1,8 +1,10 @@
 #include "Utilities.h"
+#include "Camera.h"
+
+D3DXVECTOR4 Utilities::debug_vector = D3DXVECTOR4(0, 0, 0, 0);
 
 Utilities::Utilities()
 {
-
 }
 
 Utilities::~Utilities()
@@ -113,11 +115,54 @@ std::string Utilities::get_file_name_from_path_wo_extension(string path)
 		filename = path.substr(index + 1, path.length());
 	}
 
-	index = path.find_last_of('.');
+	index = filename.find_last_of('.');
 	if (index != string::npos)
 	{
-		filename = path.substr(0, index);
+		filename = filename.substr(0, index);
 	}
 
 	return filename;
+}
+
+D3DXVECTOR4 Utilities::get_debug_vector()
+{
+	return debug_vector;
+}
+
+void Utilities::tick()
+{
+	extern Camera demo_camera;
+	if (demo_camera.is_key_down('1'))
+	{
+		debug_vector.x += 0.01;
+	}
+	if (demo_camera.is_key_down('2'))
+	{
+		debug_vector.y += 0.01;
+	}
+	if (demo_camera.is_key_down('3'))
+	{
+		debug_vector.z += 0.01;
+	}
+	if (demo_camera.is_key_down('4'))
+	{
+		debug_vector.w += 0.01;
+	}
+
+	if (demo_camera.is_key_down('5'))
+	{
+		debug_vector.x -= 0.01;
+	}
+	if (demo_camera.is_key_down('6'))
+	{
+		debug_vector.y -= 0.01;
+	}
+	if (demo_camera.is_key_down('7'))
+	{
+		debug_vector.z -= 0.01;
+	}
+	if (demo_camera.is_key_down('8'))
+	{
+		debug_vector.w -= 0.01;
+	}
 }

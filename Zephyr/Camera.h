@@ -24,6 +24,9 @@ public:
 	D3DXVECTOR3 get_forward_vector() const;
 	D3DXVECTOR3 get_up_vector() const;
 	D3DXVECTOR3 get_right_vector() const;
+
+	bool is_key_down(char key) const;
+	D3DXMATRIX get_view_projection_matrix() const;
 private:
 	//camera parameters
 	D3DXVECTOR3 camera_position;
@@ -38,6 +41,10 @@ private:
 	char keys[256];
 	bool is_moving_camera;
 	D3DXVECTOR2 last_mouse_position;
+
+	D3DXVECTOR3 original_view_direction;
+	D3DXVECTOR3 original_right_vector;
+	D3DXVECTOR3 original_up_vector;
 };
 
 extern Camera demo_camera;

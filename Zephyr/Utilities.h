@@ -15,6 +15,13 @@ public:
 	static string get_file_name_from_path(string path);
 	static string get_file_name_from_path_wo_extension(string path);
 
+	static D3DXVECTOR4 get_debug_vector();
+
+	static void tick();
+
+private:
+	static D3DXVECTOR4 debug_vector;
+
 };
 
 #endif

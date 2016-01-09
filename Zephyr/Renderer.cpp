@@ -5,11 +5,18 @@
 #include "Shader.h"
 #include "Material.h"
 #include "Texture.h"
+#include "Utilities.h"
+#include "ResourceManager.h"
+#include "Light.h"
+#include "d11.h"
+#include "Camera.h"
 
 Renderer *renderer = NULL;
 
 Renderer::Renderer()
 {
+	scene_to_render = nullptr;
+
 	default_render_shader = new Shader("default_vertex", "default_pixel");
 
 	gbuffer_normal_texture = new Texture(g_screenWidth, g_screenHeight, nullptr, DXGI_FORMAT_R8G8B8A8_UNORM);
@@ -26,6 +33,11 @@ Renderer::Renderer()
 
 void Renderer::render_frame()
 {
+	if (scene_to_render == nullptr)
+	{
+		return;
+	}
+
 	begin_frame();
 
 	pre_render();
@@ -62,7 +74,9 @@ void Renderer::gbuffer_render()
 	gbuffer_shader->set_shaders();
 	SetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-	for (int i = 2; i < 4; i++)
+	const vector<Mesh*> &meshes_to_render = scene_to_render->get_meshes();
+
+	for (int i = 0; i < meshes_to_render.size(); i++)
 	{
 		Mesh *mesh_to_render = meshes_to_render[i];
 		mesh_to_render->get_material()->set_textures();
@@ -75,7 +89,8 @@ void Renderer::gbuffer_render()
 		SetSamplerState();
 
 		//render
-		RenderIndexed(mesh_to_render->get_index_count());
+		int tri_to_render = mesh_to_render->get_index_count();// min(mesh_to_render->get_index_count(), Utilities::get_debug_vector().x * 3 * 5);
+		RenderIndexed(tri_to_render);
 	}
 
 	SetRenderTargetView(nullptr, 0);
@@ -134,16 +149,6 @@ void Renderer::end_frame()
 	EndScene();
 }
 
-void Renderer::add_mesh_to_render(Mesh* mesh)
-{
-	meshes_to_render.push_back(mesh);
-}
-
-void Renderer::add_meshes_to_render(vector<Mesh*> &mesh)
-{
-	meshes_to_render.insert(meshes_to_render.begin(), mesh.begin(), mesh.end());
-}
-
 void Renderer::add_renderer_component(RenderComponent *component)
 {
 	render_components.push_back(component);
@@ -178,6 +183,7 @@ void Renderer::forward_rendering_pipeline()
 		SetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	}
 
+	const vector<Mesh*> &meshes_to_render = scene_to_render->get_meshes();
 	for (int i = 0; i < meshes_to_render.size(); i++)
 	{
 		Mesh *mesh_to_render = meshes_to_render[i];
@@ -191,13 +197,31 @@ void Renderer::forward_rendering_pipeline()
 		SetSamplerState();
 
 		//render
-		RenderIndexed(mesh_to_render->get_index_count());
+		int tri_to_render = mesh_to_render->get_index_count();// min(mesh_to_render->get_index_count(), Utilities::get_debug_vector().x);
+		RenderIndexed(tri_to_render);
 	}
 }
 
 void Renderer::full_deferred_rendering_pipeline()
 {
-	//set gbuffer textures
+	const vector<Light*> &lights_to_render = scene_to_render->get_lights();
+	if (lights_to_render.size() > 0)
+	{
+		Light* first_light = lights_to_render[0];
+		lighting_InfoBuffer_cpu.light_color = first_light->get_color();
+		lighting_InfoBuffer_cpu.ws_light_position = first_light->get_position();
+
+		D3DXMATRIX viewProjection = demo_camera.get_view_projection_matrix();
+		D3DXVECTOR4 ss_light_p;
+		D3DXVec4Transform(&ss_light_p, &lighting_InfoBuffer_cpu.ws_light_position, &viewProjection);
+		ss_light_p = ss_light_p / ss_light_p.w;
+		ss_light_p.x = ss_light_p.x * 0.5 + 0.5;
+		ss_light_p.y = ss_light_p.y * 0.5 + 0.5;
+
+		lighting_InfoBuffer_cpu.ss_light_position = ss_light_p;
+
+		UpdateGlobalBuffers();
+	}
 
 	SetViewPortToDefault();
 
@@ -210,7 +234,8 @@ void Renderer::full_deferred_rendering_pipeline()
 	render_constantsBuffer_cpu.WorldViewProjectionMatrix = matrix;
 	UpdateGlobalBuffers();
 
-	gbuffer_albedo_texture->set_srv_to_shader(shader_type_pixel,0);
+	//set gbuffer textures
+	gbuffer_albedo_texture->set_srv_to_shader(shader_type_pixel, 0);
 	gbuffer_normal_texture->set_srv_to_shader(shader_type_pixel, 1);
 	gbuffer_specular_texture->set_srv_to_shader(shader_type_pixel, 2);
 
@@ -221,5 +246,10 @@ void Renderer::full_deferred_rendering_pipeline()
 	}
 
 	SetBlendState(blend_state_enable_color_write);
+}
+
+void Renderer::set_scene_to_render(Scene * scene)
+{
+	scene_to_render = scene;
 }
 

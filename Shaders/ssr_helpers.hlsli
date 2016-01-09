@@ -14,7 +14,7 @@ static const float HIZ_MAX_LEVEL = float(cb_mipCount);
 static const float2 HIZ_CROSS_EPSILON = float2(texelWidth, texelHeight); // maybe need to be smaller or larger? this is mip level 0 texel size
 static const uint MAX_ITERATIONS = 64u;
 
-void get_ss_hit_pos_ray_dir(in float2 tex_coord, out float3 screen_space_position, out float3 screen_space_ray_dir)
+void get_ss_hit_pos_ray_dir(in float2 tex_coord, out float3 screen_space_position, out float3 screen_space_ray_dir, out float3 world_space_position)
 {
 	//calculate the view space normal and hit position
 	//then calculate the view space reflection vector
@@ -36,6 +36,8 @@ void get_ss_hit_pos_ray_dir(in float2 tex_coord, out float3 screen_space_positio
 	}
 
 	float3 view_space_position = cameraRay * hit_linear_depth;
+	world_space_position = mul(float4(view_space_position, 1), inverseViewMatrix).xyz;
+
 	float4 screen_space_position_temp = mul(float4(view_space_position, 1), projectionMatrix);
 	screen_space_position_temp /= screen_space_position_temp.w;
 	screen_space_position = screen_space_position_temp.xyz;;
@@ -156,4 +158,14 @@ float3 do_hiz_ss_ray_trace(float3 p, float3 v)
 	}
 
 	return ray;
+}
+
+//input : screen space positions with hw depth
+bool check_visibility_ss(float3 pos1, float3 pos2)
+{
+	float3 vec = pos2 - pos1;
+	float3 ss_ray_hit = do_hiz_ss_ray_trace(pos1, vec);
+	float normalized_t = (ss_ray_hit - pos1) / vec;
+
+	return normalized_t > 1.0f;
 }

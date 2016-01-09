@@ -54,6 +54,7 @@ struct RenderConstantsBuffer
 	D3DXMATRIX inverseProjectionMatrix;
 	D3DXMATRIX projectionMatrix;
 	D3DXMATRIX viewMatrix;
+	D3DXMATRIX inverseView;
 
 	D3DXVECTOR4 right_direction;
 	D3DXVECTOR4 up_direction;
@@ -61,11 +62,14 @@ struct RenderConstantsBuffer
 	D3DXVECTOR4 camera_position;
 	D3DXVECTOR4 screen_texture_half_pixel_forced_mipmap;
 	D3DXVECTOR4 near_far_padding2;
+
+	D3DXVECTOR4 diffuse_color;
 };
 
 struct LightingInfoBuffer
 {
-	D3DXVECTOR4 light_direction;
+	D3DXVECTOR4 ws_light_position;
+	D3DXVECTOR4 ss_light_position;
 	D3DXVECTOR4 light_color;
 };
 

@@ -5,6 +5,8 @@
 
 class Texture;
 class Mesh;
+class Light;
+class Scene;
 
 class ResourceManager
 {
@@ -20,7 +22,10 @@ public:
 	
 	Texture* get_texture(string name) const;
 	Mesh* get_mesh(string name) const;
+	Scene* get_scene(string name) const;
+	
 	void get_meshes_with_filter(string name, vector<Mesh*> &meshes) const;
+	void add_scene(Scene *new_scene);
 	
 private:
 
@@ -32,7 +37,32 @@ private:
 	map<string, Mesh*> mesh_accesor_map_;
 	vector<string> mesh_extenstions_;
 	map<string, vector<Mesh*>> mesh_filter_data_;
+
+	map<string, Scene* > scenes_;
 };
+
+class Scene
+{
+public:
+	Scene(string name);
+	~Scene();
+
+	void add_mesh(Mesh *new_mesh);
+	void add_light(Light *new_light);
+
+	const vector<Mesh*> get_meshes() const;
+	const vector<Light*> get_lights() const;
+
+	Scene *create_copy() const;
+	string get_name() const;
+
+private:
+	vector<Mesh*> meshes_;
+	vector<Light*> lights_;
+
+	string name_;
+};
+
 
 extern ResourceManager resource_manager;
 

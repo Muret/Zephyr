@@ -1,0 +1,23 @@
+<node name= object4
+	<attribute type= mesh name=  />
+</node>
+<node name= object3
+	<attribute type= mesh name=  />
+</node>
+<node name= object2
+	<attribute type= mesh name=  />
+</node>
+<node name= object6
+	<attribute type= mesh name=  />
+</node>
+<node name= object5
+	<attribute type= mesh name=  />
+</node>
+<node name= Camera001
+	<attribute type= camera name=  />
+</node>
+<node name= VRayLight001
+</node>
+<node name= Sky001
+	<attribute type= light name=  />
+</node>

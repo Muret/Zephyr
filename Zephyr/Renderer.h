@@ -8,6 +8,7 @@
 
 class RenderComponent;
 class Shader;
+class Scene;
 
 class Renderer
 {
@@ -18,10 +19,9 @@ public:
 
 	void render_frame();
 
-	void add_mesh_to_render(Mesh* mesh);
-	void add_meshes_to_render(vector<Mesh*> &mesh);
 	void add_renderer_component(RenderComponent *component);
 
+	void set_scene_to_render(Scene * scene);
 private:
 	void begin_frame();
 
@@ -37,12 +37,14 @@ private:
 
 	void validate_render_options();
 	void full_deferred_rendering_pipeline();
-	vector<Mesh*> meshes_to_render;
+
 	vector<RenderComponent*> render_components;
 
 	Shader *default_render_shader;
 
-	//geomtry buffer
+	Scene *scene_to_render;
+
+	//geometry buffer
 	Texture *gbuffer_normal_texture;
 	Texture *gbuffer_albedo_texture;
 	Texture *gbuffer_specular_texture;
@@ -52,7 +54,7 @@ private:
 
 	Texture *screen_texture;
 
-	//render opsitons
+	//render options
 	bool use_postfx;
 
 

@@ -36,9 +36,6 @@
     <ClCompile Include="Mesh.cpp">
       <Filter>Resource Files</Filter>
     </ClCompile>
-    <ClCompile Include="FBXImporter.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Demo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -72,6 +69,12 @@
     <ClCompile Include="Utilities.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Light.cpp">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FBXSceneImporter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h">
@@ -89,9 +92,6 @@
     <ClInclude Include="Mesh.h">
       <Filter>Resource Files</Filter>
     </ClInclude>
-    <ClInclude Include="FBXImporter.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Demo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -107,9 +107,6 @@
     <ClInclude Include="SSR.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Renderer.h">
-      <Filter>Resource Files</Filter>
-    </ClInclude>
     <ClInclude Include="Shader.h">
       <Filter>Resource Files</Filter>
     </ClInclude>
@@ -123,6 +120,15 @@
       <Filter>Resource Files</Filter>
     </ClInclude>
     <ClInclude Include="Utilities.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Light.h">
+      <Filter>Resource Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FBXSceneImporter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -3,7 +3,7 @@
 
 
 #include "includes.h"
-#include "FBXImporter.h"
+#include "FBXSceneImporter.h"
 
 void init_demo_scene();
 

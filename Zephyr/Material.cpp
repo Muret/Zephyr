@@ -16,8 +16,10 @@ Material::Material()
 	}
 }
 
-void Material::create_from_file(std::string texture_names[mtt_count])
+void Material::create_from_file(std::string texture_names[mtt_count], const D3DXVECTOR4 &diffuse_color)
 {
+	diffuse_color_ = diffuse_color;
+
 	for (int i = 0; i < mtt_count; i++)
 	{
 		texture_names_[i] = texture_names[i];
@@ -58,5 +60,10 @@ void Material::set_textures()
 
 	SetSamplerState();
 
+}
+
+D3DXVECTOR4 Material::get_diffuse_color() const
+{
+	return diffuse_color_;
 }
 

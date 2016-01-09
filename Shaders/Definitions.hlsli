@@ -12,6 +12,7 @@ cbuffer MatrixBuffer : register (b0)
 	matrix inverseProjectionMatrix;
 	matrix projectionMatrix;
 	matrix viewMatrix;
+	matrix inverseViewMatrix;
 
 	float4 right_direction;
 	float4 up_direction;
@@ -20,11 +21,13 @@ cbuffer MatrixBuffer : register (b0)
 
 	float4 screen_texture_half_pixel_forced_mipmap;
 	float4 near_far_padding2;
+	float4 diffuse_color;
 };
 
 cbuffer LightingInfoBuffer : register (b1)
 {
-	float4 light_direction;
+	float4 ws_light_position;
+	float4 ss_light_position;
 	float4 light_color;
 };
 

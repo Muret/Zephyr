@@ -2,7 +2,7 @@
 #include "Demo.h"
 #include "Mesh.h"
 #include "Camera.h"
-#include <assert.h>
+#include "Material.h"
 
 #include "d11.h"
 
@@ -91,12 +91,12 @@ void Mesh::set_uniform_values() const
 	D3DXVECTOR3 up_vector = demo_camera.get_up_vector();
 	D3DXVECTOR3 right_vector = demo_camera.get_right_vector();
 
-	D3DXMATRIX view, projection, inverseViewProjection, inverseProjection, worldMatrix;
+	D3DXMATRIX view, projection, inverseViewProjection, inverseProjection, worldMatrix, inverseView;
 	D3DXVECTOR3 lookat = camera_position + view_direction;
 
 	D3DXMatrixLookAtRH(&view, &camera_position, &lookat, &up_vector);
 
-	D3DXMatrixPerspectiveFovRH(&projection, PI * 0.25, float(g_screenWidth) / float(g_screenHeight), 0.1f, 1000.0f);
+	D3DXMatrixPerspectiveFovRH(&projection, PI / 6.0f, float(g_screenWidth) / float(g_screenHeight), 0.1f, 10000.0f);
 
 	float determinant;
 	D3DXMATRIX mWorldViewProjection = frame_ * view * projection;
@@ -105,7 +105,9 @@ void Mesh::set_uniform_values() const
 
 	D3DXMatrixInverse(&inverseViewProjection, &determinant, &mWorldViewProjection);
 	D3DXMatrixInverse(&inverseProjection, &determinant, &projection);
-
+	D3DXMatrixInverse(&inverseProjection, &determinant, &projection);
+	D3DXMatrixInverse(&inverseView, &determinant, &view);
+	
 	// Transpose the matrices to prepare them for the shader.
 	D3DXMatrixTranspose(&mWorldViewProjection, &mWorldViewProjection);
 	D3DXMatrixTranspose(&inverseViewProjection, &inverseViewProjection);
@@ -113,6 +115,7 @@ void Mesh::set_uniform_values() const
 	D3DXMatrixTranspose(&inverseProjection, &inverseProjection);
 	D3DXMatrixTranspose(&worldMatrix, &worldMatrix);
 	D3DXMatrixTranspose(&view, &view);
+	D3DXMatrixTranspose(&inverseView, &inverseView);
 	
 	render_constantsBuffer_cpu.WorldViewProjectionMatrix = mWorldViewProjection;
 	render_constantsBuffer_cpu.WorldMatrix = worldMatrix;
@@ -125,8 +128,10 @@ void Mesh::set_uniform_values() const
 	render_constantsBuffer_cpu.inverseProjectionMatrix = inverseProjection;
 	render_constantsBuffer_cpu.projectionMatrix = projection;
 	render_constantsBuffer_cpu.viewMatrix = view;
+	render_constantsBuffer_cpu.inverseView = inverseView;
 	
-	render_constantsBuffer_cpu.near_far_padding2 = D3DXVECTOR4(0.1f, 100.0f,0,0);
+	render_constantsBuffer_cpu.near_far_padding2 = D3DXVECTOR4(0.1f, 10000.0f, 0, 0);
+	render_constantsBuffer_cpu.diffuse_color = mesh_material_->get_diffuse_color();
 
 	UpdateGlobalBuffers();
 }

@@ -3,6 +3,8 @@
 
 #include "Camera.h"
 
+
+
 void Camera::init_camera()
 {
 	memset(keys, 0, sizeof(char)* 256);
@@ -22,25 +24,23 @@ void Camera::handle_user_input_up(char key)
 
 void Camera::tick_user_inputs()
 {
-	const float multiplier = 0.1;
+	const float multiplier = 5;
 
 	if (is_moving_camera)
 	{
 		POINT  p;
 		GetCursorPos(&p);
-		y_camera_bearing -= (p.y - last_mouse_position.y) * 0.006 * multiplier;
+		y_camera_bearing -= (p.y - last_mouse_position.y) * 0.002 * multiplier;
 		if (y_camera_bearing > PI)
 		{
 			y_camera_bearing -= PI;
 		}
-		x_camera_bearing -= (p.x - last_mouse_position.x) * 0.006 * multiplier;
+		x_camera_bearing -= (p.x - last_mouse_position.x) * 0.002 * multiplier;
 
 		last_mouse_position = D3DXVECTOR2(p.x, p.y);
 	}
 
-	D3DXVECTOR3 original_view_direction(1, 0, 0);
-	D3DXVECTOR3 original_right_vector(0, 0, 1);
-	D3DXVECTOR3 original_up_vector(0, 1, 0);
+
 
 	D3DXVECTOR3 view_temp;
 	D3DXVECTOR3 view_temp2;
@@ -64,32 +64,32 @@ void Camera::tick_user_inputs()
 
 	if (keys['W'])
 	{
-		camera_position += 0.006 * view_direction * multiplier;
+		camera_position += 0.06 * view_direction * multiplier;
 	}
 
 	if (keys['S'])
 	{
-		camera_position -= 0.006 * view_direction * multiplier;
+		camera_position -= 0.06 * view_direction * multiplier;
 	}
 
 	if (keys['D'])
 	{
-		camera_position += 0.011 * right_vector * multiplier;
+		camera_position += 0.11 * right_vector * multiplier;
 	}
 
 	if (keys['A'])
 	{
-		camera_position -= 0.011 * right_vector * multiplier;
+		camera_position -= 0.11 * right_vector * multiplier;
 	}
 
 	if (keys['Q'])
 	{
-		camera_position += 0.011 * up_vector * multiplier;
+		camera_position += 0.11 * up_vector * multiplier;
 	}
 
 	if (keys['E'])
 	{
-		camera_position -= 0.011 * up_vector * multiplier;
+		camera_position -= 0.11 * up_vector * multiplier;
 	}
 }
 
@@ -113,10 +113,14 @@ void Camera::stopMovingCamera()
 
 Camera::Camera()
 {
-	camera_position = D3DXVECTOR3(-4, 1, 0);
-	view_direction = D3DXVECTOR3(1, 0, 0);
-	right_vector = D3DXVECTOR3(0, 0, 1);
-	up_vector = D3DXVECTOR3(0, 1, 0);
+	original_view_direction		= D3DXVECTOR3(0, 0, -1);
+	original_right_vector		= D3DXVECTOR3(1, 0, 0);
+	original_up_vector			= D3DXVECTOR3(0, 1, 0);
+
+	camera_position = D3DXVECTOR3(0, 10, 80);
+	view_direction = original_view_direction;
+	right_vector = original_right_vector;
+	up_vector = original_up_vector;
 }
 
 D3DXVECTOR3 Camera::get_position() const
@@ -137,6 +141,23 @@ D3DXVECTOR3 Camera::get_up_vector() const
 D3DXVECTOR3 Camera::get_right_vector() const
 {
 	return right_vector;
+}
+
+bool Camera::is_key_down(char key) const
+{
+	return keys[key];
+}
+
+D3DXMATRIX Camera::get_view_projection_matrix() const
+{
+	D3DXMATRIX view, projection;
+	D3DXVECTOR3 lookat = camera_position + view_direction;
+	D3DXMatrixLookAtRH(&view, &camera_position, &lookat, &up_vector);
+
+	D3DXMatrixPerspectiveFovRH(&projection, PI / 6.0f, float(g_screenWidth) / float(g_screenHeight), 0.1f, 10000.0f);
+
+	float determinant;
+	return view * projection;
 }
 
 

@@ -22,7 +22,8 @@
 #include <string>
 #include <vector>
 #include <map>
-
+#include <assert.h>
+#include <iostream>
 
 #pragma comment(lib, "dxgi.lib")
 #pragma comment(lib, "D3D11.lib")

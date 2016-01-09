@@ -7,6 +7,7 @@
 #include "Camera.h"
 #include "Renderer.h"
 #include "ResourceManager.h"
+#include "Utilities.h"
 
 #include "SSR_Demo.h"
 
@@ -80,6 +81,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pScmdline,
 		}
 
 		demo_camera.tick_user_inputs();
+		Utilities::tick();
 
 		renderer->render_frame();
 

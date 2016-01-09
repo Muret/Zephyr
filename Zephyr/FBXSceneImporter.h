@@ -1,24 +1,23 @@
 #ifndef _FBX_IMPORTER_H
 #define _FBX_IMPORTER_H
 
+#include "includes.h"
 #include <fbxsdk.h>
-#include <string>
-#include <iostream>
-#include <fstream>
-#include <vector>
 
 class Mesh;
 class Material;
+class Scene;
 
-class FBXImporter
+class FBXSceneImporter
 {
 public:
 
-	FBXImporter(std::string file_name, std::vector<Mesh*> &meshes);
+	FBXSceneImporter(std::string file_name);
 
 	//read functions
 	void read_node(FbxNode* pNode);
 	void read_mesh(FbxNode *pNode, FbxMesh* pMesh);
+	void read_light(FbxNode *pNode, FbxLight* pMesh);
 
 	void get_transformation_matrix(FbxNode * pNode, Mesh * new_mesh);
 
@@ -30,6 +29,8 @@ public:
 	FbxString GetAttributeTypeName(FbxNodeAttribute::EType type);
 	void PrintAttribute(FbxNodeAttribute* pAttribute);
 
+	const vector<Mesh*> get_scene_meshes() const;
+
 private:
 
 	FbxManager* lSdkManager;
@@ -39,7 +40,7 @@ private:
 	std::ofstream myfile;
 	FbxScene* lScene;
 
-	std::vector<Mesh*> &vector_to_fill;
+	Scene *scene_to_fill;
 };
 
 #endif
