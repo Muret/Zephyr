@@ -24,18 +24,18 @@ void Camera::handle_user_input_up(char key)
 
 void Camera::tick_user_inputs()
 {
-	const float multiplier = 5;
+	const float multiplier = 3;
 
 	if (is_moving_camera)
 	{
 		POINT  p;
 		GetCursorPos(&p);
-		y_camera_bearing -= (p.y - last_mouse_position.y) * 0.002 * multiplier;
+		y_camera_bearing -= (p.y - last_mouse_position.y) * 0.001 * multiplier;
 		if (y_camera_bearing > PI)
 		{
 			y_camera_bearing -= PI;
 		}
-		x_camera_bearing -= (p.x - last_mouse_position.x) * 0.002 * multiplier;
+		x_camera_bearing -= (p.x - last_mouse_position.x) * 0.001 * multiplier;
 
 		last_mouse_position = D3DXVECTOR2(p.x, p.y);
 	}

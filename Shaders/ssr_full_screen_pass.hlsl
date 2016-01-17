@@ -17,12 +17,12 @@ float4 main(PixelInputType input) : SV_TARGET
 	float3 normal = normal_texture.Sample(PointSampler, input.tex_coord.xy);
 	float3 screen_color = screen_texture.Sample(PointSampler, input.tex_coord.xy);
 
-	float3 final_color = screen_color * 0.4;
+	float3 final_color = screen_color * 0.1;
 
-	if (check_if_reflected(normal))
-	{
-		return float4(screen_color,1);
-	}
+	//if (check_if_reflected(normal))
+	//{
+	//	return float4(screen_color,1);
+	//}
 
 	float3 screen_space_position, screen_space_ray_dir, ws_position;
 	get_ss_hit_pos_ray_dir(input.tex_coord.xy, screen_space_position, screen_space_ray_dir, ws_position);
@@ -30,14 +30,16 @@ float4 main(PixelInputType input) : SV_TARGET
 	float3 vector_to_light = normalize(ws_light_position - ws_position.xyz);
 	float3 ws_normal = normalize(normal * 2.0f - 1.0f);
 
-	
-	if (check_visibility_ss(screen_space_position, ss_light_position))
+	float iteration_count;
+	if (check_visibility_ss(screen_space_position, ss_light_position.xyz))
 	{
 		final_color += light_color * saturate(dot(vector_to_light, ws_normal)) * float4(screen_color, 1);
+		//return float4(1, 0, 0,1);
 	}
-	return float4(final_color,1);
 
-	float3 final_position = do_hiz_ss_ray_trace(screen_space_position, screen_space_ray_dir);
+	return float4(final_color, 1);
+
+	float3 final_position = 0;// do_hiz_ss_ray_trace(screen_space_position, screen_space_ray_dir, iteration_count);
 
 	float3 reflection_color = 0;
 	if (final_position.x > 1.0f && final_position.x < 0.0f &&

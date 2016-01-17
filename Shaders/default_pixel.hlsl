@@ -3,7 +3,7 @@
 
 float4 main(PixelInputType input) : SV_TARGET
 {
-	float3 albedo_color = diffuse_texture.Sample(LinearSampler, input.tex_coord.xy).rgb;
+	float3 albedo_color = diffuse_texture.Sample(PointSampler, input.tex_coord.xy).rgb;
 	float3 normal = normalize(input.normal);
 
 	//TODO_MURAT cleanup

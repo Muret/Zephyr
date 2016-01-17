@@ -4,7 +4,7 @@
 
 float4 main(PixelInputType input) : SV_TARGET
 {
-	float2 pixel_size = screen_texture_half_pixel_forced_mipmap.xy * 2;
+	float2 pixel_size = screen_texture_half_pixel_forced_mipmap.xy;
 
 	float d1 = diffuse_texture.SampleLevel(PointSampler, input.tex_coord.xy + pixel_size * float2(0,0)		, -1);
 	float d2 = diffuse_texture.SampleLevel(PointSampler, input.tex_coord.xy + pixel_size * float2(1,1)		, -1);

@@ -11,8 +11,16 @@ Texture2D hi_z_depth_texture : register(t4);
 static const float HIZ_START_LEVEL = 0.0f;
 static const float HIZ_STOP_LEVEL = 0.0f;
 static const float HIZ_MAX_LEVEL = float(cb_mipCount);
-static const float2 HIZ_CROSS_EPSILON = float2(texelWidth, texelHeight); // maybe need to be smaller or larger? this is mip level 0 texel size
+static const float2 HIZ_CROSS_EPSILON = float2(texelWidth * 0.5, texelHeight * 0.5); // maybe need to be smaller or larger? this is mip level 0 texel size
 static const uint MAX_ITERATIONS = 64u;
+
+float3 get_vs_normal(float2 uv)
+{
+	float3 ws_normal = normal_texture.Sample(PointSampler, uv);
+	ws_normal *= 2.0f - 1.0f;
+
+	return normalize(mul(float4(ws_normal, 0), viewMatrix));
+}
 
 void get_ss_hit_pos_ray_dir(in float2 tex_coord, out float3 screen_space_position, out float3 screen_space_ray_dir, out float3 world_space_position)
 {
@@ -67,7 +75,7 @@ float2 getCell(float2 ray, float2 cellCount)
 	return floor(ray * cellCount);
 }
 
-static const float2 hiZSize = 1024; // not sure if correct - this is mip level 0 size
+static const float2 hiZSize = 1024 / exp2(HIZ_START_LEVEL); // not sure if correct - this is mip level 0 size
 
 float2 getCellCount(float level, float rootLevel)
 {
@@ -79,10 +87,10 @@ float2 getCellCount(float level, float rootLevel)
 float3 intersectCellBoundary(float3 o, float3 d, float2 cellIndex, float2 cellCount, float2 crossStep, float2 crossOffset)
 {
 	float2 index = cellIndex + crossStep;
-		index /= cellCount;
+	index /= cellCount;
 	index += crossOffset;
 	float2 delta = index - o.xy;
-		delta /= d.xy;
+	delta /= d.xy;
 	float t = min(delta.x, delta.y);
 	return intersectDepthPlane(o, d, t);
 }
@@ -98,6 +106,10 @@ bool crossedCellBoundary(float2 cellIdxOne, float2 cellIdxTwo)
 }
 
 
+float between(float value, float min, float max)
+{
+	return min <= value && value < max;
+}
 
 float3 do_hiz_ss_ray_trace(float3 p, float3 v)
 {
@@ -108,9 +120,9 @@ float3 do_hiz_ss_ray_trace(float3 p, float3 v)
 	uint iterations = 0u;
 
 	// get the cell cross direction and a small offset to enter the next cell when doing cell crossing
-	float2 crossStep = float2(v.x >= 0.0f ? 1.0f : -1.0f, v.y >= 0.0f ? 1.0f : -1.0f);
+	float2 crossStep = sign(v.xy); //float2(v.x >= 0.0f ? 1.0f : -1.0f, v.y >= 0.0f ? 1.0f : -1.0f);
 	float2 crossOffset = float2(crossStep.xy * HIZ_CROSS_EPSILON.xy);
-	crossStep.xy = saturate(crossStep.xy);
+	//crossStep.xy = saturate(crossStep.xy);
 
 	// set current ray to original screen coordinate and depth
 	float3 ray = p.xyz;
@@ -120,6 +132,12 @@ float3 do_hiz_ss_ray_trace(float3 p, float3 v)
 
 	// set starting point to the point where z equals 0.0f (minimum depth)
 	float3 o = intersectDepthPlane(p, d, -p.z);
+
+	float2 range_min_max = float2(0, 1);
+	//if (trace_until)
+	//{
+	//	range_min_max.y = (trace_until_position.x - o.x) / d.x;
+	//}
 
 	// cross to next cell to avoid immediate self-intersection
 	const float2 cellCount = getCellCount(level, rootLevel);
@@ -147,9 +165,20 @@ float3 do_hiz_ss_ray_trace(float3 p, float3 v)
 			// intersect the boundary of that cell instead, and go up a level for taking a larger step next iteration
 			tmpRay = intersectCellBoundary(o, d, oldCellIdx, cellCount.xy, crossStep.xy, crossOffset.xy); //// NOTE added .xy to o and d arguments
 			level = min(HIZ_MAX_LEVEL, level + 2.0f);
+			ray.xyz = tmpRay.xyz;
+
+			crossOffset *= 2.0f;
+		}
+		else
+		{
+			crossOffset /= 2.0f;
 		}
 
-		ray.xyz = tmpRay.xyz;
+		//float cur_t = (ray.x - o.x) / d.x;
+		//if (!between(cur_t, range_min_max.x, range_min_max.y))
+		//{
+		//	return ray.xyz;
+		//}
 
 		// go down a level in the hi-z buffer
 		--level;
@@ -163,9 +192,53 @@ float3 do_hiz_ss_ray_trace(float3 p, float3 v)
 //input : screen space positions with hw depth
 bool check_visibility_ss(float3 pos1, float3 pos2)
 {
-	float3 vec = pos2 - pos1;
-	float3 ss_ray_hit = do_hiz_ss_ray_trace(pos1, vec);
-	float normalized_t = (ss_ray_hit - pos1) / vec;
+	float3 vec = (pos2 - pos1);
+	float3 ss_ray_hit = do_hiz_ss_ray_trace(pos1, normalize(vec));
 
-	return normalized_t > 1.0f;
+	//vec = normalize(vec);
+
+	float normalized_t = (ss_ray_hit.x - pos1.x) / vec.x;
+	if (abs(vec.x) < abs(vec.y))
+	{
+		normalized_t = (ss_ray_hit.y - pos1.y) / vec.y;
+	}
+
+	return normalized_t > 0.99f;
+}
+
+//tracing of one path with importance sampling
+//position : screen space xy with hw depth
+float3 path_trace_imp(float3 position)
+{
+	float3 cumulative_color = 0.0f;
+	float3 cumulative_color_factor = float3(1.0f, 1.0f, 1.0f);
+	const unsigned int max_iterations = 32u;
+	unsigned int iteration_count = 0;
+	static const float mc_termination_pos = 0.3f;
+	static const float mc_termination_factor = 1.0f / mc_termination_pos;
+
+	float3 cur_ss_position = position;
+	float2 cur_uv = float2(position.x, 1.0f - position.y);
+	float3 cur_albedo_color = diffuse_texture.Sample(LinearSampler, cur_uv);
+	float3 cur_vs_normal = get_vs_normal(cur_uv);
+
+	cumulative_color_factor *= cur_albedo_color;
+
+	while (iteration_count < max_iterations)
+	{
+		//importance sampling to light source
+		if (check_visibility_ss(cur_ss_position, ss_light_position))
+		{
+			float3 vs_to_light = 
+
+		}
+
+		float mc_random_value = 0.0f;
+
+
+		iteration_count++;
+	}
+
+
+	return cumulative_color;
 }
