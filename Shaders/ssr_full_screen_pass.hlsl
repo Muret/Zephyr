@@ -27,6 +27,13 @@ float4 main(PixelInputType input) : SV_TARGET
 	float3 screen_space_position, screen_space_ray_dir, ws_position;
 	get_ss_hit_pos_ray_dir(input.tex_coord.xy, screen_space_position, screen_space_ray_dir, ws_position);
 
+	final_color = do_simple_path_tracing(screen_space_position);
+	return float4(final_color, 1);
+
+
+
+
+
 	float3 vector_to_light = normalize(ws_light_position - ws_position.xyz);
 	float3 ws_normal = normalize(normal * 2.0f - 1.0f);
 

@@ -114,6 +114,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="CatmullClark.cpp" />
     <ClCompile Include="d11.cpp" />
     <ClCompile Include="Demo.cpp" />
     <ClCompile Include="FBXSceneImporter.cpp" />
@@ -135,6 +136,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="CatmullClark.h" />
     <ClInclude Include="d11.h" />
     <ClInclude Include="Demo.h" />
     <ClInclude Include="FBXSceneImporter.h" />

@@ -1,6 +1,8 @@
 #ifndef __INCLUDE_DEFINITIONS_HLSLI
 #define __INCLUDE_DEFINITIONS_HLSLI
 
+#define PI 3.14
+
 /////////////
 // GLOBALS //
 /////////////
@@ -13,6 +15,7 @@ cbuffer MatrixBuffer : register (b0)
 	matrix projectionMatrix;
 	matrix viewMatrix;
 	matrix inverseViewMatrix;
+	matrix viewProjection;
 
 	float4 right_direction;
 	float4 up_direction;

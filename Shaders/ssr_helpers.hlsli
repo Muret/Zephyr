@@ -14,12 +14,36 @@ static const float HIZ_MAX_LEVEL = float(cb_mipCount);
 static const float2 HIZ_CROSS_EPSILON = float2(texelWidth * 0.5, texelHeight * 0.5); // maybe need to be smaller or larger? this is mip level 0 texel size
 static const uint MAX_ITERATIONS = 64u;
 
+float3 path_trace_imp(float3 position, inout Randomer randomer);
+
+float3 get_ws_normal(float2 uv)
+{
+	float3 ws_normal = normal_texture.Sample(PointSampler, uv);
+	ws_normal *= 2.0f - 1.0f;
+
+	return ws_normal;
+}
+
 float3 get_vs_normal(float2 uv)
 {
 	float3 ws_normal = normal_texture.Sample(PointSampler, uv);
 	ws_normal *= 2.0f - 1.0f;
 
 	return normalize(mul(float4(ws_normal, 0), viewMatrix));
+}
+
+float3 get_ws_position_from_uv(float2 tex_coord, float hw_depth)
+{
+	float4 cameraRay = float4(tex_coord * 2.0 - 1.0, 1.0, 1.0);
+	cameraRay.y *= -1;
+	cameraRay = mul(cameraRay, inverseProjectionMatrix);
+	cameraRay = cameraRay / cameraRay.w;
+	cameraRay.w = 0;
+	cameraRay = normalize(cameraRay);
+
+	float hit_linear_depth = hw_depth_to_linear_depth(hw_depth);
+	float3 view_space_position = cameraRay * hit_linear_depth;
+	return mul(float4(view_space_position, 1), inverseViewMatrix).xyz;
 }
 
 void get_ss_hit_pos_ray_dir(in float2 tex_coord, out float3 screen_space_position, out float3 screen_space_ray_dir, out float3 world_space_position)
@@ -206,35 +230,106 @@ bool check_visibility_ss(float3 pos1, float3 pos2)
 	return normalized_t > 0.99f;
 }
 
+float3 get_random_ws_dir_wrt_normal(float3 normal, inout Randomer randomer)
+{
+	float u1 = randomer.GetCurrentFloat();
+	float u2 = randomer.GetCurrentFloat();
+
+	float r = sqrt(u1);
+	float theta = 2 * PI * u2;
+
+	float x = r * cos(theta);
+	float y = r * sin(theta);
+
+	float3 ray = float3(x, y, sqrt(max(0.0f, 1 - u1)));
+
+	if (dot(ray, normal) < 0.0f)
+	{
+		ray *= -1;
+	}
+
+	return ray;
+}
+
+bool ss_position_inside_cube(float3 ss)
+{
+	return ss.x >= 0.0f && ss.x <= 1.0f &&
+		ss.y >= 0.0f && ss.y <= 1.0f &&
+		ss.z >= 0.0f && ss.z <= 1.0f;
+}
+
+float3 do_simple_path_tracing(float3 ss_position)
+{
+	Randomer randomer;
+	randomer.SetSeed(ss_position.x * 5.164 + ss_position.y * 5.784 - ss_position.z * 7.12254);
+
+	static const unsigned int number_of_samples = 16;
+	static const float divident = 1.0f / (float)number_of_samples;
+
+	float3 total_color = 0;
+	for (int i = 0; i < number_of_samples; i++)
+	{
+		total_color += path_trace_imp(ss_position, randomer);
+	}
+
+	return total_color * divident;
+}
+
 //tracing of one path with importance sampling
 //position : screen space xy with hw depth
-float3 path_trace_imp(float3 position)
+float3 path_trace_imp(float3 position, inout Randomer randomer)
 {
 	float3 cumulative_color = 0.0f;
 	float3 cumulative_color_factor = float3(1.0f, 1.0f, 1.0f);
-	const unsigned int max_iterations = 32u;
+	const unsigned int max_iterations = 6;
 	unsigned int iteration_count = 0;
+	
 	static const float mc_termination_pos = 0.3f;
 	static const float mc_termination_factor = 1.0f / mc_termination_pos;
 
 	float3 cur_ss_position = position;
-	float2 cur_uv = float2(position.x, 1.0f - position.y);
-	float3 cur_albedo_color = diffuse_texture.Sample(LinearSampler, cur_uv);
-	float3 cur_vs_normal = get_vs_normal(cur_uv);
+	float2 cur_uv = float2(cur_ss_position.x, 1.0f - cur_ss_position.y);
+	float3 cur_albedo_color = diffuse_texture.Sample(PointSampler, cur_uv);
+	float3 cur_ws_normal = get_ws_normal(cur_uv);
+	float3 cur_ws_ray_dir = get_random_ws_dir_wrt_normal(cur_ws_normal, randomer);
+	float3 cur_ws_position = get_ws_position_from_uv(cur_uv, cur_ss_position.z);
 
 	cumulative_color_factor *= cur_albedo_color;
 
+	[loop]
 	while (iteration_count < max_iterations)
 	{
 		//importance sampling to light source
 		if (check_visibility_ss(cur_ss_position, ss_light_position))
 		{
-			float3 vs_to_light = 
-
+			float NdotL = saturate(dot(normalize(ws_light_position - cur_ws_position), normalize(cur_ws_normal)));
+			cumulative_color += NdotL * cumulative_color_factor * light_color.rgb;
 		}
 
-		float mc_random_value = 0.0f;
+		float mc_random_value = randomer.GetCurrentFloat();
+		if (mc_random_value < mc_termination_pos)
+		{
+			cumulative_color_factor = 0;
+		}
 
+		float4 ss_ray_target_point = mul( float4(cur_ws_ray_dir + cur_ws_position, 1), viewProjection);
+		ss_ray_target_point /= ss_ray_target_point.w;
+		float3 ss_new_ray_dir = ss_ray_target_point.xyz - cur_ss_position.xyz;
+
+		float3 ss_hit_position = do_hiz_ss_ray_trace(cur_ss_position, ss_new_ray_dir);
+		if (!ss_position_inside_cube(ss_hit_position))
+		{
+			cumulative_color_factor = 0;
+		}
+
+		cumulative_color_factor *= saturate(dot(normalize(cur_ws_normal), normalize(cur_ws_ray_dir))) * mc_termination_factor * cur_albedo_color;
+
+		cur_ss_position = ss_hit_position;
+		cur_uv = float2(cur_ss_position.x, 1.0f - cur_ss_position.y);
+		cur_albedo_color = diffuse_texture.Sample(LinearSampler, cur_uv);
+		cur_ws_normal = get_ws_normal(cur_uv);
+		cur_ws_ray_dir = get_random_ws_dir_wrt_normal(cur_ws_normal, randomer);
+		cur_ws_position = get_ws_position_from_uv(cur_uv, cur_ss_position.z);
 
 		iteration_count++;
 	}

@@ -100,6 +100,7 @@ void Mesh::set_uniform_values() const
 
 	float determinant;
 	D3DXMATRIX mWorldViewProjection = frame_ * view * projection;
+	D3DXMATRIX mViewProjection = view * projection;
 
 	worldMatrix = frame_;
 
@@ -116,6 +117,7 @@ void Mesh::set_uniform_values() const
 	D3DXMatrixTranspose(&worldMatrix, &worldMatrix);
 	D3DXMatrixTranspose(&view, &view);
 	D3DXMatrixTranspose(&inverseView, &inverseView);
+	D3DXMatrixTranspose(&mViewProjection, &mViewProjection);
 	
 	render_constantsBuffer_cpu.WorldViewProjectionMatrix = mWorldViewProjection;
 	render_constantsBuffer_cpu.WorldMatrix = worldMatrix;
@@ -129,6 +131,7 @@ void Mesh::set_uniform_values() const
 	render_constantsBuffer_cpu.projectionMatrix = projection;
 	render_constantsBuffer_cpu.viewMatrix = view;
 	render_constantsBuffer_cpu.inverseView = inverseView;
+	render_constantsBuffer_cpu.viewProjection = mViewProjection;
 	
 	render_constantsBuffer_cpu.near_far_padding2 = D3DXVECTOR4(0.1f, 10000.0f, 0, 0);
 	render_constantsBuffer_cpu.diffuse_color = mesh_material_->get_diffuse_color();
@@ -152,6 +155,16 @@ void Mesh::set_frame(D3DXMATRIX frame)
 void Mesh::set_name(const char* name)
 {
 	name_ = name;
+}
+
+const vector<int>& Mesh::get_indices() const
+{
+	return indices_;
+}
+
+const vector<Mesh::Vertex>& Mesh::get_vertices() const
+{
+	return vertices_;
 }
 
 std::string Mesh::get_name() const

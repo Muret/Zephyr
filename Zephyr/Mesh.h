@@ -43,6 +43,9 @@ public:
 	void rotate(float degree, D3DXVECTOR3 axis);
 	void set_name(const char* name);
 
+	const vector<int>& get_indices() const;
+	const vector<Vertex>& get_vertices() const;
+
 	string get_name() const;
 private:
 
