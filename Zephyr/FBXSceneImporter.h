@@ -18,6 +18,7 @@ public:
 	void read_node(FbxNode* pNode);
 	void read_mesh(FbxNode *pNode, FbxMesh* pMesh);
 	void read_light(FbxNode *pNode, FbxLight* pMesh);
+	void read_camera(FbxNode *pNode, FbxCamera* pCamera);
 
 	void get_transformation_matrix(FbxNode * pNode, Mesh * new_mesh);
 

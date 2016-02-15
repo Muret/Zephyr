@@ -6,108 +6,10 @@
 
 class Texture;
 
-//constant variables
-struct MatrixBuffer
-{
-	float g_GridDimensionCube;
-	float g_GridDimensionSquare;
-	float g_GridDimension;
-	float g_InverseGridDimension[3];
-	float g_MiddleGridOffset[3];
-};
 
-struct GridCostantBuffer
-{
-	float g_GridDimensionCube;
-	float g_GridDimensionSquare;
-	float g_GridDimension;
-	float g_InverseGridDimension[3];
-	float g_MiddleGridOffset[3];
-	float padding[3];
-};
-
-__declspec(align(16)) struct SortConstantBuffer
-{
-	UINT g_sortLevel;
-	UINT g_sortAlternateMask;
-	UINT g_iWidth;
-	UINT g_iHeight;
-	D3DXVECTOR4 padding;
-};
-
-struct SimulationConstantBuffer
-{
-	float g_fTimeStep;
-	float g_fDensityCoef;
-	float g_fGradPressureCoef;
-	float g_fLapViscosityCoef;
-	float g_vGravity[4];
-	D3DXVECTOR4 g_vPlanes[6];
-};
-
-//declarations
-struct RenderConstantsBuffer
-{
-	D3DXMATRIX WorldViewProjectionMatrix;
-	D3DXMATRIX WorldMatrix;
-	D3DXMATRIX inverseWorldViewProjectionMatrix;
-	D3DXMATRIX inverseProjectionMatrix;
-	D3DXMATRIX projectionMatrix;
-	D3DXMATRIX viewMatrix;
-	D3DXMATRIX inverseView;
-	D3DXMATRIX viewProjection;
-
-	D3DXVECTOR4 right_direction;
-	D3DXVECTOR4 up_direction;
-	D3DXVECTOR4 view_direction;
-	D3DXVECTOR4 camera_position;
-	D3DXVECTOR4 screen_texture_half_pixel_forced_mipmap;
-	D3DXVECTOR4 near_far_padding2;
-
-	D3DXVECTOR4 diffuse_color;
-};
-
-struct LightingInfoBuffer
-{
-	D3DXVECTOR4 ws_light_position;
-	D3DXVECTOR4 ss_light_position;
-	D3DXVECTOR4 light_color;
-};
-
-struct ComputeBuffer
-{
-	float number_of_particles;
-	float time;
-	float padding1;
-	float padding2;
-};
-
-//grid key structure
-struct GridKeyStructure
-{
-	UINT gridKey;
-	UINT particleIndex;
-};
-
-struct ForceStructure
-{
-	D3DXVECTOR4 acceleration;
-};
-
-//grid border structure
-struct GridBorderStructure
-{
-	UINT gridStart;
-	UINT gridEnd;
-};
-
-
-struct DensityStructure
-{
-	float density;
-};
 
 extern ID3D11DeviceContext *g_deviceContext;
+extern ID3D11Device *g_device;
 extern ID3DUserDefinedAnnotation *pPerf;
 
 struct DebugginEvent
@@ -142,10 +44,19 @@ enum blendState
 	number_of_blend_states
 };
 
+enum rasterState
+{
+	raster_state_fill_mode,
+	raster_state_wireframe_mode,
+	number_of_raster_states
+};
+
+
 enum shaderType
 {
 	shader_type_vertex,
 	shader_type_pixel,
+	shader_type_compute,
 };
 
 using namespace std;
@@ -166,17 +77,20 @@ struct TextureOutputToScreenFunctionality
 };
 
 
-void UpdateGlobalBuffers();
-
 bool init_engine();
 
 void closeEngine();
+
+void CreateRasterStates();
 
 void BeginScene();
 
 void EndScene();
 
 void ClearRenderView(D3DXVECTOR4 col, int slot);
+
+void SetRasterState(rasterState state);
+
 void clearScreen(D3DXVECTOR4 col =D3DXVECTOR4(0,0,0,0), float depth = 1);
 
 void CreateDepthStencilStates();
@@ -251,15 +165,13 @@ void SetIndexBuffer(ID3D11Buffer * index_buffer);
 
 void SetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY state);
 
-void SetCameraBuffer(D3DXMATRIX worldMatrix, D3DXMATRIX viewMatrix, D3DXMATRIX projectionMatrix);
-
 void SetShaders(ID3D11VertexShader *vertex_shader, ID3D11GeometryShader *geometry_shader, ID3D11PixelShader *pixel_shader);
 
 void SetComputeShader(ID3D11ComputeShader *compute_shader);
 
-void SetConstantBufferForRendering(int start_slot, ID3D11Buffer *buffer_to_set);
+void SetConstantBufferToSlot(int start_slot, ID3D11Buffer *buffer_to_set);
 
-void UpdateBuffer(float *data , int byteWidth, ID3D11Buffer* buffer);
+void UpdateBuffer(void *data , int byteWidth, ID3D11Buffer* buffer);
 
 void setComputeConstantBuffer(ID3D11Buffer* buffer, int index);
 
@@ -273,11 +185,13 @@ ID3D11ShaderResourceView *GetDepthTextureSRV();
 
 void SetRenderViews(ID3D11RenderTargetView *view, ID3D11DepthStencilView *depth_view, int rt_slot);
 
+void SetUAVToPixelShader(ID3D11UnorderedAccessView *uav, int uav_slot);
+
+void SetPixelShaderOutputMergerStates();
+
 void SetRenderTargetView(ID3D11RenderTargetView *view, int slot = 0);
 
 void SetDepthStencilView(ID3D11DepthStencilView *view);
-
-void SetViewTargetsAux();
 
 ID3D11DepthStencilView* GetDefaultDepthView();
 
@@ -305,8 +219,6 @@ void invalidate_srv(shaderType shader_type);
 extern ID3D11Buffer* render_constantsBuffer;
 extern ID3D11Buffer* lighting_InfoBuffer;
 
-extern RenderConstantsBuffer render_constantsBuffer_cpu;
-extern LightingInfoBuffer lighting_InfoBuffer_cpu;
 
 
 #endif

@@ -14,10 +14,10 @@ struct Gbuffer_output
 Gbuffer_output main(PixelInputType input) : SV_TARGET
 {
 	Gbuffer_output output;
-	output.albedo = diffuse_color.rgba; float4(diffuse_texture.Sample(LinearSampler, input.tex_coord.xy).rgb, 1);
+	output.albedo = g_diffuse_color.rgba; float4(diffuse_texture.Sample(LinearSampler, input.tex_coord.xy).rgb, 1);
 
-	float3 world_normal = mul(float4(input.normal.xyz,0), WorldMatrix).xyz;
-	output.normal = float4(world_normal * 0.5 + 0.5, 1);
-	output.specular_gloss = 0;
+	input.world_normal.xyz = normalize(input.world_normal.xyz);
+	output.normal = float4(input.world_normal.xyz * 0.5 + float3(0.5,0.5,0.5), 0);
+	output.specular_gloss = float4(input.world_position);
 	return output;
 }

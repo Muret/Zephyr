@@ -3,8 +3,8 @@
 
 float hw_depth_to_linear_depth(float hw_depth)
 {
-	float near = near_far_padding2.x;
-	float far = near_far_padding2.y;
+	float near = g_near_far_padding2.x;
+	float far = g_near_far_padding2.y;
 	return -1 * near * far / ((hw_depth * (far - near)) - far);
 
 	//float m1 = projectionMatrix._m23;

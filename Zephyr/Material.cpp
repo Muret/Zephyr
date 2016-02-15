@@ -14,6 +14,8 @@ Material::Material()
 		texture_names_[i] = "";
 		textures_[i] = nullptr;
 	}
+
+	enforced_gbuffer_shader = nullptr;
 }
 
 void Material::create_from_file(std::string texture_names[mtt_count], const D3DXVECTOR4 &diffuse_color)
@@ -65,5 +67,15 @@ void Material::set_textures()
 D3DXVECTOR4 Material::get_diffuse_color() const
 {
 	return diffuse_color_;
+}
+
+void Material::set_enforced_gbuffer_shader(Shader * shader)
+{
+	enforced_gbuffer_shader = shader;
+}
+
+Shader * Material::get_enforced_gbuffer_shader() const
+{
+	return enforced_gbuffer_shader;
 }
 

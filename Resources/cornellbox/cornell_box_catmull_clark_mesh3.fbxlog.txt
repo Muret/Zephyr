@@ -1,0 +1,6 @@
+<node name= Sky001
+	<attribute type= light name=  />
+</node>
+<node name= smoothed_mesh
+	<attribute type= mesh name=  />
+</node>

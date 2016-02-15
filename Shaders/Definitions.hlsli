@@ -6,32 +6,46 @@
 /////////////
 // GLOBALS //
 /////////////
-cbuffer MatrixBuffer : register (b0)
+cbuffer FrameConstantsBuffer : register (b0)
 {
-	matrix WorldViewProjectionMatrix;
-	matrix WorldMatrix;
-	matrix inverseWorldViewProjectionMatrix;
-	matrix inverseProjectionMatrix;
-	matrix projectionMatrix;
-	matrix viewMatrix;
-	matrix inverseViewMatrix;
-	matrix viewProjection;
+	matrix g_view_matrix;
+	matrix g_projection_matrix;
+	matrix g_view_projection_matrix;
 
-	float4 right_direction;
-	float4 up_direction;
-	float4 view_direction;
-	float4 camera_position;
+	matrix g_inv_view_matrix;
+	matrix g_inv_projection_matrix;
+	matrix g_inv_view_projection_matrix;
 
-	float4 screen_texture_half_pixel_forced_mipmap;
-	float4 near_far_padding2;
-	float4 diffuse_color;
+	float4 g_right_direction;
+	float4 g_up_direction;
+	float4 g_view_direction;
+	float4 g_camera_position;
+
+	float4 g_screen_texture_half_pixel_forced_mipmap;
+	float4 g_near_far_padding2;
+	float4 g_debug_vector;
 };
 
-cbuffer LightingInfoBuffer : register (b1)
+cbuffer MeshConstantsBuffer : register (b1)
 {
-	float4 ws_light_position;
-	float4 ss_light_position;
-	float4 light_color;
+	matrix g_world_matrix;
+	matrix g_world_view_matrix;
+	matrix g_world_view_projection_matrix;
+
+	matrix g_inv_world_matrix;
+	matrix g_inv_world_view_matrix;
+	matrix g_inv_world_view_projection_matrix;
+
+	float4 g_diffuse_color;
+	float4 g_bb_min;
+	float4 g_bb_max;
+};
+
+cbuffer LightingConstantsBuffer : register (b2)
+{
+	float4 g_ws_light_position;
+	float4 g_ss_light_position;
+	float4 g_light_color;
 };
 
 //////////////
@@ -53,8 +67,9 @@ struct PixelInputType
 
 	float4 color		: COLOR;
 	float4 tex_coord	: TEX_COORD0;
-	float4 normal		: NORMAL0;
+	float4 world_normal	: NORMAL0;
 	float4 tangent		: TANGENT0;
+	float4 world_position : TANGENT1;
 };
 
 

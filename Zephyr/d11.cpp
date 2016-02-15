@@ -3,12 +3,7 @@
 #include "Mesh.h"
 #include "Texture.h"
 #include <assert.h>
-
-RenderConstantsBuffer render_constantsBuffer_cpu;
-ID3D11Buffer* render_constantsBuffer;
-
-LightingInfoBuffer lighting_InfoBuffer_cpu;
-ID3D11Buffer* lighting_InfoBuffer;
+#include "Renderer.h"
 
 ID3D11Buffer* fullScreenVertexBuffer = nullptr;
 ID3D11Buffer* fullScreenIndexBuffer = nullptr;
@@ -46,18 +41,19 @@ extern double g_time;
 using namespace std;
 
 static const int max_render_targets = 8;
+static const int max_uav_bound = 8;
 
 ID3D11RenderTargetView *currentRenderTargetViews[max_render_targets];
 ID3D11DepthStencilView *currentDepthStencilView = nullptr;
+ID3D11UnorderedAccessView *currentUAViews[max_uav_bound];
 
-//font rendering
-//IFW1Factory *pFW1Factory;
-//IFW1FontWrapper *pFontWrapper;
 
 ID3DUserDefinedAnnotation *pPerf;
 
 ID3D11DepthStencilState *depth_states[number_of_depth_states];
 ID3D11BlendState *blend_states[number_of_blend_states];
+
+ID3D11RasterizerState *raster_states[number_of_raster_states];
 
 enum SamplerType
 {
@@ -66,15 +62,6 @@ enum SamplerType
 };
 
 ID3D11SamplerState *sampler_states[2];
-
-void UpdateGlobalBuffers()
-{
-	UpdateBuffer((float*)&render_constantsBuffer_cpu, sizeof(RenderConstantsBuffer), render_constantsBuffer);
-	SetConstantBufferForRendering(0, render_constantsBuffer);
-
-	UpdateBuffer((float*)&lighting_InfoBuffer_cpu, sizeof(LightingInfoBuffer), lighting_InfoBuffer);
-	SetConstantBufferForRendering(1, lighting_InfoBuffer);
-}
 
 bool init_engine()
 {
@@ -92,13 +79,18 @@ bool init_engine()
 	D3D11_TEXTURE2D_DESC depthBufferDesc;
 	D3D11_DEPTH_STENCIL_DESC depthStencilDesc;
 	D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc;
-	D3D11_RASTERIZER_DESC rasterDesc;
+	
 	D3D11_VIEWPORT viewport;
 	float fieldOfView, screenAspect;
 
 	for (int i = 0; i < max_render_targets; i++)
 	{
 		currentRenderTargetViews[i] = nullptr;
+	}
+
+	for (int i = 0; i < max_uav_bound; i++)
+	{
+		currentUAViews[i] = nullptr;
 	}
 
 	g_swapChain = 0;
@@ -351,28 +343,6 @@ bool init_engine()
 	SetRenderTargetView(g_renderTargetView);
 	SetDepthStencilView(g_depthStencilView);
 
-	// Setup the raster description which will determine how and what polygons will be drawn.
-	rasterDesc.AntialiasedLineEnable = false;
-	rasterDesc.CullMode = D3D11_CULL_NONE;
-	rasterDesc.DepthBias = 0;
-	rasterDesc.DepthBiasClamp = 0.0f;
-	rasterDesc.DepthClipEnable = true;
-	rasterDesc.FillMode = D3D11_FILL_SOLID;
-	rasterDesc.FrontCounterClockwise = false;
-	rasterDesc.MultisampleEnable = false;
-	rasterDesc.ScissorEnable = false;
-	rasterDesc.SlopeScaledDepthBias = 0.0f;
-
-	// Create the rasterizer state from the description we just filled out.
-	result = g_device->CreateRasterizerState(&rasterDesc, &g_rasterState);
-	if (FAILED(result))
-	{
-		return false;
-	}
-
-	// Now set the rasterizer state. 
-	g_deviceContext->RSSetState(g_rasterState);
-
 	// Setup the viewport for rendering.
 	viewport.Width = (float) g_screenWidth;
 	viewport.Height = (float) g_screenHeight;
@@ -405,11 +375,9 @@ bool init_engine()
 	CreateDepthStencilStates();
 	CreateBlendStates();
 	CreateSamplerStates();
+	CreateRasterStates();
 
 	texture_outputter = new TextureOutputToScreenFunctionality;
-
-	render_constantsBuffer = CreateConstantBuffer(sizeof(RenderConstantsBuffer));
-	lighting_InfoBuffer = CreateConstantBuffer(sizeof(LightingInfoBuffer));
 }
 
 void closeEngine()
@@ -471,6 +439,48 @@ void closeEngine()
 	return;
 }
 
+void CreateRasterStates()
+{
+	{
+		// Setup the raster description which will determine how and what polygons will be drawn.
+		D3D11_RASTERIZER_DESC rasterDesc;
+		rasterDesc.AntialiasedLineEnable = false;
+		rasterDesc.CullMode = D3D11_CULL_NONE;
+		rasterDesc.DepthBias = 0;
+		rasterDesc.DepthBiasClamp = 0.0f;
+		rasterDesc.DepthClipEnable = true;
+		rasterDesc.FillMode = D3D11_FILL_SOLID;
+		rasterDesc.FrontCounterClockwise = false;
+		rasterDesc.MultisampleEnable = false;
+		rasterDesc.ScissorEnable = false;
+		rasterDesc.SlopeScaledDepthBias = 0.0f;
+
+		// Create the rasterizer state from the description we just filled out.
+		int result = g_device->CreateRasterizerState(&rasterDesc, &raster_states[raster_state_fill_mode]);
+	}
+
+	{
+		// Setup the raster description which will determine how and what polygons will be drawn.
+		D3D11_RASTERIZER_DESC rasterDesc;
+		rasterDesc.AntialiasedLineEnable = false;
+		rasterDesc.CullMode = D3D11_CULL_NONE;
+		rasterDesc.DepthBias = 0;
+		rasterDesc.DepthBiasClamp = 0.0f;
+		rasterDesc.DepthClipEnable = true;
+		rasterDesc.FillMode = D3D11_FILL_WIREFRAME;
+		rasterDesc.FrontCounterClockwise = false;
+		rasterDesc.MultisampleEnable = false;
+		rasterDesc.ScissorEnable = false;
+		rasterDesc.SlopeScaledDepthBias = 0.0f;
+
+		// Create the rasterizer state from the description we just filled out.
+		int result = g_device->CreateRasterizerState(&rasterDesc, &raster_states[raster_state_wireframe_mode]);
+	}
+
+	SetRasterState(raster_state_fill_mode);
+
+}
+
 void BeginScene()
 {
 	return;
@@ -495,6 +505,11 @@ void ClearRenderView(D3DXVECTOR4 col, int slot)
 	{
 		g_deviceContext->ClearRenderTargetView(currentRenderTargetViews[slot], color);
 	}
+}
+
+void SetRasterState(rasterState state)
+{
+	g_deviceContext->RSSetState(raster_states[state]);
 }
 
 void clearScreen(D3DXVECTOR4 col /*=D3DXVECTOR4(0,0,0,0) */, float depth /*= 1*/)
@@ -1200,13 +1215,6 @@ void SetViewPort(int w_start, int h_start, int width, int height)
 	viewport.MaxDepth = 1;
 
 	g_deviceContext->RSSetViewports(1, &viewport);
-
-	float dx = 0.5f / width;
-	float dy = 0.5f / height;
-
-	render_constantsBuffer_cpu.screen_texture_half_pixel_forced_mipmap.x = dx;
-	render_constantsBuffer_cpu.screen_texture_half_pixel_forced_mipmap.y = dy;
-	UpdateGlobalBuffers();
 }
 
 void SetVertexBuffer(ID3D11Buffer *  vertex_buffer, int vertex_size)
@@ -1227,7 +1235,7 @@ void SetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY state)
 	g_deviceContext->IASetPrimitiveTopology(state);
 }
 
-void SetConstantBufferForRendering(int start_slot, ID3D11Buffer *buffer_to_set)
+void SetConstantBufferToSlot(int start_slot, ID3D11Buffer *buffer_to_set)
 {
 	g_deviceContext->VSSetConstantBuffers(start_slot, 1, &buffer_to_set);
 	g_deviceContext->PSSetConstantBuffers(start_slot, 1, &buffer_to_set);
@@ -1287,7 +1295,7 @@ void SetBlendState(int blend_state)
 	g_deviceContext->OMSetBlendState(blend_states[blend_state], NULL, 0xffffffff);
 }
 
-void UpdateBuffer(float *data , int byteWidth, ID3D11Buffer* buffer)
+void UpdateBuffer(void *data , int byteWidth, ID3D11Buffer* buffer)
 {
 	HRESULT result;
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
@@ -1333,7 +1341,20 @@ void SetRenderViews(ID3D11RenderTargetView *view, ID3D11DepthStencilView *depth_
 	currentRenderTargetViews[rt_slot] = view;
 	currentDepthStencilView = depth_view;
 
-	g_deviceContext->OMSetRenderTargets(1, &view, depth_view);
+	SetPixelShaderOutputMergerStates();
+}
+
+void SetUAVToPixelShader(ID3D11UnorderedAccessView *uav, int uav_slot)
+{
+	currentUAViews[uav_slot] = uav;
+
+	SetPixelShaderOutputMergerStates();
+}
+
+
+void SetPixelShaderOutputMergerStates()
+{
+	_ASSERT(SUCCEEDED(g_deviceContext->OMSetRenderTargetsAndUnorderedAccessViews(max_render_targets, currentRenderTargetViews, currentDepthStencilView, 0, max_uav_bound, currentUAViews, NULL)));
 }
 
 
@@ -1445,13 +1466,13 @@ void CopySubResource(Texture* source_texture, Texture* destination_texture, int 
 void SetDepthStencilView(ID3D11DepthStencilView *view)
 {
 	currentDepthStencilView = view;
-	SetViewTargetsAux();
+	SetPixelShaderOutputMergerStates();
 }
 
 void SetRenderTargetView(ID3D11RenderTargetView *view, int slot /*= 0*/)
 {
 	currentRenderTargetViews[slot] = view;
-	SetViewTargetsAux();
+	SetPixelShaderOutputMergerStates();
 }
 
 
@@ -1463,11 +1484,6 @@ ID3D11RenderTargetView* GetDefaultRenderTargetView()
 ID3D11DepthStencilView* GetDefaultDepthStencilView()
 {
 	return g_depthStencilView;
-}
-
-void SetViewTargetsAux()
-{
-	g_deviceContext->OMSetRenderTargets(max_render_targets, currentRenderTargetViews, currentDepthStencilView);
 }
 
 void SetViewPortToDefault()
@@ -1491,20 +1507,8 @@ void TextureOutputToScreenFunctionality::OutputTextureToScreen(ID3D11ShaderResou
 
 	D3DXMATRIX matrix;
 	D3DXMatrixIdentity(&matrix);
-	SetViewPortToDefault();
 
-	matrix._14 = pos.x;
-	matrix._24 = pos.y;
-
-	matrix._11 = scale.x;
-	matrix._22 = scale.y;
-	matrix._33 = scale.z;
-	matrix._44 = 1;
-
-	render_constantsBuffer_cpu.WorldViewProjectionMatrix = matrix;
-	render_constantsBuffer_cpu.screen_texture_half_pixel_forced_mipmap.z = -1;
-
-	UpdateGlobalBuffers();
+	SetViewPort(pos.x * g_screenWidth, pos.y * g_screenHeight, scale.x * g_screenWidth, scale.y * g_screenHeight);
 
 	ID3D11PixelShader *pixel_shader_to_use = textureOutputPixelShader;
 	if (enforced_pixel_shader != nullptr)
@@ -1528,6 +1532,6 @@ TextureOutputToScreenFunctionality::TextureOutputToScreenFunctionality()
 	fullScreenQuadVertexBuffer = CreateFullScreenQuadVertexBuffer();
 	fullScreenQuadIndexBuffer = CreateFullScreenQuadIndexBuffer();
 
-	textureOutputVertexShader = CreateVertexShader("texture_output_v");
+	textureOutputVertexShader = CreateVertexShader("direct_vertex_position");
 	textureOutputPixelShader = CreatePixelShader("texture_output_p");
 }

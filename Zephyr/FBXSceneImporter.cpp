@@ -7,6 +7,7 @@
 #include "Light.h"
 #include "ResourceManager.h"
 #include "Utilities.h"
+#include "Camera.h"
 
 FBXSceneImporter::FBXSceneImporter(std::string file_name)
 {
@@ -168,6 +169,11 @@ void FBXSceneImporter::read_node(FbxNode* pNode)
 		{
 			FbxLight* pLight = (FbxLight*)pAttribute;
 			read_light(pNode, pLight);
+		}
+		else if (attribute_type == FbxNodeAttribute::eCamera)
+		{
+			FbxCamera* pCamera = (FbxCamera*)pAttribute;
+			read_camera(pNode, pCamera);
 		}
 	}
 
@@ -338,52 +344,60 @@ void FBXSceneImporter::read_mesh(FbxNode *pNode, FbxMesh* pMesh)
 				FbxLayerElement::EMappingMode mapMode = geomElementNormal->GetMappingMode();
 				FbxLayerElement::EReferenceMode refMode = geomElementNormal->GetReferenceMode();
 
+				FbxVector4 fbxNormal;
+				pMesh->GetPolygonVertexNormal(polygon, polyVert, fbxNormal);
+				fbxNormal.Normalize();
 
-				if (FbxGeometryElement::eByControlPoint == mapMode)
-				{ 
-					switch (geomElementNormal->GetReferenceMode())
-					{
-					case FbxGeometryElement::eDirect:
-					{
-						vertex.normal.x = static_cast<float>(geomElementNormal->GetDirectArray().GetAt(ctrlPointIndex).mData[0]);
-						vertex.normal.y = static_cast<float>(geomElementNormal->GetDirectArray().GetAt(ctrlPointIndex).mData[1]);
-						vertex.normal.z = static_cast<float>(geomElementNormal->GetDirectArray().GetAt(ctrlPointIndex).mData[2]);
-					}
-					break;
+				vertex.normal = D3DXVECTOR4(fbxNormal.mData[0], fbxNormal.mData[1], fbxNormal.mData[2], 0);
 
-					case FbxGeometryElement::eIndexToDirect:
-					{
-						int index = geomElementNormal->GetIndexArray().GetAt(ctrlPointIndex);
-						vertex.normal.x = static_cast<float>(geomElementNormal->GetDirectArray().GetAt(index).mData[0]);
-						vertex.normal.y = static_cast<float>(geomElementNormal->GetDirectArray().GetAt(index).mData[1]);
-						vertex.normal.z = static_cast<float>(geomElementNormal->GetDirectArray().GetAt(index).mData[2]);
-					}
-					break;
-
-					default:
-						throw std::exception("Invalid Reference");
-					}
-				}
-				if (FbxGeometryElement::eByPolygonVertex == mapMode)
-				{
-					int directIndex = -1;
-					if (FbxGeometryElement::eDirect == refMode)
-					{
-						directIndex = vertexID;
-					}
-					else if (FbxGeometryElement::eIndexToDirect == refMode)
-					{
-						directIndex = geomElementNormal->GetIndexArray().GetAt(vertexID);
-					}
-
-					// If we got an index
-					if (directIndex != -1)
-					{
-						FbxVector4 norm = geomElementNormal->GetDirectArray().GetAt(directIndex);
-
-						vertex.normal = D3DXVECTOR4((float)norm.mData[0], (float)norm.mData[1], (float)norm.mData[2], 0);
-					}
-				}
+				//if (FbxGeometryElement::eByControlPoint == mapMode)
+				//{ 
+				//	switch (geomElementNormal->GetReferenceMode())
+				//	{
+				//	case FbxGeometryElement::eDirect:
+				//	{
+				//		vertex.normal.x = static_cast<float>(geomElementNormal->GetDirectArray().GetAt(ctrlPointIndex).mData[0]);
+				//		vertex.normal.y = static_cast<float>(geomElementNormal->GetDirectArray().GetAt(ctrlPointIndex).mData[1]);
+				//		vertex.normal.z = static_cast<float>(geomElementNormal->GetDirectArray().GetAt(ctrlPointIndex).mData[2]);
+				//		D3DXVec4Normalize(&vertex.normal, &vertex.normal);
+				//	}
+				//	break;
+				//
+				//	case FbxGeometryElement::eIndexToDirect:
+				//	{
+				//		int index = geomElementNormal->GetIndexArray().GetAt(ctrlPointIndex);
+				//		vertex.normal.x = static_cast<float>(geomElementNormal->GetDirectArray().GetAt(index).mData[0]);
+				//		vertex.normal.y = static_cast<float>(geomElementNormal->GetDirectArray().GetAt(index).mData[1]);
+				//		vertex.normal.z = static_cast<float>(geomElementNormal->GetDirectArray().GetAt(index).mData[2]);
+				//		D3DXVec4Normalize(&vertex.normal, &vertex.normal);
+				//	}
+				//	break;
+				//
+				//	default:
+				//		throw std::exception("Invalid Reference");
+				//	}
+				//}
+				//if (FbxGeometryElement::eByPolygonVertex == mapMode)
+				//{
+				//	int directIndex = -1;
+				//	if (FbxGeometryElement::eDirect == refMode)
+				//	{
+				//		directIndex = vertexID;
+				//	}
+				//	else if (FbxGeometryElement::eIndexToDirect == refMode)
+				//	{
+				//		directIndex = geomElementNormal->GetIndexArray().GetAt(vertexID);
+				//	}
+				//
+				//	// If we got an index
+				//	if (directIndex != -1)
+				//	{
+				//		FbxVector4 norm = geomElementNormal->GetDirectArray().GetAt(directIndex);
+				//
+				//		D3DXVECTOR4 normal_final((float)norm.mData[0], (float)norm.mData[1], (float)norm.mData[2], 0);
+				//		D3DXVec4Normalize(&vertex.normal, &normal_final);
+				//	}
+				//}
 
 
 			}
@@ -425,32 +439,32 @@ void FBXSceneImporter::read_mesh(FbxNode *pNode, FbxMesh* pMesh)
 			size_t size = vertices.size();
 			size_t i;
 
-			//for (i = 0; i < size; i++)
-			//{
-			//	if (vertex == vertices[i])
-			//	{
-			//		break;
-			//	}
-			//}
+			for (i = 0; i < size; i++)
+			{
+				if (vertex == vertices[i])
+				{
+					break;
+				}
+			}
 
-			//if (i == size)
+			if (i == size)
 			{
 				vertices.push_back(vertex);
 			}
 
-			indices.push_back(size);
+			indices.push_back(i);
 			++vertexID;
 		}
 
-		int cur_size = indices.size();
-		int temp = indices[cur_size - 3];
-		indices[cur_size - 3] = indices[cur_size - 1];
-		indices[cur_size - 1] = temp;
+		//int cur_size = indices.size();
+		//int temp = indices[cur_size - 3];
+		//indices[cur_size - 3] = indices[cur_size - 1];
+		//indices[cur_size - 1] = temp;
 	}
 
 	int materialCount = pNode->GetSrcObjectCount<FbxSurfaceMaterial>();
 
-	new_mesh->create_from_fbx(vertices, indices);
+	new_mesh->create_from_buffers(vertices, indices);
 	scene_to_fill->add_mesh(new_mesh);
 
 	if (materialCount > 0)
@@ -564,6 +578,45 @@ void FBXSceneImporter::read_light(FbxNode *pNode, FbxLight* pLight)
 	Light *new_light = new Light();
 	new_light->create_from_file(pLight->GetName(), light_color, position);
 	scene_to_fill->add_light(new_light);
+}
+
+void FBXSceneImporter::read_camera(FbxNode *pNode, FbxCamera* pCamera)
+{
+	FbxAMatrix frame = pNode->EvaluateGlobalTransform();
+	float near_v = pCamera->GetNearPlane();
+	float fov_v = pCamera->ComputeFieldOfView(pCamera->FocalLength);
+	float far_v = pCamera->GetFarPlane();
+	string name = pCamera->GetName();
+
+	D3DMATRIX cam_frame;
+	cam_frame._11 = frame[0][0];
+	cam_frame._12 = frame[0][1];
+	cam_frame._13 = frame[0][2];
+	cam_frame._14 = frame[0][3];
+
+	cam_frame._21 = frame[1][0];
+	cam_frame._22 = frame[1][1];
+	cam_frame._23 = frame[1][2];
+	cam_frame._24 = frame[1][3];
+
+	cam_frame._31 = frame[2][0];
+	cam_frame._32 = frame[2][1];
+	cam_frame._33 = frame[2][2];
+	cam_frame._34 = frame[2][3];
+
+	cam_frame._41 = frame[3][0];
+	cam_frame._42 = frame[3][1];
+	cam_frame._43 = frame[3][2];
+	cam_frame._44 = frame[3][3];
+
+	Camera *new_camera = new Camera();
+	new_camera->set_frame(cam_frame);
+	new_camera->set_near(near_v);
+	new_camera->set_far(far_v);
+	new_camera->set_fov(fov_v);
+	new_camera->set_name(name);
+
+	scene_to_fill->add_camera(new_camera);
 }
 
 const vector<Mesh*> FBXSceneImporter::get_scene_meshes() const

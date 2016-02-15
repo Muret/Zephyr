@@ -1,0 +1,4 @@
+﻿C:\Users\Murat\Documents\GitHub\Zephyr\Shaders\full_deferred_diffuse_lighting.hlsl(11,23-94): warning X3206: implicit truncation of vector type
+  
+  compilation object save succeeded; see C:\Users\Murat\Documents\GitHub\Zephyr\Shaders\Assemblies\full_deferred_diffuse_lighting.cso
+  Zephyr.vcxproj -> C:\Users\Murat\Documents\GitHub\Zephyr\Release\Zephyr.exe

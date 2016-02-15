@@ -17,6 +17,8 @@ public:
 	virtual void initialize() = 0;
 	virtual void tick(float dt) = 0;
 
+	virtual void on_key_up(char key) = 0;
+
 private:
 	std::string name_;
 

@@ -4,6 +4,7 @@
 
 #include "includes.h"
 #include "d11.h"
+#include "BoundingBox.h"
 
 class Material;
 
@@ -26,7 +27,7 @@ public:
 
 	Mesh();
 
-	void create_from_fbx(const std::vector<Vertex> &vertices, const std::vector<int> &indices);
+	void create_from_buffers(const std::vector<Vertex> &vertices, const std::vector<int> &indices);
 
 	ID3D11Buffer* get_vertex_buffer();
 	ID3D11Buffer* get_index_buffer();
@@ -35,8 +36,6 @@ public:
 
 	void set_material(Material *mesh_material);
 	Material* get_material() const;
-
-	void set_uniform_values() const;
 
 	void set_frame(D3DXMATRIX frame);
 
@@ -47,7 +46,16 @@ public:
 	const vector<Vertex>& get_vertices() const;
 
 	string get_name() const;
+	bool is_wireframe() const;
+	void set_wireframe(bool v);
+
+	void set_color_multiplier(const D3DXVECTOR4& color);
+	const D3DXMATRIX& get_frame() const;
+
+	const BoundingBox& get_bb() const;
 private:
+
+	void validate_bounding_box();
 
 	Material *mesh_material_;
 
@@ -61,6 +69,12 @@ private:
 	std::vector<int> indices_;
 
 	string name_;
+
+	D3DXVECTOR4 color_multiplier_;
+
+	bool render_wireframe_;
+
+	BoundingBox bb;
 };
 
 

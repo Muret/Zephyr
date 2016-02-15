@@ -1,5 +1,6 @@
 #include "Utilities.h"
 #include "Camera.h"
+#include "KeyChain.h"
 
 D3DXVECTOR4 Utilities::debug_vector = D3DXVECTOR4(0, 0, 0, 0);
 
@@ -131,38 +132,39 @@ D3DXVECTOR4 Utilities::get_debug_vector()
 
 void Utilities::tick()
 {
-	extern Camera demo_camera;
-	if (demo_camera.is_key_down('1'))
+	float multiplier = 0.2;
+
+	if (key_chain.key('1'))
 	{
-		debug_vector.x += 0.01;
+		debug_vector.x += 0.01 * multiplier;
 	}
-	if (demo_camera.is_key_down('2'))
+	if (key_chain.key('2'))
 	{
-		debug_vector.y += 0.01;
+		debug_vector.y += 0.01 * multiplier;
 	}
-	if (demo_camera.is_key_down('3'))
+	if (key_chain.key('3'))
 	{
-		debug_vector.z += 0.01;
+		debug_vector.z += 0.01 * multiplier;
 	}
-	if (demo_camera.is_key_down('4'))
+	if (key_chain.key('4'))
 	{
-		debug_vector.w += 0.01;
+		debug_vector.w += 0.01 * multiplier;
 	}
 
-	if (demo_camera.is_key_down('5'))
+	if (key_chain.key('5'))
 	{
-		debug_vector.x -= 0.01;
+		debug_vector.x -= 0.01 * multiplier;
 	}
-	if (demo_camera.is_key_down('6'))
+	if (key_chain.key('6'))
 	{
-		debug_vector.y -= 0.01;
+		debug_vector.y -= 0.01 * multiplier;
 	}
-	if (demo_camera.is_key_down('7'))
+	if (key_chain.key('7'))
 	{
-		debug_vector.z -= 0.01;
+		debug_vector.z -= 0.01 * multiplier;
 	}
-	if (demo_camera.is_key_down('8'))
+	if (key_chain.key('8'))
 	{
-		debug_vector.w -= 0.01;
+		debug_vector.w -= 0.01 * multiplier;
 	}
 }

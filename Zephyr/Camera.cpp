@@ -7,157 +7,177 @@
 
 void Camera::init_camera()
 {
-	memset(keys, 0, sizeof(char)* 256);
-	x_camera_bearing = 0;
-	y_camera_bearing = 0;
+
 }
 
-void Camera::handle_user_input_down(char key)
+
+void Camera::tick()
 {
-	keys[key] = true;
-}
 
-void Camera::handle_user_input_up(char key)
-{
-	keys[key] = false;
-}
-
-void Camera::tick_user_inputs()
-{
-	const float multiplier = 3;
-
-	if (is_moving_camera)
-	{
-		POINT  p;
-		GetCursorPos(&p);
-		y_camera_bearing -= (p.y - last_mouse_position.y) * 0.001 * multiplier;
-		if (y_camera_bearing > PI)
-		{
-			y_camera_bearing -= PI;
-		}
-		x_camera_bearing -= (p.x - last_mouse_position.x) * 0.001 * multiplier;
-
-		last_mouse_position = D3DXVECTOR2(p.x, p.y);
-	}
-
-
-
-	D3DXVECTOR3 view_temp;
-	D3DXVECTOR3 view_temp2;
-	D3DXVECTOR3 right_temp;
-	D3DXVECTOR3 up_temp;
-
-	D3DXMATRIX m_1;
-	D3DXMATRIX m_2;
-
-	D3DXMatrixRotationAxis(&m_2, &original_up_vector, x_camera_bearing);
-	D3DXVec3TransformCoord(&view_temp2, &original_view_direction, &m_2);
-	D3DXVec3TransformCoord(&right_temp, &original_right_vector, &m_2);
-
-	D3DXMatrixRotationAxis(&m_1, &right_vector, y_camera_bearing);
-	D3DXVec3TransformCoord(&view_temp, &view_temp2, &m_1);
-	D3DXVec3TransformCoord(&up_temp, &original_up_vector, &m_1);
-
-	D3DXVec3Normalize(&up_vector, &up_temp);
-	D3DXVec3Normalize(&view_direction, &view_temp);
-	D3DXVec3Normalize(&right_vector, &right_temp);
-
-	if (keys['W'])
-	{
-		camera_position += 0.06 * view_direction * multiplier;
-	}
-
-	if (keys['S'])
-	{
-		camera_position -= 0.06 * view_direction * multiplier;
-	}
-
-	if (keys['D'])
-	{
-		camera_position += 0.11 * right_vector * multiplier;
-	}
-
-	if (keys['A'])
-	{
-		camera_position -= 0.11 * right_vector * multiplier;
-	}
-
-	if (keys['Q'])
-	{
-		camera_position += 0.11 * up_vector * multiplier;
-	}
-
-	if (keys['E'])
-	{
-		camera_position -= 0.11 * up_vector * multiplier;
-	}
-}
-
-void Camera::startMovingCamera()
-{
-	if (!is_moving_camera)
-	{
-		POINT  p;
-		GetCursorPos(&p);
-		last_mouse_position = D3DXVECTOR2(p.x, p.y);
-
-		is_moving_camera = true;
-
-	}
-}
-
-void Camera::stopMovingCamera()
-{
-	is_moving_camera = false;
 }
 
 Camera::Camera()
 {
-	original_view_direction		= D3DXVECTOR3(0, 0, -1);
-	original_right_vector		= D3DXVECTOR3(1, 0, 0);
-	original_up_vector			= D3DXVECTOR3(0, 1, 0);
+	camera_position_ = D3DXVECTOR4(0, 0, 0, 0);
+	view_vector_ = D3DXVECTOR4(0, 0, 0, 0);
+	right_vector_ = D3DXVECTOR4(0, 0, 0, 0);
+	up_vector_ = D3DXVECTOR4(0, 0, 0, 0);
 
-	camera_position = D3DXVECTOR3(0, 10, 80);
-	view_direction = original_view_direction;
-	right_vector = original_right_vector;
-	up_vector = original_up_vector;
+	near_ = 0;
+	far_ = 0;
+
+	is_ortho_ = false;
 }
 
-D3DXVECTOR3 Camera::get_position() const
+void Camera::validate_cur_frame_cache()
 {
-	return camera_position;
-}
+	D3DXVECTOR3 lookat = camera_position_ + view_vector_;
+	D3DXVECTOR3 up_vector_v3 = up_vector_;
+	D3DXVECTOR3 cam_position_v3 = camera_position_;
 
-D3DXVECTOR3 Camera::get_forward_vector() const 
-{
-	return view_direction;
-}
+	D3DXMatrixLookAtRH(&cur_frame_view_matrix_, &cam_position_v3, &lookat, &up_vector_v3);
 
-D3DXVECTOR3 Camera::get_up_vector() const
-{
-	return up_vector;
-}
-
-D3DXVECTOR3 Camera::get_right_vector() const
-{
-	return right_vector;
-}
-
-bool Camera::is_key_down(char key) const
-{
-	return keys[key];
-}
-
-D3DXMATRIX Camera::get_view_projection_matrix() const
-{
-	D3DXMATRIX view, projection;
-	D3DXVECTOR3 lookat = camera_position + view_direction;
-	D3DXMatrixLookAtRH(&view, &camera_position, &lookat, &up_vector);
-
-	D3DXMatrixPerspectiveFovRH(&projection, PI / 6.0f, float(g_screenWidth) / float(g_screenHeight), 0.1f, 10000.0f);
+	if (is_ortho_)
+	{
+		D3DXMatrixOrthoRH(&cur_frame_inv_projection_matrix_, right_ - left_, top_ - bottom_, near_, far_);
+	}
+	else
+	{
+		D3DXMatrixPerspectiveFovRH(&cur_frame_projection_matrix_, (field_of_view_ / 180) * PI, float(g_screenWidth) / float(g_screenHeight), near_, far_);
+	}
+	
+	cur_frame_view_projection_matrix_ = cur_frame_view_matrix_ * cur_frame_projection_matrix_;
 
 	float determinant;
-	return view * projection;
+	D3DXMatrixInverse(&cur_frame_inv_view_matrix_, &determinant, &cur_frame_view_matrix_);
+	D3DXMatrixInverse(&cur_frame_inv_projection_matrix_, &determinant, &cur_frame_projection_matrix_);
+	D3DXMatrixInverse(&cur_frame_inv_view_projection_matrix_, &determinant, &cur_frame_view_projection_matrix_);
 }
 
+const D3DXVECTOR4& Camera::get_position() const
+{
+	return camera_position_;
+}
+
+const D3DXVECTOR4& Camera::get_forward_vector() const
+{
+	return view_vector_;
+}
+
+const D3DXVECTOR4& Camera::get_up_vector() const
+{
+	return up_vector_;
+}
+
+const D3DXVECTOR4& Camera::get_right_vector() const
+{
+	return right_vector_;
+}
+
+const D3DXMATRIX& Camera::get_view_matrix() const
+{
+	return cur_frame_view_matrix_;
+}
+
+const D3DXMATRIX& Camera::get_view_projection_matrix() const
+{
+	return cur_frame_view_projection_matrix_;
+}
+
+const D3DXMATRIX& Camera::get_projection_matrix() const
+{
+	return cur_frame_projection_matrix_;
+}
+
+const D3DXMATRIX& Camera::get_inv_view_matrix() const
+{
+	return cur_frame_inv_view_matrix_;
+}
+
+const D3DXMATRIX& Camera::get_inv_view_projection_matrix() const
+{
+	return cur_frame_inv_view_projection_matrix_;
+}
+
+const D3DXMATRIX& Camera::get_inv_projection_matrix() const
+{
+	return cur_frame_inv_projection_matrix_;
+}
+
+float Camera::get_near() const
+{
+	return near_;
+}
+
+float Camera::get_far() const
+{
+	return far_;
+}
+
+std::string Camera::get_name() const
+{
+	return name_;
+}
+
+float Camera::get_fov() const
+{
+	return field_of_view_;
+}
+
+void Camera::set_position(const D3DXVECTOR4 &p)
+{
+	camera_position_ = p;
+}
+
+void Camera::set_frame(const D3DXMATRIX &value)
+{
+	camera_frame_ = value;
+}
+
+void Camera::set_directions(const D3DXVECTOR4 &view, const D3DXVECTOR4 &up, const D3DXVECTOR4 &right)
+{
+	view_vector_ = view;
+	up_vector_ = up;
+	right_vector_ = right;
+}
+
+void Camera::set_near(float near_value)
+{
+	near_ = near_value;
+}
+
+void Camera::set_far(float far_value)
+{
+	far_ = far_value;
+}
+
+void Camera::set_name(string name)
+{
+	name_ = name;
+}
+
+const D3DXMATRIX& Camera::get_frame() const
+{
+	return camera_frame_;
+}
+
+void Camera::set_fov(float v)
+{
+	field_of_view_ = v;
+}
+
+void Camera::set_is_ortho(bool v)
+{
+	is_ortho_ = v;
+}
+
+void Camera::set_ortho_params(float left, float right, float top, float bottom, float near_v, float far_v)
+{
+	left_ = left;
+	right_ = right;
+	top_ = top;
+	bottom_ = bottom;
+	near_ = near_v;
+	far_ = far_v;
+}
 

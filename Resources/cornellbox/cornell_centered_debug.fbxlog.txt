@@ -1,0 +1,6 @@
+<node name= cornellbox_lightmiddle:object2
+	<attribute type= mesh name=  />
+</node>
+<node name= cornellbox_lightmiddle:Sky001
+	<attribute type= light name=  />
+</node>

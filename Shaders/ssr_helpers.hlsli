@@ -19,7 +19,8 @@ float3 path_trace_imp(float3 position, inout Randomer randomer);
 float3 get_ws_normal(float2 uv)
 {
 	float3 ws_normal = normal_texture.Sample(PointSampler, uv);
-	ws_normal *= 2.0f - 1.0f;
+	ws_normal = ws_normal * 2.0f - 1.0f;
+	ws_normal = normalize(ws_normal);
 
 	return ws_normal;
 }
@@ -27,23 +28,23 @@ float3 get_ws_normal(float2 uv)
 float3 get_vs_normal(float2 uv)
 {
 	float3 ws_normal = normal_texture.Sample(PointSampler, uv);
-	ws_normal *= 2.0f - 1.0f;
+	ws_normal *= 2.0f - float3(1.0f,1.0f,1.0f);
 
-	return normalize(mul(float4(ws_normal, 0), viewMatrix));
+	return normalize(mul(float4(ws_normal, 0), g_view_matrix));
 }
 
 float3 get_ws_position_from_uv(float2 tex_coord, float hw_depth)
 {
 	float4 cameraRay = float4(tex_coord * 2.0 - 1.0, 1.0, 1.0);
 	cameraRay.y *= -1;
-	cameraRay = mul(cameraRay, inverseProjectionMatrix);
+	cameraRay = mul(cameraRay, g_inv_projection_matrix);
 	cameraRay = cameraRay / cameraRay.w;
 	cameraRay.w = 0;
 	cameraRay = normalize(cameraRay);
 
 	float hit_linear_depth = hw_depth_to_linear_depth(hw_depth);
 	float3 view_space_position = cameraRay * hit_linear_depth;
-	return mul(float4(view_space_position, 1), inverseViewMatrix).xyz;
+	return mul(float4(view_space_position, 1), g_inv_view_matrix).xyz;
 }
 
 void get_ss_hit_pos_ray_dir(in float2 tex_coord, out float3 screen_space_position, out float3 screen_space_ray_dir, out float3 world_space_position)
@@ -52,9 +53,11 @@ void get_ss_hit_pos_ray_dir(in float2 tex_coord, out float3 screen_space_positio
 	//then calculate the view space reflection vector
 	//convert all those to screen space
 
-	float4 cameraRay = float4(tex_coord * 2.0 - 1.0, 1.0, 1.0);
+	float2 uv_ma = float2(tex_coord.x * 2.0f - 1.0f, tex_coord.y * 2.0f - 1.0f);
+
+	float4 cameraRay = float4(uv_ma, 1.0, 1.0);
 	cameraRay.y *= -1;
-	cameraRay = mul(cameraRay, inverseProjectionMatrix);
+	cameraRay = mul(cameraRay, g_inv_projection_matrix);
 	cameraRay = cameraRay / cameraRay.w;
 	cameraRay.w = 0;
 	cameraRay = normalize(cameraRay);
@@ -67,24 +70,32 @@ void get_ss_hit_pos_ray_dir(in float2 tex_coord, out float3 screen_space_positio
 		clip(-1);
 	}
 
-	float3 view_space_position = cameraRay * hit_linear_depth;
-	world_space_position = mul(float4(view_space_position, 1), inverseViewMatrix).xyz;
+	//inverseProjectionMatrix
 
-	float4 screen_space_position_temp = mul(float4(view_space_position, 1), projectionMatrix);
+	float3 view_space_position = cameraRay * hit_linear_depth;
+	world_space_position = mul(float4(view_space_position, 1), g_inv_view_matrix).xyz;
+
+	//float4 temp2 = float4(uv_ma, hit_hw_depth, 1);
+	//float4 temp = mul(temp2, g_inv_projection_matrix);
+	//temp /= temp.w;
+	//
+	//world_space_position = mul(temp, g_inv_view_matrix).xyz;
+	//
+	float4 screen_space_position_temp = mul(float4(view_space_position, 1), g_projection_matrix);
 	screen_space_position_temp /= screen_space_position_temp.w;
 	screen_space_position = screen_space_position_temp.xyz;;
-	screen_space_position.xy = screen_space_position.xy * 0.5 + 0.5;
+	screen_space_position.xy = screen_space_position.xy * 0.5 + float2(0.5,0.5);
 
 	float3 world_space_normal = normal_texture.SampleLevel(PointSampler, tex_coord, 0);
 	world_space_normal = normalize(world_space_normal * 2.0f - 1.0f);
-	float3 view_space_normal = normalize(mul(float4(world_space_normal, 0), viewMatrix));
+	float3 view_space_normal = normalize(mul(float4(world_space_normal, 0), g_view_matrix));
 
 	float3 view_space_view_dir = normalize(view_space_position);
 	float3 view_space_reflected_ray_dir = normalize(reflect(view_space_view_dir, view_space_normal));
 
-	float4 screen_space_reflected_position = mul(float4(view_space_position + view_space_reflected_ray_dir, 1), projectionMatrix);
+	float4 screen_space_reflected_position = mul(float4(view_space_position + view_space_reflected_ray_dir, 1), g_projection_matrix);
 	screen_space_reflected_position = screen_space_reflected_position / screen_space_reflected_position.w;
-	screen_space_reflected_position.xy = screen_space_reflected_position.xy * 0.5 + 0.5;
+	screen_space_reflected_position.xy = screen_space_reflected_position.xy * 0.5 + float2(0.5,05);
 	screen_space_ray_dir = screen_space_reflected_position.xyz - screen_space_position.xyz;
 }
 
@@ -129,6 +140,30 @@ bool crossedCellBoundary(float2 cellIdxOne, float2 cellIdxTwo)
 	return cellIdxOne.x != cellIdxTwo.x || cellIdxOne.y != cellIdxTwo.y;
 }
 
+float3 linear_ss_ray_trace(float3 p, float3 v)
+{
+	static const int iteration_count = 100;
+	static const float c = 1.0f / (float)iteration_count;
+	float3 delta = v * c;
+
+	p += delta;
+
+	for (int i = 0; i < iteration_count - 2; i++)
+	{
+		float2 uv = float2(p.x, 1.0f - p.y);
+		float z = hi_z_depth_texture.SampleLevel(PointSampler, uv, 0).x;
+
+		if (z < p.z)
+		{
+			return p;
+		}
+
+		p += delta;
+	}
+
+	p += 2 * delta;
+	return p;
+}
 
 float between(float value, float min, float max)
 {
@@ -217,7 +252,8 @@ float3 do_hiz_ss_ray_trace(float3 p, float3 v)
 bool check_visibility_ss(float3 pos1, float3 pos2)
 {
 	float3 vec = (pos2 - pos1);
-	float3 ss_ray_hit = do_hiz_ss_ray_trace(pos1, normalize(vec));
+	//vec = normalize(vec);
+	float3 ss_ray_hit = linear_ss_ray_trace(pos1, vec);
 
 	//vec = normalize(vec);
 
@@ -263,7 +299,7 @@ float3 do_simple_path_tracing(float3 ss_position)
 	Randomer randomer;
 	randomer.SetSeed(ss_position.x * 5.164 + ss_position.y * 5.784 - ss_position.z * 7.12254);
 
-	static const unsigned int number_of_samples = 16;
+	static const unsigned int number_of_samples = 10;
 	static const float divident = 1.0f / (float)number_of_samples;
 
 	float3 total_color = 0;
@@ -281,7 +317,7 @@ float3 path_trace_imp(float3 position, inout Randomer randomer)
 {
 	float3 cumulative_color = 0.0f;
 	float3 cumulative_color_factor = float3(1.0f, 1.0f, 1.0f);
-	const unsigned int max_iterations = 6;
+	const unsigned int max_iterations = 5;
 	unsigned int iteration_count = 0;
 	
 	static const float mc_termination_pos = 0.3f;
@@ -300,10 +336,10 @@ float3 path_trace_imp(float3 position, inout Randomer randomer)
 	while (iteration_count < max_iterations)
 	{
 		//importance sampling to light source
-		if (check_visibility_ss(cur_ss_position, ss_light_position))
+		if (check_visibility_ss(cur_ss_position, g_ss_light_position))
 		{
-			float NdotL = saturate(dot(normalize(ws_light_position - cur_ws_position), normalize(cur_ws_normal)));
-			cumulative_color += NdotL * cumulative_color_factor * light_color.rgb;
+			float NdotL = saturate(dot(normalize(g_ws_light_position - cur_ws_position), normalize(cur_ws_normal)));
+			cumulative_color += NdotL * cumulative_color_factor * g_light_color.rgb;
 		}
 
 		float mc_random_value = randomer.GetCurrentFloat();
@@ -312,11 +348,12 @@ float3 path_trace_imp(float3 position, inout Randomer randomer)
 			cumulative_color_factor = 0;
 		}
 
-		float4 ss_ray_target_point = mul( float4(cur_ws_ray_dir + cur_ws_position, 1), viewProjection);
+		float4 ss_ray_target_point = mul( float4(cur_ws_ray_dir + cur_ws_position * 10, 1), g_view_projection_matrix);
 		ss_ray_target_point /= ss_ray_target_point.w;
+		ss_ray_target_point.xy = ss_ray_target_point.xy * 0.5 + float2(0.5,0.5);
 		float3 ss_new_ray_dir = ss_ray_target_point.xyz - cur_ss_position.xyz;
 
-		float3 ss_hit_position = do_hiz_ss_ray_trace(cur_ss_position, ss_new_ray_dir);
+		float3 ss_hit_position = linear_ss_ray_trace(cur_ss_position, ss_new_ray_dir);
 		if (!ss_position_inside_cube(ss_hit_position))
 		{
 			cumulative_color_factor = 0;

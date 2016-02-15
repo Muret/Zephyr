@@ -4,6 +4,7 @@
 #include "TextureLoader.h"
 #include "FBXSceneImporter.h"
 #include "Mesh.h"
+#include "Camera.h"
 
 ResourceManager::ResourceManager()
 {
@@ -138,11 +139,18 @@ Scene::~Scene()
 void Scene::add_mesh(Mesh *new_mesh)
 {
 	meshes_.push_back(new_mesh);
+
+	bb_.enlarge_bb_with_bb(new_mesh->get_bb());
 }
 
 void Scene::add_light(Light *new_light)
 {
 	lights_.push_back(new_light);
+}
+
+void Scene::add_camera(Camera *new_camera)
+{
+	cameras_.push_back(new_camera);
 }
 
 const vector<Mesh*> Scene::get_meshes() const
@@ -166,6 +174,10 @@ Scene * Scene::create_copy() const
 	{
 		new_scene->add_light(lights_[i]);
 	}
+	for (int i = 0; i < cameras_.size(); i++)
+	{
+		new_scene->add_camera(cameras_[i]);
+	}
 
 	return new_scene;
 }
@@ -173,4 +185,35 @@ Scene * Scene::create_copy() const
 std::string Scene::get_name() const
 {
 	return name_;
+}
+
+Mesh* Scene::get_mesh(string name) const
+{
+	for (int i = 0; i < meshes_.size(); i++)
+	{
+		if (meshes_[i]->get_name() == name)
+		{
+			return meshes_[i];
+		}
+	}
+
+	return nullptr;
+}
+
+Camera* Scene::get_camera(string name) const
+{
+	for (int i = 0; i < cameras_.size(); i++)
+	{
+		if (cameras_[i]->get_name() == name)
+		{
+			return cameras_[i];
+		}
+	}
+
+	return nullptr;
+}
+
+const BoundingBox & Scene::get_bb() const
+{
+	return bb_;
 }

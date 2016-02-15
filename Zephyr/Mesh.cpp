@@ -13,13 +13,30 @@ Mesh::Mesh()
 
 	mesh_material_ = nullptr;
 
+	render_wireframe_ = false;
+	color_multiplier_ = D3DXVECTOR4(1, 1, 1, 1);
+
 	D3DXMatrixIdentity(&frame_);
 }
 
-void Mesh::create_from_fbx(const std::vector<Vertex> &vertices, const std::vector<int> &indices)
+void Mesh::create_from_buffers(const std::vector<Vertex> &vertices, const std::vector<int> &indices)
 {
 	vertices_ = vertices;
 	indices_ = indices;
+
+	if (vertex_buffer_ != nullptr)
+	{
+		//delete vertex_buffer_;
+		vertex_buffer_ = nullptr;
+	}
+
+	if (index_buffer_ != nullptr)
+	{
+		//delete index_buffer_;
+		index_buffer_ = nullptr;
+	}
+
+	validate_bounding_box();
 }
 
 ID3D11Buffer* Mesh::get_vertex_buffer()
@@ -84,60 +101,6 @@ Material* Mesh::get_material() const
 	return mesh_material_;
 }
 
-void Mesh::set_uniform_values() const
-{
-	D3DXVECTOR3 camera_position = demo_camera.get_position();
-	D3DXVECTOR3 view_direction = demo_camera.get_forward_vector();
-	D3DXVECTOR3 up_vector = demo_camera.get_up_vector();
-	D3DXVECTOR3 right_vector = demo_camera.get_right_vector();
-
-	D3DXMATRIX view, projection, inverseViewProjection, inverseProjection, worldMatrix, inverseView;
-	D3DXVECTOR3 lookat = camera_position + view_direction;
-
-	D3DXMatrixLookAtRH(&view, &camera_position, &lookat, &up_vector);
-
-	D3DXMatrixPerspectiveFovRH(&projection, PI / 6.0f, float(g_screenWidth) / float(g_screenHeight), 0.1f, 10000.0f);
-
-	float determinant;
-	D3DXMATRIX mWorldViewProjection = frame_ * view * projection;
-	D3DXMATRIX mViewProjection = view * projection;
-
-	worldMatrix = frame_;
-
-	D3DXMatrixInverse(&inverseViewProjection, &determinant, &mWorldViewProjection);
-	D3DXMatrixInverse(&inverseProjection, &determinant, &projection);
-	D3DXMatrixInverse(&inverseProjection, &determinant, &projection);
-	D3DXMatrixInverse(&inverseView, &determinant, &view);
-	
-	// Transpose the matrices to prepare them for the shader.
-	D3DXMatrixTranspose(&mWorldViewProjection, &mWorldViewProjection);
-	D3DXMatrixTranspose(&inverseViewProjection, &inverseViewProjection);
-	D3DXMatrixTranspose(&projection, &projection);
-	D3DXMatrixTranspose(&inverseProjection, &inverseProjection);
-	D3DXMatrixTranspose(&worldMatrix, &worldMatrix);
-	D3DXMatrixTranspose(&view, &view);
-	D3DXMatrixTranspose(&inverseView, &inverseView);
-	D3DXMatrixTranspose(&mViewProjection, &mViewProjection);
-	
-	render_constantsBuffer_cpu.WorldViewProjectionMatrix = mWorldViewProjection;
-	render_constantsBuffer_cpu.WorldMatrix = worldMatrix;
-	render_constantsBuffer_cpu.right_direction = D3DXVECTOR4(right_vector, 0);
-	render_constantsBuffer_cpu.up_direction = D3DXVECTOR4(up_vector, 0);
-	render_constantsBuffer_cpu.view_direction = D3DXVECTOR4(view_direction, 0);
-	render_constantsBuffer_cpu.camera_position = D3DXVECTOR4(camera_position, 0);
-	render_constantsBuffer_cpu.screen_texture_half_pixel_forced_mipmap = D3DXVECTOR4((1.0f / float(g_screenWidth)), (1.0f / float(g_screenHeight)), -1, 0);
-	render_constantsBuffer_cpu.inverseWorldViewProjectionMatrix = inverseViewProjection;
-	render_constantsBuffer_cpu.inverseProjectionMatrix = inverseProjection;
-	render_constantsBuffer_cpu.projectionMatrix = projection;
-	render_constantsBuffer_cpu.viewMatrix = view;
-	render_constantsBuffer_cpu.inverseView = inverseView;
-	render_constantsBuffer_cpu.viewProjection = mViewProjection;
-	
-	render_constantsBuffer_cpu.near_far_padding2 = D3DXVECTOR4(0.1f, 10000.0f, 0, 0);
-	render_constantsBuffer_cpu.diffuse_color = mesh_material_->get_diffuse_color();
-
-	UpdateGlobalBuffers();
-}
 
 void Mesh::rotate(float degree, D3DXVECTOR3 axis)
 {
@@ -173,6 +136,40 @@ std::string Mesh::get_name() const
 }
 
 
+bool Mesh::is_wireframe() const
+{
+	return render_wireframe_;
+}
+
+void Mesh::set_wireframe(bool v)
+{
+	render_wireframe_ = v;
+}
+
+void Mesh::set_color_multiplier(const D3DXVECTOR4& color)
+{
+	color_multiplier_ = color;
+}
+
+const D3DXMATRIX& Mesh::get_frame() const
+{
+	return frame_;
+}
+
+const BoundingBox & Mesh::get_bb() const
+{
+	return bb;
+}
+
+void Mesh::validate_bounding_box()
+{
+	bb.reset();
+	for (int i = 0; i < vertices_.size(); i++)
+	{
+		bb.enlarge_bb_with_point(vertices_[i].position);
+	}
+}
+
 bool Mesh::Vertex::operator==(const Vertex &rhs)
 {
 	bool same = true;
@@ -180,7 +177,7 @@ bool Mesh::Vertex::operator==(const Vertex &rhs)
 	same = same && (color == rhs.color);
 	same = same && (texture_coord == rhs.texture_coord);
 	same = same && (normal == rhs.normal);
-	same = same && (normal == rhs.tangent);
+	same = same && (tangent == rhs.tangent);
 
 	return same;
 }

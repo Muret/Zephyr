@@ -7,9 +7,9 @@
 
 SSR::SSR()
 {
-	depth_root_copy_shader = new Shader("default_vertex" , "texture_output_p");
-	hi_z_depth_gen_shader = new Shader("default_vertex", "depth_mipmap_gen");
-	ssr_post_fx_pass = new Shader("default_vertex", "ssr_full_screen_pass");
+	depth_root_copy_shader = new Shader("direct_vertex_position" , "texture_output_p");
+	hi_z_depth_gen_shader = new Shader("direct_vertex_position", "depth_mipmap_gen");
+	ssr_post_fx_pass = new Shader("direct_vertex_position", "ssr_full_screen_pass");
 
 	assert(g_screenWidth == g_screenHeight);
 	mipmap_count_ = log2(g_screenWidth);
@@ -28,8 +28,6 @@ void SSR::pre_render()
 void SSR::post_render()
 {
 	//print_hi_z_depth_texture();
-
-	//SetViewPortToDefault();
 
 	SetDepthStencilView(nullptr);
 	ssr_post_fx_pass->set_shaders();
@@ -50,11 +48,6 @@ void SSR::generate_depth_mipmap_textures()
 
 	D3DXMATRIX matrix;
 	D3DXMatrixIdentity(&matrix);
-
-	render_constantsBuffer_cpu.WorldViewProjectionMatrix = matrix;
-	render_constantsBuffer_cpu.screen_texture_half_pixel_forced_mipmap.z = -1;
-
-	UpdateGlobalBuffers();
 
 	int render_count = mipmap_count_;
 

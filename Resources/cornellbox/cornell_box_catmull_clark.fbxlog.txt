@@ -1,0 +1,15 @@
+<node name= object4
+	<attribute type= mesh name=  />
+</node>
+<node name= object3
+	<attribute type= mesh name=  />
+</node>
+<node name= object2
+	<attribute type= mesh name=  />
+</node>
+<node name= smoothed_mesh
+	<attribute type= mesh name=  />
+</node>
+<node name= Sky001
+	<attribute type= light name=  />
+</node>

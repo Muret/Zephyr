@@ -37,7 +37,7 @@
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v120</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>Unicode</CharacterSet>
+    <CharacterSet>NotSet</CharacterSet>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -54,7 +54,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(ProjectDir)..\..\Dependencies\DXUT-master\Core;$(ProjectDir)..\..\Dependencies\DXUT-master\Optional;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)..\..\Dependencies\DXUT-master\Core;$(ProjectDir)..\..\Dependencies\DXUT-master\Optional;$(ProjectDir)..\..\Dependencies\Microsoft DirectX SDK (June 2010)\Include;$(ProjectDir)..\..\Dependencies\FBX\include;$(ProjectDir)..\..\Dependencies\FreeImage\Dist\x32;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)..\..\Dependencies\DXUT-master\Optional\Bin\Desktop_2013\Win32\Release;$(ProjectDir)..\..\Dependencies\DXUT-master\Core\Bin\Desktop_2013\Win32\Release;$(ProjectDir)..\..\Dependencies\Microsoft DirectX SDK (June 2010)\Lib\x86;$(ProjectDir)..\..\Dependencies\FBX\lib\vs2013\x86\release;$(ProjectDir)..\..\Dependencies\FreeImage\Dist\x32;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugFast|Win32'">
     <LinkIncremental>true</LinkIncremental>
@@ -63,6 +64,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
+    <IncludePath>$(ProjectDir)..\..\Dependencies\DXUT-master\Core;$(ProjectDir)..\..\Dependencies\DXUT-master\Optional;$(ProjectDir)..\..\Dependencies\Microsoft DirectX SDK (June 2010)\Include;$(ProjectDir)..\..\Dependencies\FBX\include;$(ProjectDir)..\..\Dependencies\FreeImage\Dist\x32;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)..\..\Dependencies\DXUT-master\Optional\Bin\Desktop_2013\Win32\Release;$(ProjectDir)..\..\Dependencies\DXUT-master\Core\Bin\Desktop_2013\Win32\Release;$(ProjectDir)..\..\Dependencies\Microsoft DirectX SDK (June 2010)\Lib\x86;$(ProjectDir)..\..\Dependencies\FBX\lib\vs2013\x86\release;$(ProjectDir)..\..\Dependencies\FreeImage\Dist\x32;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -76,6 +79,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>DXUT.lib;DXUTOpt.lib;dxerr.lib;dxguid.lib;comctl32.lib;dxgi.lib;d3d11.lib;d3dx11d.lib;d3dcompiler.lib;d3dx9d.lib;winmm.lib;D3DCompiler.lib;libfbxsdk-md.lib;FreeImage.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DebugFast|Win32'">
@@ -106,19 +110,26 @@
       <SDLCheck>true</SDLCheck>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>DXUT.lib;DXUTOpt.lib;dxerr.lib;dxguid.lib;comctl32.lib;dxgi.lib;d3d11.lib;d3dx11d.lib;d3dcompiler.lib;d3dx9d.lib;winmm.lib;D3DCompiler.lib;libfbxsdk-md.lib;FreeImage.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BoundingBox.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CatmullClark.cpp" />
+    <ClCompile Include="CatmullClark_Demo.cpp" />
     <ClCompile Include="d11.cpp" />
     <ClCompile Include="Demo.cpp" />
     <ClCompile Include="FBXSceneImporter.cpp" />
+    <ClCompile Include="FreeCameraController.cpp" />
     <ClCompile Include="globals.cpp" />
+    <ClCompile Include="GPUBuffer.cpp" />
+    <ClCompile Include="GPUVoxelOcctree.cpp" />
+    <ClCompile Include="KeyChain.cpp" />
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Material.cpp" />
@@ -135,12 +146,18 @@
     <ClCompile Include="window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BoundingBox.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CatmullClark.h" />
+    <ClInclude Include="CatmullClark_Demo.h" />
     <ClInclude Include="d11.h" />
     <ClInclude Include="Demo.h" />
     <ClInclude Include="FBXSceneImporter.h" />
+    <ClInclude Include="FreeCameraController.h" />
+    <ClInclude Include="GPUBuffer.h" />
+    <ClInclude Include="GPUVoxelOcctree.h" />
     <ClInclude Include="includes.h" />
+    <ClInclude Include="KeyChain.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="Mesh.h" />
@@ -160,14 +177,28 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='DebugFast|Win32'">5.0</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='DebugFast|Win32'">Vertex</ShaderType>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='DebugFast|Win32'">$(ProjectDir)..\Shaders\Assemblies\%(Filename).cso</ObjectFileOutput>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectDir)..\Shaders\Assemblies\%(Filename).cso</ObjectFileOutput>
     </FxCompile>
     <FxCompile Include="..\Shaders\default_pixel.hlsl">
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='DebugFast|Win32'">5.0</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='DebugFast|Win32'">Pixel</ShaderType>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='DebugFast|Win32'">$(ProjectDir)..\Shaders\Assemblies\%(Filename).cso</ObjectFileOutput>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectDir)..\Shaders\Assemblies\%(Filename).cso</ObjectFileOutput>
     </FxCompile>
     <FxCompile Include="..\Shaders\depth_mipmap_gen.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='DebugFast|Win32'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='DebugFast|Win32'">5.0</ShaderModel>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='DebugFast|Win32'">$(ProjectDir)..\Shaders\Assemblies\%(Filename).cso</ObjectFileOutput>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectDir)..\Shaders\Assemblies\%(Filename).cso</ObjectFileOutput>
+    </FxCompile>
+    <FxCompile Include="..\Shaders\direct_vertex_position.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='DebugFast|Win32'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='DebugFast|Win32'">5.0</ShaderModel>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='DebugFast|Win32'">$(ProjectDir)..\Shaders\Assemblies\%(Filename).cso</ObjectFileOutput>
     </FxCompile>
@@ -175,26 +206,41 @@
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='DebugFast|Win32'">$(ProjectDir)..\Shaders\Assemblies\%(Filename).cso</ObjectFileOutput>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='DebugFast|Win32'">5.0</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='DebugFast|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectDir)..\Shaders\Assemblies\%(Filename).cso</ObjectFileOutput>
     </FxCompile>
     <FxCompile Include="..\Shaders\gbuffer_pixel.hlsl">
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='DebugFast|Win32'">$(ProjectDir)..\Shaders\Assemblies\%(Filename).cso</ObjectFileOutput>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='DebugFast|Win32'">5.0</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='DebugFast|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectDir)..\Shaders\Assemblies\%(Filename).cso</ObjectFileOutput>
     </FxCompile>
     <FxCompile Include="..\Shaders\ssr_full_screen_pass.hlsl">
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='DebugFast|Win32'">$(ProjectDir)..\Shaders\Assemblies\%(Filename).cso</ObjectFileOutput>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='DebugFast|Win32'">Pixel</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='DebugFast|Win32'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectDir)..\Shaders\Assemblies\%(Filename).cso</ObjectFileOutput>
     </FxCompile>
     <FxCompile Include="..\Shaders\texture_output_p.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='DebugFast|Win32'">Pixel</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='DebugFast|Win32'">5.0</ShaderModel>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='DebugFast|Win32'">$(ProjectDir)..\Shaders\Assemblies\%(Filename).cso</ObjectFileOutput>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectDir)..\Shaders\Assemblies\%(Filename).cso</ObjectFileOutput>
     </FxCompile>
     <FxCompile Include="..\Shaders\texture_output_v.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='DebugFast|Win32'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='DebugFast|Win32'">5.0</ShaderModel>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='DebugFast|Win32'">$(ProjectDir)..\Shaders\Assemblies\%(Filename).cso</ObjectFileOutput>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectDir)..\Shaders\Assemblies\%(Filename).cso</ObjectFileOutput>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
