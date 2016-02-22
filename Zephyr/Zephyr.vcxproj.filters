@@ -96,6 +96,12 @@
     <ClCompile Include="GPUBuffer.cpp">
       <Filter>Resource Files</Filter>
     </ClCompile>
+    <ClCompile Include="GPUVCT.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VCT_Demo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h">
@@ -173,6 +179,12 @@
     <ClInclude Include="GPUBuffer.h">
       <Filter>Resource Files</Filter>
     </ClInclude>
+    <ClInclude Include="GPUVCT.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VCT_Demo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Shaders\default_pixel.hlsl">
@@ -202,6 +214,12 @@
     <FxCompile Include="..\Shaders\direct_vertex_position.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
+    <FxCompile Include="..\Shaders\voxel_construction_p.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Shaders\voxel_filler_cs.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Shaders\Definitions.hlsli">
@@ -211,6 +229,9 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="..\Shaders\ssr_helpers.hlsli">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Shaders\vct_helpers.hlsli">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

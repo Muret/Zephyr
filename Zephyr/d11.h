@@ -106,11 +106,11 @@ void RenderFullScreenQuad();
 
 void SetBlendState(blendState state);
 
-ID3D11Query* CreateQuery(D3D11_QUERY type);
-
 ID3D11Buffer* CreateConstantBuffer(int byteWidth);
 
 ID3D11VertexShader* CreateVertexShader(std::string path);
+
+ID3D11ComputeShader* CreateComputeShader(std::string path);
 
 ID3D11PixelShader* CreatePixelShader(std::string shader_name);
 
@@ -185,7 +185,7 @@ ID3D11ShaderResourceView *GetDepthTextureSRV();
 
 void SetRenderViews(ID3D11RenderTargetView *view, ID3D11DepthStencilView *depth_view, int rt_slot);
 
-void SetUAVToPixelShader(ID3D11UnorderedAccessView *uav, int uav_slot);
+void SetUAVToPixelShader(ID3D11UnorderedAccessView *uav, int uav_slot, int index = -1);
 
 void SetPixelShaderOutputMergerStates();
 
@@ -193,9 +193,11 @@ void SetRenderTargetView(ID3D11RenderTargetView *view, int slot = 0);
 
 void SetDepthStencilView(ID3D11DepthStencilView *view);
 
+void ResetUAVToPixelShader();
+
 ID3D11DepthStencilView* GetDefaultDepthView();
 
-void setCShaderUAVResources(ID3D11UnorderedAccessView **uav_list, int number_of_resources);
+void setCShaderUAVResources(ID3D11UnorderedAccessView **uav_list, int number_of_resources, int start_index);
 
 void SetCShaderRV(ID3D11ShaderResourceView **uav_list, int number_of_resources);
 
@@ -215,6 +217,8 @@ void OutputTextureToScreen(Texture* texture, D3DXVECTOR4 pos, D3DXVECTOR4 scale,
 void OutputTextureToScreen(ID3D11ShaderResourceView* texture, D3DXVECTOR4 pos, D3DXVECTOR4 scale, int forced_lod = -1, ID3D11PixelShader *enforced_pixel_shader = nullptr);
 
 void invalidate_srv(shaderType shader_type);
+
+void CopyStructureCount(ID3D11Buffer *dest_buffer, int offset, ID3D11UnorderedAccessView *uav);
 
 extern ID3D11Buffer* render_constantsBuffer;
 extern ID3D11Buffer* lighting_InfoBuffer;

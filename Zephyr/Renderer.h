@@ -66,6 +66,8 @@ public:
 
 	void set_camera_controller(Camera *cam);
 
+	void render_mesh(const Mesh* mesh, const Camera &cam);
+
 private:
 	void begin_frame();
 

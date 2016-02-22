@@ -39,7 +39,7 @@ void Camera::validate_cur_frame_cache()
 
 	if (is_ortho_)
 	{
-		D3DXMatrixOrthoRH(&cur_frame_inv_projection_matrix_, right_ - left_, top_ - bottom_, near_, far_);
+		D3DXMatrixOrthoRH(&cur_frame_projection_matrix_, right_ - left_, top_ - bottom_, near_, far_);
 	}
 	else
 	{

@@ -10,6 +10,7 @@
 #include "Utilities.h"
 
 #include "SSR_Demo.h"
+#include "VCT_Demo.h"
 #include "CatmullClark_Demo.h"
 #include "KeyChain.h"
 
@@ -43,7 +44,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pScmdline,
 
 	string path = ExePath();
 
-	current_demo = new SSRDemo();
+	current_demo = new VCTDemo();
 	current_demo->initialize();
 
 	MSG msg = {};

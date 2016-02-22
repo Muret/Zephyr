@@ -29,8 +29,8 @@ public:
 
 	void create_from_buffers(const std::vector<Vertex> &vertices, const std::vector<int> &indices);
 
-	ID3D11Buffer* get_vertex_buffer();
-	ID3D11Buffer* get_index_buffer();
+	ID3D11Buffer* get_vertex_buffer() const;
+	ID3D11Buffer* get_index_buffer() const;
 	int get_vertex_count() const;
 	int get_index_count() const;
 
@@ -59,8 +59,8 @@ private:
 
 	Material *mesh_material_;
 
-	ID3D11Buffer *vertex_buffer_;
-	ID3D11Buffer *index_buffer_;
+	mutable ID3D11Buffer *vertex_buffer_;
+	mutable ID3D11Buffer *index_buffer_;
 
 	D3DXMATRIX frame_;
 

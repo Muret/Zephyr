@@ -226,7 +226,7 @@ void Renderer::forward_rendering_pipeline()
 		}
 
 		//render
-		int tri_to_render = mesh_to_render->get_index_count();// min(mesh_to_render->get_index_count(), Utilities::get_debug_vector().x);
+		int tri_to_render = mesh_to_render->get_index_count();
 		RenderIndexed(tri_to_render);
 	}
 }
@@ -368,5 +368,27 @@ void Renderer::set_scene_to_render(Scene * scene)
 void Renderer::set_camera_controller(Camera *cam)
 {
 	camera_ = cam;
+}
+
+void Renderer::render_mesh(const Mesh * mesh, const Camera &cam)
+{
+	//TODO_MURAT00 : seperate camera from renderer
+	Camera *old_camera = camera_;
+	camera_ = (Camera*)&cam;
+
+	SetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	set_frame_constant_values();
+	set_mesh_constant_values(mesh);
+
+	mesh->get_material()->set_textures();
+
+	//set buffers
+	SetVertexBuffer(mesh->get_vertex_buffer(), sizeof(Mesh::Vertex));
+	SetIndexBuffer(mesh->get_index_buffer());
+
+	RenderIndexed(mesh->get_index_count());
+
+	camera_ = old_camera;
 }
 

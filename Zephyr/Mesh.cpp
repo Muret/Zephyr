@@ -37,9 +37,10 @@ void Mesh::create_from_buffers(const std::vector<Vertex> &vertices, const std::v
 	}
 
 	validate_bounding_box();
+
 }
 
-ID3D11Buffer* Mesh::get_vertex_buffer()
+ID3D11Buffer* Mesh::get_vertex_buffer() const
 {
 	if (vertex_buffer_ == nullptr)
 	{
@@ -60,7 +61,7 @@ ID3D11Buffer* Mesh::get_vertex_buffer()
 }
 
 
-ID3D11Buffer* Mesh::get_index_buffer()
+ID3D11Buffer* Mesh::get_index_buffer() const
 {
 	if (index_buffer_ == nullptr)
 	{
@@ -77,6 +78,7 @@ ID3D11Buffer* Mesh::get_index_buffer()
 
 	assert(index_buffer_ != nullptr);
 	return index_buffer_;
+	
 
 }
 
@@ -113,6 +115,7 @@ void Mesh::rotate(float degree, D3DXVECTOR3 axis)
 void Mesh::set_frame(D3DXMATRIX frame)
 {
 	frame_ = frame;
+	validate_bounding_box();
 }
 
 void Mesh::set_name(const char* name)
@@ -166,7 +169,10 @@ void Mesh::validate_bounding_box()
 	bb.reset();
 	for (int i = 0; i < vertices_.size(); i++)
 	{
-		bb.enlarge_bb_with_point(vertices_[i].position);
+		D3DXVECTOR3 world_position, local_position = D3DXVECTOR3(vertices_[i].position);
+		D3DXVec3TransformCoord(&world_position, &local_position, &frame_);
+
+		bb.enlarge_bb_with_point(D3DXVECTOR4(world_position, 1));
 	}
 }
 

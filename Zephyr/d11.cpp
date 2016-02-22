@@ -40,12 +40,13 @@ extern double g_time;
 
 using namespace std;
 
-static const int max_render_targets = 8;
-static const int max_uav_bound = 8;
+static const int max_render_targets = 4;
+static const int max_uav_bound = 4;
 
 ID3D11RenderTargetView *currentRenderTargetViews[max_render_targets];
 ID3D11DepthStencilView *currentDepthStencilView = nullptr;
 ID3D11UnorderedAccessView *currentUAViews[max_uav_bound];
+UINT currentUAVIndexes[max_uav_bound];
 
 
 ID3DUserDefinedAnnotation *pPerf;
@@ -91,6 +92,7 @@ bool init_engine()
 	for (int i = 0; i < max_uav_bound; i++)
 	{
 		currentUAViews[i] = nullptr;
+		currentUAVIndexes[i] = -1;
 	}
 
 	g_swapChain = 0;
@@ -857,6 +859,31 @@ ID3D11VertexShader* CreateVertexShader(std::string shader_name)
 
 }
 
+ID3D11ComputeShader * CreateComputeShader(std::string shader_name)
+{
+	std::string full_path = "..\\Shaders\\Assemblies\\";
+	full_path.append(shader_name);
+	full_path.append(".cso");
+
+	std::ifstream myFile(full_path, std::ios::in | std::ios::binary | std::ios::ate); //replace with the name of your shader
+	size_t fileSize = myFile.tellg();
+	myFile.seekg(0, std::ios::beg);
+	char* shaderData = new char[fileSize];
+	myFile.read(shaderData, fileSize);
+	myFile.close();
+
+	ID3D11ComputeShader *m_compute_shader = nullptr;
+	// Create the vertex shader from the buffer.
+	bool result = g_device->CreateComputeShader(shaderData, fileSize, NULL, &m_compute_shader);
+	if (FAILED(result))
+	{
+		return NULL;
+	}
+
+	return m_compute_shader;
+}
+
+
 ID3D11Buffer * CreateIndexBuffer(int index_count, void *data, int index_struct_size)
 {
 	ID3D11Buffer *index_buffer = nullptr;
@@ -944,7 +971,11 @@ ID3D11ComputeShader* CreateComputeShader(LPCTSTR name)
 	ID3D10Blob* errorMessage;
 	ID3D11ComputeShader *m_computeShader;
 
-	std::ifstream myFile(name, std::ios::in | std::ios::binary | std::ios::ate); //replace with the name of your shader
+	std::string full_path = "..\\Shaders\\Assemblies\\";
+	full_path.append(name);
+	full_path.append(".cso");
+
+	std::ifstream myFile(full_path, std::ios::in | std::ios::binary | std::ios::ate); //replace with the name of your shader
 	size_t fileSize = myFile.tellg();
 	myFile.seekg(0, std::ios::beg);
 	char* shaderData = new char[fileSize];
@@ -1240,6 +1271,7 @@ void SetConstantBufferToSlot(int start_slot, ID3D11Buffer *buffer_to_set)
 	g_deviceContext->VSSetConstantBuffers(start_slot, 1, &buffer_to_set);
 	g_deviceContext->PSSetConstantBuffers(start_slot, 1, &buffer_to_set);
 	g_deviceContext->GSSetConstantBuffers(start_slot, 1, &buffer_to_set);
+	g_deviceContext->CSSetConstantBuffers(start_slot, 1, &buffer_to_set);
 }
 
 void SetShaders(ID3D11VertexShader *vertex_shader, ID3D11GeometryShader *geometry_shader,  ID3D11PixelShader *pixel_shader)
@@ -1257,9 +1289,9 @@ void SetComputeShader(ID3D11ComputeShader *compute_shader)
 	g_deviceContext->CSSetShader(compute_shader, NULL, 0);
 }
 
-void setCShaderUAVResources(ID3D11UnorderedAccessView **uav_list, int number_of_resources)
+void setCShaderUAVResources(ID3D11UnorderedAccessView **uav_list, int number_of_resources, int start_index)
 {
-	g_deviceContext->CSSetUnorderedAccessViews( 0, number_of_resources, uav_list, NULL );
+	g_deviceContext->CSSetUnorderedAccessViews(start_index, number_of_resources, uav_list, NULL );
 }
 
 void SetCShaderRV(ID3D11ShaderResourceView **srv_list, int number_of_resources)
@@ -1344,9 +1376,10 @@ void SetRenderViews(ID3D11RenderTargetView *view, ID3D11DepthStencilView *depth_
 	SetPixelShaderOutputMergerStates();
 }
 
-void SetUAVToPixelShader(ID3D11UnorderedAccessView *uav, int uav_slot)
+void SetUAVToPixelShader(ID3D11UnorderedAccessView *uav, int uav_slot, int index /*= -1*/)
 {
 	currentUAViews[uav_slot] = uav;
+	currentUAVIndexes[uav_slot] = index;
 
 	SetPixelShaderOutputMergerStates();
 }
@@ -1354,7 +1387,8 @@ void SetUAVToPixelShader(ID3D11UnorderedAccessView *uav, int uav_slot)
 
 void SetPixelShaderOutputMergerStates()
 {
-	_ASSERT(SUCCEEDED(g_deviceContext->OMSetRenderTargetsAndUnorderedAccessViews(max_render_targets, currentRenderTargetViews, currentDepthStencilView, 0, max_uav_bound, currentUAViews, NULL)));
+	g_deviceContext->OMSetRenderTargetsAndUnorderedAccessViews(max_render_targets, currentRenderTargetViews, 
+		currentDepthStencilView, max_render_targets, max_uav_bound, currentUAViews, currentUAVIndexes);
 }
 
 
@@ -1469,6 +1503,17 @@ void SetDepthStencilView(ID3D11DepthStencilView *view)
 	SetPixelShaderOutputMergerStates();
 }
 
+void ResetUAVToPixelShader()
+{
+	for (int i = 0; i < max_uav_bound; i++)
+	{
+		currentUAViews[i] = nullptr;
+		currentUAViews[i] = 0;
+	}
+
+	SetPixelShaderOutputMergerStates();
+}
+
 void SetRenderTargetView(ID3D11RenderTargetView *view, int slot /*= 0*/)
 {
 	currentRenderTargetViews[slot] = view;
@@ -1498,6 +1543,11 @@ void invalidate_srv(shaderType shader_type)
 	ID3D11ShaderResourceView *nullsrv[max_srv_used];
 	memset(nullsrv, 0, max_srv_used * sizeof(ID3D11ShaderResourceView *));
 	SetSRV(nullsrv, max_srv_used, shader_type_pixel, 0);
+}
+
+void CopyStructureCount(ID3D11Buffer *dest_buffer, int offset, ID3D11UnorderedAccessView *uav)
+{
+	g_deviceContext->CopyStructureCount(dest_buffer, offset, uav);
 }
 
 void TextureOutputToScreenFunctionality::OutputTextureToScreen(ID3D11ShaderResourceView* texture, D3DXVECTOR4 pos, D3DXVECTOR4 scale, int forced_lod, ID3D11PixelShader *enforced_pixel_shader)

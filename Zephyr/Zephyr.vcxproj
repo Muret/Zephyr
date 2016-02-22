@@ -128,6 +128,7 @@
     <ClCompile Include="FreeCameraController.cpp" />
     <ClCompile Include="globals.cpp" />
     <ClCompile Include="GPUBuffer.cpp" />
+    <ClCompile Include="GPUVCT.cpp" />
     <ClCompile Include="GPUVoxelOcctree.cpp" />
     <ClCompile Include="KeyChain.cpp" />
     <ClCompile Include="Light.cpp" />
@@ -143,6 +144,7 @@
     <ClCompile Include="TextureLoader.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="Utilities.cpp" />
+    <ClCompile Include="VCT_Demo.cpp" />
     <ClCompile Include="window.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -155,6 +157,7 @@
     <ClInclude Include="FBXSceneImporter.h" />
     <ClInclude Include="FreeCameraController.h" />
     <ClInclude Include="GPUBuffer.h" />
+    <ClInclude Include="GPUVCT.h" />
     <ClInclude Include="GPUVoxelOcctree.h" />
     <ClInclude Include="includes.h" />
     <ClInclude Include="KeyChain.h" />
@@ -170,6 +173,7 @@
     <ClInclude Include="TextureLoader.h" />
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="Utilities.h" />
+    <ClInclude Include="VCT_Demo.h" />
     <ClInclude Include="window.h" />
   </ItemGroup>
   <ItemGroup>
@@ -242,11 +246,22 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectDir)..\Shaders\Assemblies\%(Filename).cso</ObjectFileOutput>
     </FxCompile>
+    <FxCompile Include="..\Shaders\voxel_construction_p.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='DebugFast|Win32'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='DebugFast|Win32'">5.0</ShaderModel>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='DebugFast|Win32'">$(ProjectDir)..\Shaders\Assemblies\%(Filename).cso</ObjectFileOutput>
+    </FxCompile>
+    <FxCompile Include="..\Shaders\voxel_filler_cs.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='DebugFast|Win32'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='DebugFast|Win32'">5.0</ShaderModel>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='DebugFast|Win32'">$(ProjectDir)..\Shaders\Assemblies\%(Filename).cso</ObjectFileOutput>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Shaders\Definitions.hlsli" />
     <None Include="..\Shaders\shared_functions.hlsli" />
     <None Include="..\Shaders\ssr_helpers.hlsli" />
+    <None Include="..\Shaders\vct_helpers.hlsli" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

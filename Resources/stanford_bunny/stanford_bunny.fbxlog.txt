@@ -1,0 +1,6 @@
+<node name= stanford_bunny:Mesh
+	<attribute type= mesh name=  />
+</node>
+<node name= main_camera
+	<attribute type= camera name= main_camera />
+</node>
