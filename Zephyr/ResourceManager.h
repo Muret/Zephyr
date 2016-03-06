@@ -65,6 +65,8 @@ public:
 
 	const BoundingBox& get_bb() const;
 
+	void clear_meshes();
+
 private:
 	vector<Mesh*> meshes_;
 	vector<Light*> lights_;

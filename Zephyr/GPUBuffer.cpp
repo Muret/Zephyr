@@ -69,13 +69,10 @@ void GPUBuffer::create_buffer(int bytewidth, int number_of_elements, void *initi
 		uav_desc.ViewDimension = D3D11_UAV_DIMENSION_BUFFER;
 		uav_desc.Buffer.FirstElement = 0;
 
-		if (creation_flags & (UINT)CreationFlags::structured_buffer)
-		{
-			// This is a Structured Buffer
-			uav_desc.Format = DXGI_FORMAT_UNKNOWN;      // Format must be must be DXGI_FORMAT_UNKNOWN, when creating a View of a Structured Buffer
-			uav_desc.Buffer.NumElements = number_of_elements;
-		}
-	
+		// This is a Structured Buffer
+		uav_desc.Format = DXGI_FORMAT_UNKNOWN;      // Format must be must be DXGI_FORMAT_UNKNOWN, when creating a View of a Structured Buffer
+		uav_desc.Buffer.NumElements = number_of_elements;
+
 		if (creation_flags & (UINT)CreationFlags::append_consume_buffer)
 		{
 			uav_desc.Buffer.Flags |= D3D11_BUFFER_UAV_FLAG_APPEND;

@@ -164,6 +164,49 @@ const BoundingBox & Mesh::get_bb() const
 	return bb;
 }
 
+void Mesh::add_cube_mesh(vector<Mesh::Vertex>& vertices, vector<int>& indices, const D3DXVECTOR3 &center, const D3DXVECTOR3 &half_length, const D3DXVECTOR4 &color)
+{
+	D3DXVECTOR3 cur_vertices[8];
+	cur_vertices[0] = D3DXVECTOR3(center + half_length * D3DXVECTOR3(-1, -1, -1));
+	cur_vertices[1] = D3DXVECTOR3(center + half_length * D3DXVECTOR3(+1, -1, -1));
+	cur_vertices[2] = D3DXVECTOR3(center + half_length * D3DXVECTOR3(-1, -1, +1));
+	cur_vertices[3] = D3DXVECTOR3(center + half_length * D3DXVECTOR3(+1, -1, +1));
+
+	cur_vertices[4] = D3DXVECTOR3(center + half_length * D3DXVECTOR3(-1, +1, -1));
+	cur_vertices[5] = D3DXVECTOR3(center + half_length * D3DXVECTOR3(+1, +1, -1));
+	cur_vertices[6] = D3DXVECTOR3(center + half_length * D3DXVECTOR3(-1, +1, +1));
+	cur_vertices[7] = D3DXVECTOR3(center + half_length * D3DXVECTOR3(+1, +1, +1));
+
+	int current_first_vertex = vertices.size();
+	for (int i = 0; i < 8; i++)
+	{
+		Mesh::Vertex new_v;
+		new_v.position = D3DXVECTOR4(cur_vertices[i], 1);
+		new_v.color = color;
+
+		vertices.push_back(new_v);
+	}
+
+	indices.push_back(current_first_vertex + 0);	indices.push_back(current_first_vertex + 2);	indices.push_back(current_first_vertex + 1);
+	indices.push_back(current_first_vertex + 2);	indices.push_back(current_first_vertex + 3);	indices.push_back(current_first_vertex + 1);
+
+	indices.push_back(current_first_vertex + 0);	indices.push_back(current_first_vertex + 4);	indices.push_back(current_first_vertex + 1);
+	indices.push_back(current_first_vertex + 4);	indices.push_back(current_first_vertex + 5);	indices.push_back(current_first_vertex + 1);
+
+	indices.push_back(current_first_vertex + 6);	indices.push_back(current_first_vertex + 4);	indices.push_back(current_first_vertex + 0);
+	indices.push_back(current_first_vertex + 6);	indices.push_back(current_first_vertex + 0);	indices.push_back(current_first_vertex + 2);
+
+	indices.push_back(current_first_vertex + 5);	indices.push_back(current_first_vertex + 7);	indices.push_back(current_first_vertex + 3);
+	indices.push_back(current_first_vertex + 5);	indices.push_back(current_first_vertex + 3);	indices.push_back(current_first_vertex + 1);
+
+	indices.push_back(current_first_vertex + 6);	indices.push_back(current_first_vertex + 5);	indices.push_back(current_first_vertex + 4);
+	indices.push_back(current_first_vertex + 6);	indices.push_back(current_first_vertex + 7);	indices.push_back(current_first_vertex + 5);
+
+	indices.push_back(current_first_vertex + 7);	indices.push_back(current_first_vertex + 6);	indices.push_back(current_first_vertex + 3);
+	indices.push_back(current_first_vertex + 6);	indices.push_back(current_first_vertex + 2);	indices.push_back(current_first_vertex + 3);
+
+}
+
 void Mesh::validate_bounding_box()
 {
 	bb.reset();

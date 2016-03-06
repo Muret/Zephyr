@@ -12,6 +12,27 @@ extern ID3D11DeviceContext *g_deviceContext;
 extern ID3D11Device *g_device;
 extern ID3DUserDefinedAnnotation *pPerf;
 
+enum class CreationFlags : UINT
+{
+	structured_buffer = 0x00000001,
+	append_consume_buffer = 0x00000002,
+	cpu_write_acces = 0x00000004,
+	constant_buffer = 0x00000008,
+	has_atomic_counter = 0x0000010,
+	staging = 0x0000020,
+};
+
+
+inline UINT operator | (CreationFlags lhs, CreationFlags rhs)
+{
+	return UINT(lhs) | UINT(rhs);
+}
+
+inline UINT operator & (UINT lhs, CreationFlags rhs)
+{
+	return UINT(lhs) & UINT(rhs);
+}
+
 struct DebugginEvent
 {
 	
@@ -133,14 +154,17 @@ ID3D11ShaderResourceView *CreateShaderResourceView(ID3D11Buffer* pBuffer , int v
 
 ID3D11Buffer *CreateReadableBuffer(int buffer_size, float* data);	
 
-ID3D11ShaderResourceView *CreateTextureResourceView(ID3D11Texture2D *text, DXGI_FORMAT format, int mip_map_start, int mip_map_count);
+ID3D11ShaderResourceView *CreateTextureResourceView(ID3D11Resource *text, DXGI_FORMAT format, int mip_map_start, int mip_map_count, D3D11_SRV_DIMENSION dimension);
 
-void CopySubResource(ID3D11Texture2D* source_texture, ID3D11Texture2D* destination_texture, int width, int height, int destination_subresource, int source_subresource);
-void CopySubResource(Texture* source_texture, Texture* destination_texture, int width, int height, int destination_subresource, int source_subresource);
+void CopySubResource(ID3D11Resource* source_texture, ID3D11Resource* destination_texture, const D3DXVECTOR3 &dim, int destination_subresource, int source_subresource);
 
-ID3D11Texture2D *CreateTexture(int width, int height, void *data, DXGI_FORMAT format, int mipmap_count = 1);
+void CopySubResource(Texture* source_texture, Texture* destination_texture, const D3DXVECTOR3 &dim, int destination_subresource, int source_subresource);
 
-ID3D11RenderTargetView* CreateRenderTargetView(ID3D11Texture2D* texture, int mip_map = 0, DXGI_FORMAT format = DXGI_FORMAT_UNKNOWN);
+ID3D11Texture2D *CreateTexture2D(int width, int height, void *data, DXGI_FORMAT format, UINT creation_flags, int mipmap_count = 1);
+
+ID3D11Texture3D *CreateTexture3D(int width, int height, int depth, void *data, DXGI_FORMAT format, UINT creation_flags, int mipmap_count = 1);
+
+ID3D11RenderTargetView* CreateRenderTargetView(ID3D11Resource* texture, D3D11_RTV_DIMENSION dimension, int mip_map = 0, DXGI_FORMAT format = DXGI_FORMAT_UNKNOWN);
 
 void CreateComputeResourceBuffer(ID3D11Buffer** pBuffer, ID3D11UnorderedAccessView** uav, ID3D11ShaderResourceView **srv, int vertex_count, float* data, int bytewidth);
 

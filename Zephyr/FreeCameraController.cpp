@@ -14,7 +14,7 @@ FreeCameraController::FreeCameraController()
 
 void FreeCameraController::tick()
 {
-	float multiplier = 1.0f;
+	float multiplier = 0.1f;
 
 	if (key_chain.key(KeyType::right_mouse_button))
 	{

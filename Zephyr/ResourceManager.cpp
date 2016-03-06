@@ -217,3 +217,9 @@ const BoundingBox & Scene::get_bb() const
 {
 	return bb_;
 }
+
+void Scene::clear_meshes()
+{
+	meshes_.clear();
+	bb_.reset();
+}

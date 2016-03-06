@@ -19,9 +19,12 @@ public:
 
 	static void tick();
 
+
 private:
 	static D3DXVECTOR4 debug_vector;
 
 };
+
+float vec3_len(const D3DXVECTOR3 &vec);
 
 #endif

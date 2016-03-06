@@ -4,6 +4,7 @@
 #include "Texture.h"
 #include <assert.h>
 #include "Renderer.h"
+#include "GPUBuffer.h"
 
 ID3D11Buffer* fullScreenVertexBuffer = nullptr;
 ID3D11Buffer* fullScreenIndexBuffer = nullptr;
@@ -288,7 +289,7 @@ bool init_engine()
 		return false;
 	}
 
-	g_depthStencilTextureSRV = CreateTextureResourceView(g_depthStencilTexture, DXGI_FORMAT_R32_FLOAT, 0, 1);
+	g_depthStencilTextureSRV = CreateTextureResourceView(g_depthStencilTexture, DXGI_FORMAT_R32_FLOAT, 0, 1, D3D_SRV_DIMENSION_TEXTURE2D);
 
 	const char *name = "depth texture";
 	g_depthStencilTexture->SetPrivateData(WKPDID_D3DDebugObjectName, sizeof(name)-1, name);
@@ -1115,14 +1116,14 @@ ID3D11ShaderResourceView *CreateShaderResourceView(ID3D11Buffer* pBuffer , int v
 
 }
 
-ID3D11ShaderResourceView * CreateTextureResourceView(ID3D11Texture2D *text, DXGI_FORMAT format, int mip_map_start, int mip_map_count)
+ID3D11ShaderResourceView * CreateTextureResourceView(ID3D11Resource *text, DXGI_FORMAT format, int mip_map_start, int mip_map_count, D3D11_SRV_DIMENSION dimension)
 {
 	ID3D11ShaderResourceView *srV;
 	// Create SRV
 	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
 	ZeroMemory(&srvDesc, sizeof(srvDesc));
 	srvDesc.Format = format;
-	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	srvDesc.ViewDimension = dimension;
 	srvDesc.Texture2D.MostDetailedMip = mip_map_start;
 	srvDesc.Texture2D.MipLevels = mip_map_count;
 	g_device->CreateShaderResourceView(text, &srvDesc, &srV);
@@ -1130,7 +1131,7 @@ ID3D11ShaderResourceView * CreateTextureResourceView(ID3D11Texture2D *text, DXGI
 	return srV;
 }
 
-ID3D11Texture2D *CreateTexture(int width, int height, void *data, DXGI_FORMAT format, int mipmap_count /*= 1*/)
+ID3D11Texture2D *CreateTexture2D(int width, int height, void *data, DXGI_FORMAT format, UINT creation_flags, int mipmap_count /*= 1*/)
 {
 	D3D11_TEXTURE2D_DESC texDesc;
 	texDesc.Width = width;
@@ -1147,6 +1148,18 @@ ID3D11Texture2D *CreateTexture(int width, int height, void *data, DXGI_FORMAT fo
 	texDesc.SampleDesc.Count = 1;
 	texDesc.SampleDesc.Quality = 0;
 	texDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET;
+
+	if (creation_flags & CreationFlags::structured_buffer)
+	{
+		texDesc.BindFlags |= D3D11_BIND_UNORDERED_ACCESS;
+	}
+
+	if (creation_flags & (UINT)CreationFlags::staging)
+	{
+		texDesc.Usage = D3D11_USAGE_STAGING;
+		texDesc.BindFlags = 0;
+	}
+
 	texDesc.MiscFlags = 0;
 	texDesc.Usage = D3D11_USAGE_DEFAULT;
 	texDesc.CPUAccessFlags = 0;
@@ -1164,6 +1177,51 @@ ID3D11Texture2D *CreateTexture(int width, int height, void *data, DXGI_FORMAT fo
 
 	return texture;
 
+}
+
+ID3D11Texture3D *CreateTexture3D(int width, int height, int depth, void *data, DXGI_FORMAT format, UINT creation_flags, int mipmap_count /*= 1*/)
+{
+	D3D11_TEXTURE3D_DESC texDesc;
+	texDesc.Width = width;
+	texDesc.Height = height;
+	texDesc.Depth = depth;
+	texDesc.MipLevels = mipmap_count;
+
+	D3D11_SUBRESOURCE_DATA frameData;
+	frameData.pSysMem = data;
+	frameData.SysMemSlicePitch = width * height * sizeof(float) * 4;
+	frameData.SysMemPitch = width * sizeof(float) * 4;
+
+	texDesc.Format = format;
+	texDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET;
+	texDesc.MiscFlags = 0;
+	texDesc.Usage = D3D11_USAGE_DEFAULT;
+	texDesc.CPUAccessFlags = 0;
+
+	if (creation_flags & CreationFlags::structured_buffer)
+	{
+		texDesc.BindFlags |= D3D11_BIND_UNORDERED_ACCESS;
+	}
+
+	if (creation_flags & (UINT)CreationFlags::staging)
+	{
+		texDesc.Usage = D3D11_USAGE_STAGING;
+		texDesc.BindFlags = 0;
+		texDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
+	}
+
+	ID3D11Texture3D *texture;
+
+	if (data)
+	{
+		g_device->CreateTexture3D(&texDesc, &frameData, &texture);
+	}
+	else
+	{
+		g_device->CreateTexture3D(&texDesc, nullptr, &texture);
+	}
+
+	return texture;
 }
 
 ID3D11Buffer *CreateReadableBuffer(int buffer_size, float* data)
@@ -1378,8 +1436,10 @@ void SetRenderViews(ID3D11RenderTargetView *view, ID3D11DepthStencilView *depth_
 
 void SetUAVToPixelShader(ID3D11UnorderedAccessView *uav, int uav_slot, int index /*= -1*/)
 {
-	currentUAViews[uav_slot] = uav;
-	currentUAVIndexes[uav_slot] = index;
+	_ASSERT(uav_slot >= 4);
+
+	currentUAViews[uav_slot - 4] = uav;
+	currentUAVIndexes[uav_slot - 4] = index;
 
 	SetPixelShaderOutputMergerStates();
 }
@@ -1456,7 +1516,7 @@ void OutputTextureToScreen(ID3D11ShaderResourceView* texture, D3DXVECTOR4 pos, D
 	SetRenderViews(GetDefaultRenderTargetView(), GetDefaultDepthStencilView(), 0);
 }
 
-ID3D11RenderTargetView* CreateRenderTargetView(ID3D11Texture2D* texture, int mip_map /*= 0*/, DXGI_FORMAT format /*= DXGI_FORMAT_UNKNOWN*/)
+ID3D11RenderTargetView* CreateRenderTargetView(ID3D11Resource* texture, D3D11_RTV_DIMENSION dimension,  int mip_map /*= 0*/, DXGI_FORMAT format /*= DXGI_FORMAT_UNKNOWN*/)
 {
 	ID3D11RenderTargetView *render_view = nullptr;
 
@@ -1469,8 +1529,15 @@ ID3D11RenderTargetView* CreateRenderTargetView(ID3D11Texture2D* texture, int mip
 	{
 		D3D11_RENDER_TARGET_VIEW_DESC desc;
 		desc.Format = format;
-		desc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
-		desc.Texture2D.MipSlice = mip_map;
+		desc.ViewDimension = dimension;
+		if (dimension == D3D11_RTV_DIMENSION_TEXTURE2D)
+		{
+			desc.Texture2D.MipSlice = mip_map;
+		}
+		else
+		{
+			desc.Texture3D.MipSlice = mip_map;
+		}
 		g_device->CreateRenderTargetView(texture, &desc, &render_view);
 	}
 
@@ -1479,22 +1546,22 @@ ID3D11RenderTargetView* CreateRenderTargetView(ID3D11Texture2D* texture, int mip
 	return render_view;
 }
 
-void CopySubResource(ID3D11Texture2D* source_texture, ID3D11Texture2D* destination_texture, int width, int height, int destination_subresource, int source_subresource)
+void CopySubResource(ID3D11Resource* source_texture, ID3D11Resource* destination_texture, const D3DXVECTOR3 &dim, int destination_subresource, int source_subresource)
 {
 	D3D11_BOX sourceRegion;
 	sourceRegion.left = 0;
-	sourceRegion.right = width;
+	sourceRegion.right = dim.x;
 	sourceRegion.top = 0;
-	sourceRegion.bottom = height;
+	sourceRegion.bottom = dim.y;
 	sourceRegion.front = 0;
-	sourceRegion.back = 1;
+	sourceRegion.back = dim.z;
 
-	g_deviceContext->CopySubresourceRegion(destination_texture, destination_subresource, 0, 0, 0, source_texture, source_subresource, &sourceRegion);
+	g_deviceContext->CopySubresourceRegion(destination_texture, destination_subresource, 0, 0, 0, source_texture, source_subresource, nullptr);
 }
 
-void CopySubResource(Texture* source_texture, Texture* destination_texture, int width, int height, int destination_subresource, int source_subresource)
+void CopySubResource(Texture* source_texture, Texture* destination_texture, const D3DXVECTOR3 &dim, int destination_subresource, int source_subresource)
 {
-	CopySubResource(source_texture->get_texture_object(), destination_texture->get_texture_object(), width, height, destination_subresource, source_subresource);
+	CopySubResource(source_texture->get_texture_object(), destination_texture->get_texture_object(), dim, destination_subresource, source_subresource);
 }
 
 void SetDepthStencilView(ID3D11DepthStencilView *view)
@@ -1508,7 +1575,7 @@ void ResetUAVToPixelShader()
 	for (int i = 0; i < max_uav_bound; i++)
 	{
 		currentUAViews[i] = nullptr;
-		currentUAViews[i] = 0;
+		currentUAVIndexes[i] = -1;
 	}
 
 	SetPixelShaderOutputMergerStates();

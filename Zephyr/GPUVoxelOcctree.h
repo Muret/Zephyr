@@ -2,6 +2,7 @@
 #define INCLUDE_GPUVOXELCONSTRUCTOR_
 
 #include "includes.h"
+#include "Camera.h"
 
 class Scene;
 class Texture;
@@ -23,10 +24,10 @@ public:
 	struct Node
 	{
 		int construction_mutex;
-		int brick_index;
+		int is_leaf_index;
 
 		int child_node_set_index;
-		float padding;
+		int is_constructed;
 	};
 
 	struct NodeSet
@@ -40,6 +41,7 @@ public:
 		D3DXVECTOR4 g_scene_min;
 		D3DXVECTOR4 g_inverse_scene_length;
 		D3DXVECTOR4 g_grid_resolution_xyz_iteration_count_w;
+		D3DXVECTOR4 g_inverse_leaf_dimension;
 	};
 
 
@@ -47,14 +49,20 @@ public:
 	~GPUVoxelOcctree();
 
 	void construct(Scene *scene);
+	void build_octree_from_side_aux(const Camera &cam);
 
 private:
 
 	void update_constant_buffer();
+	void create_debug_render_mesh();
+
+	D3DXVECTOR3 sample_brick(float *brick_set, const D3DXVECTOR3 &inside_index) const;
 
 	Texture *x_render_texture_;
 	Texture *y_render_texture_;
 	Texture *z_render_texture_;
+
+	Texture *leaf_bricks_3d;
 
 	D3DXVECTOR3 resolution_;
 

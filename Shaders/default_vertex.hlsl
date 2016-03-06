@@ -61,7 +61,7 @@ PixelInputType main(VertexInputType input)
 	}
 
 	output.position = mul(position, g_world_view_projection_matrix);
-	output.color = g_diffuse_color;
+	output.color = input.color;
 	output.tex_coord = float4(input.tex_coord.xy,0,0);
 	output.tangent = input.tangent;
 	output.world_normal = mul(float4(input.normal.xyz,0), g_world_matrix);

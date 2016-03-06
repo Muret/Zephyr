@@ -14,8 +14,8 @@ SSR::SSR()
 	assert(g_screenWidth == g_screenHeight);
 	mipmap_count_ = log2(g_screenWidth);
 
-	hi_z_depth_texture_ping_pong[0] = new Texture(g_screenWidth, g_screenHeight, nullptr, DXGI_FORMAT_R32G32B32A32_FLOAT, mipmap_count_ + 1);
-	hi_z_depth_texture_ping_pong[1] = new Texture(g_screenWidth, g_screenHeight, nullptr, DXGI_FORMAT_R32G32B32A32_FLOAT, mipmap_count_ + 1);
+	hi_z_depth_texture_ping_pong[0] = new Texture( D3DXVECTOR3(g_screenWidth, g_screenHeight,1), nullptr, DXGI_FORMAT_R32G32B32A32_FLOAT, mipmap_count_ + 1);
+	hi_z_depth_texture_ping_pong[1] = new Texture( D3DXVECTOR3(g_screenWidth, g_screenHeight,1), nullptr, DXGI_FORMAT_R32G32B32A32_FLOAT, mipmap_count_ + 1);
 	
 	hi_z_depth_texture = hi_z_depth_texture_ping_pong[0];
 }

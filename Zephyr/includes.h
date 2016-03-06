@@ -24,6 +24,7 @@
 #include <map>
 #include <assert.h>
 #include <iostream>
+#include <functional>
 
 #pragma comment(lib, "dxgi.lib")
 #pragma comment(lib, "D3D11.lib")
@@ -36,5 +37,7 @@
 extern int g_screenWidth, g_screenHeight;
 
 using namespace std;
+
+D3DXVECTOR3 operator*(const D3DXVECTOR3 &lhs, const D3DXVECTOR3 &rhs);
 
 #endif

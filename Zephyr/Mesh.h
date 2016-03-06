@@ -53,6 +53,8 @@ public:
 	const D3DXMATRIX& get_frame() const;
 
 	const BoundingBox& get_bb() const;
+
+	static void add_cube_mesh(vector<Mesh::Vertex> &vertices, vector<int> &indices, const D3DXVECTOR3 &center, const D3DXVECTOR3 &half_length, const D3DXVECTOR4 &color);
 private:
 
 	void validate_bounding_box();

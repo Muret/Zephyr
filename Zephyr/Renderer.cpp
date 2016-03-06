@@ -20,11 +20,11 @@ Renderer::Renderer()
 
 	default_render_shader = new Shader("default_vertex", "default_pixel");
 
-	gbuffer_normal_texture = new Texture(g_screenWidth, g_screenHeight, nullptr, DXGI_FORMAT_R8G8B8A8_UNORM);
-	gbuffer_specular_texture = new Texture(g_screenWidth, g_screenHeight, nullptr, DXGI_FORMAT_R8G8B8A8_UNORM);
-	gbuffer_albedo_texture = new Texture(g_screenWidth, g_screenHeight, nullptr, DXGI_FORMAT_R8G8B8A8_UNORM);
+	gbuffer_normal_texture = new Texture  (D3DXVECTOR3( g_screenWidth, g_screenHeight,1), nullptr, DXGI_FORMAT_R8G8B8A8_UNORM , 0);
+	gbuffer_specular_texture = new Texture(D3DXVECTOR3( g_screenWidth, g_screenHeight,1), nullptr, DXGI_FORMAT_R8G8B8A8_UNORM , 0);
+	gbuffer_albedo_texture = new Texture  (D3DXVECTOR3( g_screenWidth, g_screenHeight,1), nullptr, DXGI_FORMAT_R8G8B8A8_UNORM , 0);
 
-	screen_texture = new Texture(g_screenWidth, g_screenHeight, nullptr, DXGI_FORMAT_R8G8B8A8_UNORM);
+	screen_texture = new Texture(D3DXVECTOR3(g_screenWidth, g_screenHeight, 1), nullptr, DXGI_FORMAT_R8G8B8A8_UNORM, 0);
 	
 	gbuffer_shader = new Shader("default_vertex", "gbuffer_pixel");
 	full_deferred_diffuse_lighting_shader = new Shader("direct_vertex_position", "full_deferred_diffuse_lighting");
@@ -91,10 +91,14 @@ void Renderer::gbuffer_render()
 	for (int i = 0; i < meshes_to_render.size(); i++)
 	{
 		Mesh *mesh_to_render = meshes_to_render[i];
-		mesh_to_render->get_material()->set_textures();
+
+		if (mesh_to_render->get_material())
+		{
+			mesh_to_render->get_material()->set_textures();
+		}
 		set_mesh_constant_values(mesh_to_render);
 
-		Shader *shader_to_set = mesh_to_render->get_material()->get_enforced_gbuffer_shader();
+		Shader *shader_to_set = mesh_to_render->get_material() ? mesh_to_render->get_material()->get_enforced_gbuffer_shader() : nullptr;
 		if (shader_to_set == nullptr)
 		{
 			shader_to_set = gbuffer_shader;
@@ -353,7 +357,7 @@ void Renderer::set_mesh_constant_values(const Mesh *mesh)
 	mesh_constants_buffer_cpu.inv_world_view_matrix = inv_world_view_matrix;
 	mesh_constants_buffer_cpu.inv_world_view_projection_matrix = inv_world_view_projection_matrix;
 
-	mesh_constants_buffer_cpu.diffuse_color = mesh->get_material()->get_diffuse_color();
+	mesh_constants_buffer_cpu.diffuse_color = mesh->get_material() ? mesh->get_material()->get_diffuse_color() : D3DXVECTOR4(1,1,1,1);
 	mesh_constants_buffer_cpu.bb_min = mesh->get_bb().get_min();
 	mesh_constants_buffer_cpu.bb_max = mesh->get_bb().get_max();
 

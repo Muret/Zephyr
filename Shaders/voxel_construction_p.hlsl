@@ -12,5 +12,8 @@ float4 main(PixelInputType input) : SV_TARGET
 	float3 albedo = input.color;
 	float3 normal = input.world_normal;
 
+	int index;
+	InterlockedAdd(GET_NODE(uint2(0, 2)).construction_mutex, 1, index);
+
 	return handle_grid_entry(world_position, albedo, normal);
 }

@@ -168,3 +168,19 @@ void Utilities::tick()
 		debug_vector.w -= 0.01 * multiplier;
 	}
 }
+
+
+D3DXVECTOR3 operator*(const D3DXVECTOR3 &lhs, const D3DXVECTOR3 &rhs)
+{
+	D3DXVECTOR3 output;
+	output.x = lhs.x * rhs.x;
+	output.y = lhs.y * rhs.y;
+	output.z = lhs.z * rhs.z;
+
+	return output;
+}
+
+float vec3_len(const D3DXVECTOR3 &vec)
+{
+	return D3DXVec3Length(&vec);
+}
