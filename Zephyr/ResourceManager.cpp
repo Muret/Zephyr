@@ -22,9 +22,6 @@ ResourceManager::~ResourceManager()
 
 void ResourceManager::init_resources(string resource_folder)
 {
-	init_textures(resource_folder);
-	init_meshes(resource_folder);
-	
 	vector<string> folders;
 	Utilities::get_folders_under_folder(resource_folder, folders);
 
@@ -32,6 +29,9 @@ void ResourceManager::init_resources(string resource_folder)
 	{
 		init_resources(resource_folder + "/" + folders[i]);
 	}
+
+	init_textures(resource_folder);
+	init_meshes(resource_folder);
 }
 
 void ResourceManager::init_textures(string resource_folder)

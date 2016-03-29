@@ -1,0 +1,3 @@
+<node name= instance_test_sphere
+	<attribute type= mesh name=  />
+</node>

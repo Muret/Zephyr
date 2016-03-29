@@ -38,7 +38,7 @@ GPUVoxelOcctree::GPUVoxelOcctree(const D3DXVECTOR3 &resolution)
 	int pixel_count = max_bricks * 3 * 3 * 1.5 * max_bricks;
 	float *initial_data = new float[pixel_count * 4];
 	memset(initial_data, 0 , pixel_count * 4 * sizeof(float));
-	leaf_bricks_3d = new Texture(D3DXVECTOR3( 3 , 3 , 1.5 * max_bricks), initial_data, DXGI_FORMAT_R32G32B32A32_FLOAT , (UINT)CreationFlags::structured_buffer);
+	leaf_bricks_3d = new Texture(D3DXVECTOR3( 3 * 4 , 3 * 4 , 1.5 * max_bricks), initial_data, DXGI_FORMAT_R32G32B32A32_FLOAT , (UINT)CreationFlags::structured_buffer);
 	delete[] initial_data;
 }
 
@@ -293,7 +293,7 @@ D3DXVECTOR3 GPUVoxelOcctree::sample_brick(float * brick_set, const D3DXVECTOR3 &
 {
 	std::function<int(const D3DXVECTOR3&)> get_linear_index = [&get_linear_index](const D3DXVECTOR3& index)
 	{
-		return 4 * (index.x + index.y * 3 + index.z * 3 * 3);
+		return 4 * (index.x + index.y * 3 * 4 + index.z * 3 * 3 * 16);
 	};
 
 	std::function<D3DXVECTOR4(float *, int)> sample_aux = [&sample_aux](float *data, int linear_index)

@@ -44,7 +44,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pScmdline,
 
 	string path = ExePath();
 
-	current_demo = new VCTDemo();
+	current_demo = new SSRDemo();
 	current_demo->initialize();
 
 	MSG msg = {};

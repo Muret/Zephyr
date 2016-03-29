@@ -127,6 +127,7 @@
     <ClCompile Include="FBXSceneImporter.cpp" />
     <ClCompile Include="FreeCameraController.cpp" />
     <ClCompile Include="globals.cpp" />
+    <ClCompile Include="GokTengri.cpp" />
     <ClCompile Include="GPUBuffer.cpp" />
     <ClCompile Include="GPUVCT.cpp" />
     <ClCompile Include="GPUVoxelOcctree.cpp" />
@@ -156,6 +157,7 @@
     <ClInclude Include="Demo.h" />
     <ClInclude Include="FBXSceneImporter.h" />
     <ClInclude Include="FreeCameraController.h" />
+    <ClInclude Include="GokTengri.h" />
     <ClInclude Include="GPUBuffer.h" />
     <ClInclude Include="GPUVCT.h" />
     <ClInclude Include="GPUVoxelOcctree.h" />

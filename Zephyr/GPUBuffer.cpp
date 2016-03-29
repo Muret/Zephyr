@@ -36,6 +36,15 @@ void GPUBuffer::create_buffer(int bytewidth, int number_of_elements, void *initi
 		desc.BindFlags = 0;
 	}
 
+	if (creation_flags & (UINT)CreationFlags::vertex_buffer)
+	{
+		desc.BindFlags = desc.BindFlags | D3D11_BIND_VERTEX_BUFFER;
+	}
+	else if (creation_flags & (UINT)CreationFlags::index_buffer)
+	{
+		desc.BindFlags = desc.BindFlags | D3D11_BIND_INDEX_BUFFER;
+	}
+
 	desc.MiscFlags = 0;
 
 	if (creation_flags & (UINT)CreationFlags::structured_buffer)

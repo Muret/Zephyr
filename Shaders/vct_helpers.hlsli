@@ -133,13 +133,13 @@ float4 handle_grid_entry(float3 world_position, float3 albedo, float3  normal)
 		uint3 u111 = first_coord + uint3(1, 1, 1);
 
 		GET_LEAF_NODE(u000) = float4(albedo, 1);
-		GET_LEAF_NODE(u001) = float4(albedo, 1);
 		GET_LEAF_NODE(u010) = float4(albedo, 1);
-		GET_LEAF_NODE(u011) = float4(albedo, 1);
-		GET_LEAF_NODE(u100) = float4(albedo, 1);
-		GET_LEAF_NODE(u101) = float4(albedo, 1);
-		GET_LEAF_NODE(u110) = float4(albedo, 1);
-		GET_LEAF_NODE(u111) = float4(albedo, 1);
+		//GET_LEAF_NODE(u010) = float4(albedo, 1);
+		//GET_LEAF_NODE(u011) = float4(albedo, 1);
+		//GET_LEAF_NODE(u100) = float4(albedo, 1);
+		//GET_LEAF_NODE(u101) = float4(albedo, 1);
+		//GET_LEAF_NODE(u110) = float4(albedo, 1);
+		//GET_LEAF_NODE(u111) = float4(albedo, 1);
 	}
 
 	return float4(albedo, 1);

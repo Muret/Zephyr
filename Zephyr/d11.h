@@ -14,12 +14,14 @@ extern ID3DUserDefinedAnnotation *pPerf;
 
 enum class CreationFlags : UINT
 {
-	structured_buffer = 0x00000001,
-	append_consume_buffer = 0x00000002,
-	cpu_write_acces = 0x00000004,
-	constant_buffer = 0x00000008,
-	has_atomic_counter = 0x0000010,
-	staging = 0x0000020,
+	structured_buffer		= 0x00000001,
+	append_consume_buffer	= 0x00000002,
+	cpu_write_acces			= 0x00000004,
+	constant_buffer			= 0x00000008,
+	has_atomic_counter		= 0x00000010,
+	staging					= 0x00000020,
+	vertex_buffer			= 0x00000040,
+	index_buffer			= 0x00000080,
 };
 
 

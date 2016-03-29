@@ -61,7 +61,7 @@ void Texture::create(const D3DXVECTOR3 &dimension, void *data, DXGI_FORMAT forma
 		{
 			uav_desc.Texture3D.MipSlice = 0;
 			uav_desc.Texture3D.FirstWSlice = 0;
-			uav_desc.Texture3D.WSize = dimension.z;
+			uav_desc.Texture3D.WSize = -1;
 			uav_desc.ViewDimension = D3D11_UAV_DIMENSION_TEXTURE3D;
 		}
 
@@ -136,7 +136,6 @@ void Texture::get_data(void * data, int length)
 	}
 
 	CopySubResource(texture_object_, data_accesor_staging_texture_->get_texture_object(), dimension_, 0, 0);
-
 
 	D3D11_MAPPED_SUBRESOURCE info;
 	bool result = g_deviceContext->Map(data_accesor_staging_texture_->get_texture_object(), 0, D3D11_MAP_READ, 0, &info);

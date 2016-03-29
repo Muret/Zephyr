@@ -437,16 +437,16 @@ void FBXSceneImporter::read_mesh(FbxNode *pNode, FbxMesh* pMesh)
 			}
 
 			size_t size = vertices.size();
-			size_t i;
+			size_t i = size;
 
-			for (i = 0; i < size; i++)
-			{
-				if (vertex == vertices[i])
-				{
-					break;
-				}
-			}
-
+			//for (i = 0; i < size; i++)
+			//{
+			//	if (vertex == vertices[i])
+			//	{
+			//		break;
+			//	}
+			//}
+			//
 			if (i == size)
 			{
 				vertices.push_back(vertex);

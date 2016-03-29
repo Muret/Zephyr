@@ -68,11 +68,11 @@ public:
 
 	void render_mesh(const Mesh* mesh, const Camera &cam);
 
-private:
+protected:
 	void begin_frame();
 
 	void pre_render();
-	void gbuffer_render();
+	virtual void gbuffer_render();
 	void main_render();
 
 	void forward_rendering_pipeline();

@@ -136,10 +136,8 @@ void Renderer::main_render()
 
 void Renderer::post_render()
 {
-	{
-		SetRenderViews(GetDefaultRenderTargetView(), GetDefaultDepthStencilView(), 0);
-		screen_texture->set_srv_to_shader(shader_type_pixel, 3);
-	}
+	SetRenderViews(GetDefaultRenderTargetView(), GetDefaultDepthStencilView(), 0);
+	screen_texture->set_srv_to_shader(shader_type_pixel, 3);
 	
 	for (int i = 0; i < render_components.size(); i++)
 	{

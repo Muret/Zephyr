@@ -1006,18 +1006,6 @@ ID3D11Buffer *CreateVertexBuffer(int vertex_count, void *data, int vertex_struct
 
 	ID3D11Buffer* m_vertexBuffer;
 
-
-	/*
-	// Load the vertex array with data.
-	for (int i = 0; i < vertex_count; i++)
-	{
-		vertices[i].position = D3DXVECTOR4(0.0f,-0.0f, 0.0f, 0.0f);  
-		vertices[i].color = D3DXVECTOR4(0.0f, 1.0f, 0.0f, 1.0f);
-	}*/
-
-	// Load the vertex array with data.
-
-
 	// Set up the description of the static vertex buffer.
 	vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
 	vertexBufferDesc.ByteWidth = vertex_struct_size * vertex_count;
