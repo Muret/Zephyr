@@ -43,4 +43,6 @@ using namespace std;
 
 D3DXVECTOR3 operator*(const D3DXVECTOR3 &lhs, const D3DXVECTOR3 &rhs);
 
+#define SAFE_DELETE(px) if(px) { delete px; px = nullptr;}
+
 #endif

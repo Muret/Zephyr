@@ -6,7 +6,7 @@
 #include "ResourceManager.h"
 #include "FreeCameraController.h"
 
-#include "GokTengri.h"
+#include "GPUBasedPipeline.h"
 
 SSRDemo::SSRDemo() : DemoBase("SSR")
 {
@@ -20,12 +20,8 @@ SSRDemo::~SSRDemo()
 
 void SSRDemo::initialize()
 {
-	init_tengri();
-
-
-
-	//ssr_component = new SSR();
-	//renderer->add_renderer_component(ssr_component);
+	ssr_component = new SSR();
+	renderer->add_renderer_component(ssr_component);
 }
 
 void SSRDemo::tick(float dt)
@@ -43,7 +39,7 @@ void SSRDemo::init_tengri()
 	Scene *scene = resource_manager.get_scene("tengri_test");
 	renderer->set_scene_to_render(scene);
 
-	Tengri::GreyWolf *t_renderer = new Tengri::GreyWolf();
+	GPUBasedPipeline::GPUBasedRenderer *t_renderer = new GPUBasedPipeline::GPUBasedRenderer();
 	t_renderer->set_scene(scene);
 
 	Camera *camera = scene->get_camera("main_camera");

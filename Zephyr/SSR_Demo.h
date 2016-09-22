@@ -3,7 +3,7 @@
 
 #include "includes.h"
 #include "Demo.h"
-#include "GokTengri.h"
+#include "GPUBasedPipeline.h"
 
 class SSR;
 class FreeCameraController;
@@ -22,7 +22,7 @@ public:
 private:
 	SSR *ssr_component;
 	FreeCameraController *camera_controller_;
-	Tengri::GreyWolf *tengri_renderer_;
+	GPUBasedPipeline::GPUBasedRenderer *tengri_renderer_;
 
 	void init_tengri();
 };

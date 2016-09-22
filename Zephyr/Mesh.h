@@ -26,6 +26,7 @@ public:
 	};
 
 	Mesh();
+	Mesh(const Mesh *original_mesh);
 
 	void create_from_buffers(const std::vector<Vertex> &vertices, const std::vector<int> &indices);
 

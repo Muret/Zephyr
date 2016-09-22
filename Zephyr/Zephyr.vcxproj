@@ -54,17 +54,17 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(ProjectDir)..\..\Dependencies\DXUT-master\Core;$(ProjectDir)..\..\Dependencies\DXUT-master\Optional;$(ProjectDir)..\..\Dependencies\Microsoft DirectX SDK (June 2010)\Include;$(ProjectDir)..\..\Dependencies\FBX\include;$(ProjectDir)..\..\Dependencies\FreeImage\Dist\x32;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)..\..\Dependencies\DXUT-master\Core;$(ProjectDir)..\..\Dependencies\DXUT-master\Optional;$(ProjectDir)..\..\Dependencies\Microsoft DirectX SDK (June 2010)\Include;$(ProjectDir)..\..\Dependencies\FBX\include;$(ProjectDir)..\..\Dependencies\FreeImage\Dist\x32;$(ProjectDir)imgui;$(ProjectDir)..\..\Dependencies\boost_1_61_0;$(IncludePath)</IncludePath>
     <LibraryPath>$(ProjectDir)..\..\Dependencies\DXUT-master\Optional\Bin\Desktop_2013\Win32\Release;$(ProjectDir)..\..\Dependencies\DXUT-master\Core\Bin\Desktop_2013\Win32\Release;$(ProjectDir)..\..\Dependencies\Microsoft DirectX SDK (June 2010)\Lib\x86;$(ProjectDir)..\..\Dependencies\FBX\lib\vs2013\x86\release;$(ProjectDir)..\..\Dependencies\FreeImage\Dist\x32;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugFast|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(ProjectDir)..\..\Dependencies\DXUT-master\Core;$(ProjectDir)..\..\Dependencies\DXUT-master\Optional;$(ProjectDir)..\..\Dependencies\Microsoft DirectX SDK (June 2010)\Include;$(ProjectDir)..\..\Dependencies\FBX\include;$(ProjectDir)..\..\Dependencies\FreeImage\Dist\x32;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)..\..\Dependencies\DXUT-master\Core;$(ProjectDir)..\..\Dependencies\DXUT-master\Optional;$(ProjectDir)..\..\Dependencies\Microsoft DirectX SDK (June 2010)\Include;$(ProjectDir)..\..\Dependencies\FBX\include;$(ProjectDir)..\..\Dependencies\FreeImage\Dist\x32;$(ProjectDir)imgui;$(ProjectDir)..\..\Dependencies\boost_1_61_0;$(IncludePath)</IncludePath>
     <LibraryPath>$(ProjectDir)..\..\Dependencies\DXUT-master\Optional\Bin\Desktop_2013\Win32\Release;$(ProjectDir)..\..\Dependencies\DXUT-master\Core\Bin\Desktop_2013\Win32\Release;$(ProjectDir)..\..\Dependencies\Microsoft DirectX SDK (June 2010)\Lib\x86;$(ProjectDir)..\..\Dependencies\FBX\lib\vs2013\x86\release;$(ProjectDir)..\..\Dependencies\FreeImage\Dist\x32;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(ProjectDir)..\..\Dependencies\DXUT-master\Core;$(ProjectDir)..\..\Dependencies\DXUT-master\Optional;$(ProjectDir)..\..\Dependencies\Microsoft DirectX SDK (June 2010)\Include;$(ProjectDir)..\..\Dependencies\FBX\include;$(ProjectDir)..\..\Dependencies\FreeImage\Dist\x32;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)..\..\Dependencies\DXUT-master\Core;$(ProjectDir)..\..\Dependencies\DXUT-master\Optional;$(ProjectDir)..\..\Dependencies\Microsoft DirectX SDK (June 2010)\Include;$(ProjectDir)..\..\Dependencies\FBX\include;$(ProjectDir)..\..\Dependencies\FreeImage\Dist\x32;$(ProjectDir)imgui;$(ProjectDir)..\..\Dependencies\boost_1_61_0;$(IncludePath)</IncludePath>
     <LibraryPath>$(ProjectDir)..\..\Dependencies\DXUT-master\Optional\Bin\Desktop_2013\Win32\Release;$(ProjectDir)..\..\Dependencies\DXUT-master\Core\Bin\Desktop_2013\Win32\Release;$(ProjectDir)..\..\Dependencies\Microsoft DirectX SDK (June 2010)\Lib\x86;$(ProjectDir)..\..\Dependencies\FBX\lib\vs2013\x86\release;$(ProjectDir)..\..\Dependencies\FreeImage\Dist\x32;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -118,6 +118,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\Dependencies\imgui-master\imgui.cpp" />
+    <ClCompile Include="..\..\Dependencies\imgui-master\imgui_demo.cpp" />
+    <ClCompile Include="..\..\Dependencies\imgui-master\imgui_draw.cpp" />
     <ClCompile Include="BoundingBox.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CatmullClark.cpp" />
@@ -127,10 +130,13 @@
     <ClCompile Include="FBXSceneImporter.cpp" />
     <ClCompile Include="FreeCameraController.cpp" />
     <ClCompile Include="globals.cpp" />
-    <ClCompile Include="GokTengri.cpp" />
+    <ClCompile Include="GPUBasedPipeline.cpp" />
+    <ClCompile Include="GPUBasedPipelineDemo.cpp" />
     <ClCompile Include="GPUBuffer.cpp" />
     <ClCompile Include="GPUVCT.cpp" />
     <ClCompile Include="GPUVoxelOcctree.cpp" />
+    <ClCompile Include="GUI.cpp" />
+    <ClCompile Include="imgui\imgui_impl_dx11.cpp" />
     <ClCompile Include="KeyChain.cpp" />
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="main.cpp" />
@@ -146,9 +152,17 @@
     <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="Utilities.cpp" />
     <ClCompile Include="VCT_Demo.cpp" />
+    <ClCompile Include="VoronoiSolver.cpp" />
     <ClCompile Include="window.cpp" />
+    <ClCompile Include="WorldMapDemo.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Dependencies\imgui-master\imconfig.h" />
+    <ClInclude Include="..\..\Dependencies\imgui-master\imgui.h" />
+    <ClInclude Include="..\..\Dependencies\imgui-master\imgui_internal.h" />
+    <ClInclude Include="..\..\Dependencies\imgui-master\stb_rect_pack.h" />
+    <ClInclude Include="..\..\Dependencies\imgui-master\stb_textedit.h" />
+    <ClInclude Include="..\..\Dependencies\imgui-master\stb_truetype.h" />
     <ClInclude Include="BoundingBox.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CatmullClark.h" />
@@ -157,10 +171,13 @@
     <ClInclude Include="Demo.h" />
     <ClInclude Include="FBXSceneImporter.h" />
     <ClInclude Include="FreeCameraController.h" />
-    <ClInclude Include="GokTengri.h" />
+    <ClInclude Include="GPUBasedPipeline.h" />
+    <ClInclude Include="GPUBasedPipelineDemo.h" />
     <ClInclude Include="GPUBuffer.h" />
     <ClInclude Include="GPUVCT.h" />
     <ClInclude Include="GPUVoxelOcctree.h" />
+    <ClInclude Include="GUI.h" />
+    <ClInclude Include="imgui\imgui_impl_dx11.h" />
     <ClInclude Include="includes.h" />
     <ClInclude Include="KeyChain.h" />
     <ClInclude Include="Light.h" />
@@ -176,7 +193,9 @@
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="Utilities.h" />
     <ClInclude Include="VCT_Demo.h" />
+    <ClInclude Include="VoronoiSolver.h" />
     <ClInclude Include="window.h" />
+    <ClInclude Include="WorldMapDemo.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Shaders\default_vertex.hlsl">
@@ -207,6 +226,10 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='DebugFast|Win32'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='DebugFast|Win32'">5.0</ShaderModel>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='DebugFast|Win32'">$(ProjectDir)..\Shaders\Assemblies\%(Filename).cso</ObjectFileOutput>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="..\Shaders\full_deferred_diffuse_lighting.hlsl">
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='DebugFast|Win32'">$(ProjectDir)..\Shaders\Assemblies\%(Filename).cso</ObjectFileOutput>
@@ -252,11 +275,19 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='DebugFast|Win32'">Pixel</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='DebugFast|Win32'">5.0</ShaderModel>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='DebugFast|Win32'">$(ProjectDir)..\Shaders\Assemblies\%(Filename).cso</ObjectFileOutput>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="..\Shaders\voxel_filler_cs.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='DebugFast|Win32'">Compute</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='DebugFast|Win32'">5.0</ShaderModel>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='DebugFast|Win32'">$(ProjectDir)..\Shaders\Assemblies\%(Filename).cso</ObjectFileOutput>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

@@ -10,6 +10,9 @@ FreeCameraController::FreeCameraController()
 {
 	yaw_ = 0.0f;
 	pitch_ = 0.0f;
+	field_of_view_ = 45.0f;
+	near_ = 0.1f;
+	far_ = 100.0f;
 }
 
 void FreeCameraController::tick()

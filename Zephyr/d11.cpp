@@ -6,6 +6,8 @@
 #include "Renderer.h"
 #include "GPUBuffer.h"
 
+#include "GUI.h"
+
 ID3D11Buffer* fullScreenVertexBuffer = nullptr;
 ID3D11Buffer* fullScreenIndexBuffer = nullptr;
 
@@ -381,6 +383,8 @@ bool init_engine()
 	CreateRasterStates();
 
 	texture_outputter = new TextureOutputToScreenFunctionality;
+
+	gui.init(g_hwnd, g_device, g_deviceContext);
 }
 
 void closeEngine()

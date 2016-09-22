@@ -10,7 +10,7 @@
 #include "Light.h"
 #include "d11.h"
 #include "Camera.h"
-
+#include "GUI.h"
 
 Renderer *renderer = NULL;
 
@@ -43,20 +43,20 @@ Renderer::Renderer()
 
 void Renderer::render_frame()
 {
-	if (scene_to_render == nullptr)
+	begin_frame();
+	
+	if (scene_to_render != nullptr)
 	{
-		return;
+		pre_render();
+
+		gbuffer_render();
+
+		main_render();
+
+		post_render();
 	}
 
-	begin_frame();
-
-	pre_render();
-
-	gbuffer_render();
-
-	main_render();
-
-	post_render();
+	gui.render_frame();
 
 	end_frame();
 }
@@ -110,6 +110,15 @@ void Renderer::gbuffer_render()
 		SetVertexBuffer(mesh_to_render->get_vertex_buffer(), sizeof(Mesh::Vertex));
 		SetIndexBuffer(mesh_to_render->get_index_buffer());
 
+		if (mesh_to_render->is_wireframe())
+		{
+			SetRasterState(raster_state_wireframe_mode);
+		}
+		else
+		{
+			SetRasterState(raster_state_fill_mode);
+		}
+
 		SetSamplerState();
 
 		//render
@@ -131,11 +140,13 @@ void Renderer::main_render()
 {
 	//forward_rendering_pipeline();
 
+	SetRasterState(raster_state_fill_mode);
 	full_deferred_rendering_pipeline();
 }
 
 void Renderer::post_render()
 {
+	SetRasterState(raster_state_fill_mode);
 	SetRenderViews(GetDefaultRenderTargetView(), GetDefaultDepthStencilView(), 0);
 	screen_texture->set_srv_to_shader(shader_type_pixel, 3);
 	

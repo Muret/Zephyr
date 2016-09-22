@@ -60,7 +60,7 @@ PixelInputType main(VertexInputType input)
 		}
 	}
 
-	output.position = mul(position, g_world_view_projection_matrix);
+	output.position = /*position;*/ mul(position, g_world_view_projection_matrix);
 	output.color = input.color;
 	output.tex_coord = float4(input.tex_coord.xy,0,0);
 	output.tangent = input.tangent;

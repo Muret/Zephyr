@@ -13,6 +13,10 @@
 #include "VCT_Demo.h"
 #include "CatmullClark_Demo.h"
 #include "KeyChain.h"
+#include "GPUBasedPipelineDemo.h"
+#include "WorldMapDemo.h"
+
+#include "GUI.h"
 
 extern HINSTANCE g_hinstance;
 extern int g_nCmdShow;
@@ -44,7 +48,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pScmdline,
 
 	string path = ExePath();
 
-	current_demo = new SSRDemo();
+	current_demo = new WorldMapDemo();
 	current_demo->initialize();
 
 	MSG msg = {};
@@ -54,11 +58,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pScmdline,
 
 		while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE) > 0)
 		{
+			if(gui.handle_key_event(msg.message, msg.wParam, msg.lParam))
 			key_chain.handle_key_event(msg.message, msg.wParam);
 
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		}
+
+		gui.start_frame();
 
 		key_chain.tick();
 

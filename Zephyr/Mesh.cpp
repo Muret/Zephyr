@@ -19,6 +19,22 @@ Mesh::Mesh()
 	D3DXMatrixIdentity(&frame_);
 }
 
+Mesh::Mesh(const Mesh * original_mesh)
+{
+	original_mesh->get_index_buffer();
+	original_mesh->get_vertex_buffer();
+
+	mesh_material_ = original_mesh->mesh_material_;
+	vertex_buffer_ = original_mesh->vertex_buffer_;
+	index_buffer_ = original_mesh->index_buffer_;
+	frame_ = original_mesh->frame_;
+	name_ = original_mesh->name_;
+	color_multiplier_ = original_mesh->color_multiplier_;
+	bb = original_mesh->bb;
+
+	indices_ = original_mesh->indices_;
+}
+
 void Mesh::create_from_buffers(const std::vector<Vertex> &vertices, const std::vector<int> &indices)
 {
 	vertices_ = vertices;
@@ -234,7 +250,7 @@ bool Mesh::Vertex::operator==(const Vertex &rhs)
 Mesh::Vertex::Vertex()
 {
 	position		= D3DXVECTOR4(0,0,0,0);
-	color			= D3DXVECTOR4(0,0,0,0);	
+	color			= D3DXVECTOR4(1,1,1,0);	
 	texture_coord	= D3DXVECTOR4(0,0,0,0);
 	normal			= D3DXVECTOR4(0,0,0,0);
 	tangent			= D3DXVECTOR4(0,0,0,0);
