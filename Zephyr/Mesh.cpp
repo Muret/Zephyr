@@ -16,6 +16,8 @@ Mesh::Mesh()
 	render_wireframe_ = false;
 	color_multiplier_ = D3DXVECTOR4(1, 1, 1, 1);
 
+	mesh_type_ = MeshType::triangle_mesh;
+
 	D3DXMatrixIdentity(&frame_);
 }
 
@@ -33,6 +35,7 @@ Mesh::Mesh(const Mesh * original_mesh)
 	bb = original_mesh->bb;
 
 	indices_ = original_mesh->indices_;
+	mesh_type_ = original_mesh->mesh_type_;
 }
 
 void Mesh::create_from_buffers(const std::vector<Vertex> &vertices, const std::vector<int> &indices)

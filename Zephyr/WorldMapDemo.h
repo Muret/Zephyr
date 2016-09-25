@@ -25,6 +25,7 @@ private:
 	int seed_;
 	int number_of_sites_;
 	int number_of_smooth_operations_;
+	float smoothing_amount_;
 
 	void create_random_world_map();
 };

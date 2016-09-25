@@ -131,9 +131,10 @@ public:
 	~VoronoiSolver();
 
 	void calculate(const std::vector<VoronoiSite> &points);
+	void increment_uniformity(std::vector<VoronoiSite> &new_points);
 
 	Mesh* get_triangulated_voronoi_mesh();
-	void increment_uniformity(std::vector<VoronoiSite> &new_points);
+	Mesh* get_edge_line_mesh(float smoothing_amount);
 
 private:
 	voronoi_diagram<double> *vd_;

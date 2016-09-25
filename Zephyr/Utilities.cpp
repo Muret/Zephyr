@@ -130,6 +130,11 @@ D3DXVECTOR4 Utilities::get_debug_vector()
 	return debug_vector;
 }
 
+float Utilities::random_normalized_float(int presicion /*= RAND_MAX*/)
+{
+	return float(rand() % presicion) / (float)RAND_MAX;
+}
+
 void Utilities::tick()
 {
 	float multiplier = 0.2;

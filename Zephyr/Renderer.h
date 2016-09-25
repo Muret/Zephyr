@@ -68,6 +68,8 @@ public:
 
 	void render_mesh(const Mesh* mesh, const Camera &cam);
 
+	void set_mesh_primitive_topology(const Mesh* mesh);
+
 protected:
 	void begin_frame();
 

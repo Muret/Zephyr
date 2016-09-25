@@ -12,6 +12,12 @@ class Mesh
 {
 public:
 
+	enum MeshType
+	{
+		triangle_mesh,
+		line_mesh,
+	};
+
 	struct Vertex
 	{
 		D3DXVECTOR4 position;
@@ -29,6 +35,16 @@ public:
 	Mesh(const Mesh *original_mesh);
 
 	void create_from_buffers(const std::vector<Vertex> &vertices, const std::vector<int> &indices);
+
+	void set_mesh_type(MeshType type)
+	{
+		mesh_type_ = type;
+	}
+
+	MeshType get_mesh_type() const
+	{
+		return mesh_type_;
+	}
 
 	ID3D11Buffer* get_vertex_buffer() const;
 	ID3D11Buffer* get_index_buffer() const;
@@ -66,6 +82,8 @@ private:
 	mutable ID3D11Buffer *index_buffer_;
 
 	D3DXMATRIX frame_;
+
+	MeshType mesh_type_;
 
 	//CPU side data
 	std::vector<Vertex> vertices_;

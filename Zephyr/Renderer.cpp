@@ -110,6 +110,8 @@ void Renderer::gbuffer_render()
 		SetVertexBuffer(mesh_to_render->get_vertex_buffer(), sizeof(Mesh::Vertex));
 		SetIndexBuffer(mesh_to_render->get_index_buffer());
 
+		set_mesh_primitive_topology(mesh_to_render);
+
 		if (mesh_to_render->is_wireframe())
 		{
 			SetRasterState(raster_state_wireframe_mode);
@@ -260,6 +262,7 @@ void Renderer::full_deferred_rendering_pipeline()
 	clearScreen();
 
 	set_lighting_constant_values();
+	SetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	//set gbuffer textures
 	gbuffer_albedo_texture->set_srv_to_shader(shader_type_pixel, 0);
@@ -389,7 +392,7 @@ void Renderer::render_mesh(const Mesh * mesh, const Camera &cam)
 	Camera *old_camera = camera_;
 	camera_ = (Camera*)&cam;
 
-	SetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	set_mesh_primitive_topology(mesh);
 
 	set_frame_constant_values();
 	set_mesh_constant_values(mesh);
@@ -403,5 +406,18 @@ void Renderer::render_mesh(const Mesh * mesh, const Camera &cam)
 	RenderIndexed(mesh->get_index_count());
 
 	camera_ = old_camera;
+}
+
+void Renderer::set_mesh_primitive_topology(const Mesh * mesh)
+{
+	switch (mesh->get_mesh_type())
+	{
+	case Mesh::MeshType::triangle_mesh:
+		SetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		break;
+	case Mesh::MeshType::line_mesh:
+		SetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
+		break;
+	}
 }
 

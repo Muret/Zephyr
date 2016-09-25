@@ -13,6 +13,7 @@ WorldMapDemo::WorldMapDemo() : DemoBase("WorldMapDemo")
 	last_voronoi_mesh_ = nullptr;
 	seed_ = 0;
 	number_of_smooth_operations_ = 0;
+	smoothing_amount_ = 0.5f;
 }
 
 WorldMapDemo::~WorldMapDemo()
@@ -48,6 +49,7 @@ void WorldMapDemo::tick(float dt)
 	recaulculate = recaulculate || ImGui::InputInt("Seed", &seed_);
 	recaulculate = recaulculate || ImGui::InputInt("Number Of Smooths", &number_of_smooth_operations_);
 	recaulculate = recaulculate || ImGui::InputInt("Number Of Sites", &number_of_sites_);
+	recaulculate = recaulculate || ImGui::InputFloat("Smoothing Amount", &smoothing_amount_);
 	recaulculate = recaulculate || ImGui::Button("Press to create random world map");
 	
 	if (recaulculate && number_of_sites_ > 0)
@@ -124,9 +126,9 @@ void WorldMapDemo::create_random_world_map()
 
 		D3DXMATRIX new_frame;
 		D3DXMatrixIdentity(&new_frame);
-		new_frame.m[0][0] = 0.01f;
-		new_frame.m[1][1] = 0.01f;
-		new_frame.m[2][2] = 0.01f;
+		new_frame.m[0][0] = 0.005f;
+		new_frame.m[1][1] = 0.005f;
+		new_frame.m[2][2] = 0.005f;
 		new_frame.m[3][0] = /*(int)*/x;
 		new_frame.m[3][1] = /*(int)*/y;
 		new_frame.m[3][2] = /*(int)*/0;
@@ -135,7 +137,7 @@ void WorldMapDemo::create_random_world_map()
 		scene_->add_mesh(new_mesh);
 	}
 
-	last_voronoi_mesh_ = new_solver.get_triangulated_voronoi_mesh();
+	last_voronoi_mesh_ = new_solver.get_edge_line_mesh(smoothing_amount_);
 	last_voronoi_mesh_->set_frame(voronoi_mesh_frame);
 	scene_->add_mesh(last_voronoi_mesh_);
 	//last_voronoi_mesh_->set_wireframe(true);

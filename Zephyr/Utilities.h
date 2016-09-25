@@ -1,6 +1,9 @@
 #ifndef INCLUDE_UTILITIES_
 #define INCLUDE_UTILITIES_
 
+#include <Windows.h>
+#include <iostream>
+#include <sstream>
 #include "includes.h"
 
 class Utilities
@@ -17,6 +20,8 @@ public:
 
 	static D3DXVECTOR4 get_debug_vector();
 
+	static float random_normalized_float(int presicion = RAND_MAX);
+
 	static void tick();
 
 
@@ -26,5 +31,12 @@ private:
 };
 
 float vec3_len(const D3DXVECTOR3 &vec);
+
+#define DBOUT( s )            \
+{                             \
+   std::ostringstream os_;    \
+   os_ << s;                   \
+   OutputDebugString( os_.str().c_str() );  \
+}
 
 #endif
