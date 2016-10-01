@@ -54,18 +54,18 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(ProjectDir)..\..\Dependencies\DXUT-master\Core;$(ProjectDir)..\..\Dependencies\DXUT-master\Optional;$(ProjectDir)..\..\Dependencies\Microsoft DirectX SDK (June 2010)\Include;$(ProjectDir)..\..\Dependencies\FBX\include;$(ProjectDir)..\..\Dependencies\FreeImage\Dist\x32;$(ProjectDir)imgui;$(ProjectDir)..\..\Dependencies\boost_1_61_0;$(IncludePath)</IncludePath>
-    <LibraryPath>$(ProjectDir)..\..\Dependencies\DXUT-master\Optional\Bin\Desktop_2013\Win32\Release;$(ProjectDir)..\..\Dependencies\DXUT-master\Core\Bin\Desktop_2013\Win32\Release;$(ProjectDir)..\..\Dependencies\Microsoft DirectX SDK (June 2010)\Lib\x86;$(ProjectDir)..\..\Dependencies\FBX\lib\vs2013\x86\release;$(ProjectDir)..\..\Dependencies\FreeImage\Dist\x32;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir)..\..\Dependencies\DXUT-master\Core;$(ProjectDir)..\..\Dependencies\DXUT-master\Optional;$(ProjectDir)..\..\Dependencies\Microsoft DirectX SDK (June 2010)\Include;$(ProjectDir)..\..\Dependencies\FBX\include;$(ProjectDir)..\..\Dependencies\FreeImage\Dist\x32;$(ProjectDir)imgui;$(ProjectDir)..\..\Dependencies\boost_1_61_0;$(ProjectDir)..\..\Dependencies\libnoise\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)..\..\Dependencies\DXUT-master\Optional\Bin\Desktop_2013\Win32\Release;$(ProjectDir)..\..\Dependencies\DXUT-master\Core\Bin\Desktop_2013\Win32\Release;$(ProjectDir)..\..\Dependencies\Microsoft DirectX SDK (June 2010)\Lib\x86;$(ProjectDir)..\..\Dependencies\FBX\lib\vs2013\x86\release;$(ProjectDir)..\..\Dependencies\FreeImage\Dist\x32;$(ProjectDir)..\..\Dependencies\libnoise\bin;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugFast|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(ProjectDir)..\..\Dependencies\DXUT-master\Core;$(ProjectDir)..\..\Dependencies\DXUT-master\Optional;$(ProjectDir)..\..\Dependencies\Microsoft DirectX SDK (June 2010)\Include;$(ProjectDir)..\..\Dependencies\FBX\include;$(ProjectDir)..\..\Dependencies\FreeImage\Dist\x32;$(ProjectDir)imgui;$(ProjectDir)..\..\Dependencies\boost_1_61_0;$(IncludePath)</IncludePath>
-    <LibraryPath>$(ProjectDir)..\..\Dependencies\DXUT-master\Optional\Bin\Desktop_2013\Win32\Release;$(ProjectDir)..\..\Dependencies\DXUT-master\Core\Bin\Desktop_2013\Win32\Release;$(ProjectDir)..\..\Dependencies\Microsoft DirectX SDK (June 2010)\Lib\x86;$(ProjectDir)..\..\Dependencies\FBX\lib\vs2013\x86\release;$(ProjectDir)..\..\Dependencies\FreeImage\Dist\x32;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir)..\..\Dependencies\DXUT-master\Core;$(ProjectDir)..\..\Dependencies\DXUT-master\Optional;$(ProjectDir)..\..\Dependencies\Microsoft DirectX SDK (June 2010)\Include;$(ProjectDir)..\..\Dependencies\FBX\include;$(ProjectDir)..\..\Dependencies\FreeImage\Dist\x32;$(ProjectDir)imgui;$(ProjectDir)..\..\Dependencies\boost_1_61_0;$(ProjectDir)..\..\Dependencies\libnoise\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)..\..\Dependencies\DXUT-master\Optional\Bin\Desktop_2013\Win32\Release;$(ProjectDir)..\..\Dependencies\DXUT-master\Core\Bin\Desktop_2013\Win32\Release;$(ProjectDir)..\..\Dependencies\Microsoft DirectX SDK (June 2010)\Lib\x86;$(ProjectDir)..\..\Dependencies\FBX\lib\vs2013\x86\release;$(ProjectDir)..\..\Dependencies\FreeImage\Dist\x32;$(ProjectDir)..\..\Dependencies\libnoise\bin;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(ProjectDir)..\..\Dependencies\DXUT-master\Core;$(ProjectDir)..\..\Dependencies\DXUT-master\Optional;$(ProjectDir)..\..\Dependencies\Microsoft DirectX SDK (June 2010)\Include;$(ProjectDir)..\..\Dependencies\FBX\include;$(ProjectDir)..\..\Dependencies\FreeImage\Dist\x32;$(ProjectDir)imgui;$(ProjectDir)..\..\Dependencies\boost_1_61_0;$(IncludePath)</IncludePath>
-    <LibraryPath>$(ProjectDir)..\..\Dependencies\DXUT-master\Optional\Bin\Desktop_2013\Win32\Release;$(ProjectDir)..\..\Dependencies\DXUT-master\Core\Bin\Desktop_2013\Win32\Release;$(ProjectDir)..\..\Dependencies\Microsoft DirectX SDK (June 2010)\Lib\x86;$(ProjectDir)..\..\Dependencies\FBX\lib\vs2013\x86\release;$(ProjectDir)..\..\Dependencies\FreeImage\Dist\x32;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir)..\..\Dependencies\DXUT-master\Core;$(ProjectDir)..\..\Dependencies\DXUT-master\Optional;$(ProjectDir)..\..\Dependencies\Microsoft DirectX SDK (June 2010)\Include;$(ProjectDir)..\..\Dependencies\FBX\include;$(ProjectDir)..\..\Dependencies\FreeImage\Dist\x32;$(ProjectDir)imgui;$(ProjectDir)..\..\Dependencies\boost_1_61_0;$(ProjectDir)..\..\Dependencies\libnoise\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)..\..\Dependencies\DXUT-master\Optional\Bin\Desktop_2013\Win32\Release;$(ProjectDir)..\..\Dependencies\DXUT-master\Core\Bin\Desktop_2013\Win32\Release;$(ProjectDir)..\..\Dependencies\Microsoft DirectX SDK (June 2010)\Lib\x86;$(ProjectDir)..\..\Dependencies\FBX\lib\vs2013\x86\release;$(ProjectDir)..\..\Dependencies\FreeImage\Dist\x32;$(ProjectDir)..\..\Dependencies\libnoise\bin;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -79,7 +79,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>DXUT.lib;DXUTOpt.lib;dxerr.lib;dxguid.lib;comctl32.lib;dxgi.lib;d3d11.lib;d3dx11d.lib;d3dcompiler.lib;d3dx9d.lib;winmm.lib;D3DCompiler.lib;libfbxsdk-md.lib;FreeImage.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>DXUT.lib;DXUTOpt.lib;dxerr.lib;dxguid.lib;comctl32.lib;dxgi.lib;d3d11.lib;d3dx11d.lib;libnoise.lib;d3dcompiler.lib;d3dx9d.lib;winmm.lib;D3DCompiler.lib;libfbxsdk-md.lib;FreeImage.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DebugFast|Win32'">
@@ -95,7 +95,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>DXUT.lib;DXUTOpt.lib;dxerr.lib;dxguid.lib;comctl32.lib;dxgi.lib;d3d11.lib;d3dx11d.lib;d3dcompiler.lib;d3dx9d.lib;winmm.lib;D3DCompiler.lib;libfbxsdk-md.lib;FreeImage.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>DXUT.lib;DXUTOpt.lib;dxerr.lib;dxguid.lib;comctl32.lib;dxgi.lib;d3d11.lib;d3dx11d.lib;libnoise.lib;d3dcompiler.lib;d3dx9d.lib;winmm.lib;D3DCompiler.lib;libfbxsdk-md.lib;FreeImage.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -114,7 +114,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>DXUT.lib;DXUTOpt.lib;dxerr.lib;dxguid.lib;comctl32.lib;dxgi.lib;d3d11.lib;d3dx11d.lib;d3dcompiler.lib;d3dx9d.lib;winmm.lib;D3DCompiler.lib;libfbxsdk-md.lib;FreeImage.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>DXUT.lib;DXUTOpt.lib;dxerr.lib;dxguid.lib;comctl32.lib;dxgi.lib;d3d11.lib;d3dx11d.lib;libnoise.lib;d3dcompiler.lib;d3dx9d.lib;winmm.lib;D3DCompiler.lib;libfbxsdk-md.lib;FreeImage.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -138,10 +138,12 @@
     <ClCompile Include="GUI.cpp" />
     <ClCompile Include="imgui\imgui_impl_dx11.cpp" />
     <ClCompile Include="KeyChain.cpp" />
+    <ClCompile Include="libnoise\noiseutils.cpp" />
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="Noise.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="RendererComponent.cpp" />
     <ClCompile Include="Shader.cpp" />
@@ -154,6 +156,7 @@
     <ClCompile Include="VCT_Demo.cpp" />
     <ClCompile Include="VoronoiSolver.cpp" />
     <ClCompile Include="window.cpp" />
+    <ClCompile Include="World.cpp" />
     <ClCompile Include="WorldMapDemo.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -180,9 +183,11 @@
     <ClInclude Include="imgui\imgui_impl_dx11.h" />
     <ClInclude Include="includes.h" />
     <ClInclude Include="KeyChain.h" />
+    <ClInclude Include="libnoise\noiseutils.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="Mesh.h" />
+    <ClInclude Include="Noise.h" />
     <ClInclude Include="RenderComponent.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="Shader.h" />
@@ -195,6 +200,7 @@
     <ClInclude Include="VCT_Demo.h" />
     <ClInclude Include="VoronoiSolver.h" />
     <ClInclude Include="window.h" />
+    <ClInclude Include="World.h" />
     <ClInclude Include="WorldMapDemo.h" />
   </ItemGroup>
   <ItemGroup>

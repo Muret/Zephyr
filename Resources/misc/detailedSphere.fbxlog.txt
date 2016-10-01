@@ -1,0 +1,3 @@
+<node name= detailedSphere
+	<attribute type= mesh name=  />
+</node>

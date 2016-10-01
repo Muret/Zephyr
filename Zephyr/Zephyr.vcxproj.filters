@@ -16,8 +16,14 @@
     <Filter Include="Shaders">
       <UniqueIdentifier>{0b4a9d6d-8ab2-49ed-9f3a-94fbfcfb6842}</UniqueIdentifier>
     </Filter>
-    <Filter Include="imgui">
+    <Filter Include="external">
+      <UniqueIdentifier>{28fd2ece-7499-41eb-b94c-c025ad3ea530}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="external\imgui">
       <UniqueIdentifier>{0087fe4d-f5ec-4de1-9b78-7b8e947f3df8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="external\libnoise">
+      <UniqueIdentifier>{551e39ee-00b3-459b-970d-66fec56f4632}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -115,21 +121,30 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Dependencies\imgui-master\imgui_demo.cpp">
-      <Filter>imgui</Filter>
+      <Filter>external\imgui</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Dependencies\imgui-master\imgui_draw.cpp">
-      <Filter>imgui</Filter>
+      <Filter>external\imgui</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Dependencies\imgui-master\imgui.cpp">
-      <Filter>imgui</Filter>
+      <Filter>external\imgui</Filter>
     </ClCompile>
     <ClCompile Include="imgui\imgui_impl_dx11.cpp">
-      <Filter>imgui</Filter>
+      <Filter>external\imgui</Filter>
     </ClCompile>
     <ClCompile Include="WorldMapDemo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="VoronoiSolver.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Noise.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="libnoise\noiseutils.cpp">
+      <Filter>external\libnoise</Filter>
+    </ClCompile>
+    <ClCompile Include="World.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -225,30 +240,39 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Dependencies\imgui-master\imgui.h">
-      <Filter>imgui</Filter>
+      <Filter>external\imgui</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Dependencies\imgui-master\imgui_internal.h">
-      <Filter>imgui</Filter>
+      <Filter>external\imgui</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Dependencies\imgui-master\stb_rect_pack.h">
-      <Filter>imgui</Filter>
+      <Filter>external\imgui</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Dependencies\imgui-master\stb_textedit.h">
-      <Filter>imgui</Filter>
+      <Filter>external\imgui</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Dependencies\imgui-master\stb_truetype.h">
-      <Filter>imgui</Filter>
+      <Filter>external\imgui</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Dependencies\imgui-master\imconfig.h">
-      <Filter>imgui</Filter>
+      <Filter>external\imgui</Filter>
     </ClInclude>
     <ClInclude Include="imgui\imgui_impl_dx11.h">
-      <Filter>imgui</Filter>
+      <Filter>external\imgui</Filter>
     </ClInclude>
     <ClInclude Include="WorldMapDemo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="VoronoiSolver.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Noise.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="libnoise\noiseutils.h">
+      <Filter>external\libnoise</Filter>
+    </ClInclude>
+    <ClInclude Include="World.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

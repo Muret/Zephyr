@@ -93,6 +93,43 @@ Mesh * VoronoiSolver::get_triangulated_voronoi_mesh()
 	return voronoi_mesh;
 }
 
+Mesh * VoronoiSolver::get_triangulated_voronoi_mesh(const std::vector<VoronoiCellInfo>& voronoi_cells)
+{
+	Mesh *voronoi_mesh = new Mesh();
+	std::vector<Mesh::Vertex> vertices;
+	std::vector<int> indices;
+
+	for (int i = 0; i < voronoi_cells.size(); i++)
+	{
+		const std::vector<D3DXVECTOR2> &cell_vertices = voronoi_cells[i].vertices;
+
+		Mesh::Vertex new_vertex1;
+		new_vertex1.position = D3DXVECTOR4(cell_vertices[0].x, cell_vertices[0].y, 0, 1);
+		new_vertex1.color = D3DXVECTOR4(site_points_[i].color.x, site_points_[i].color.y, site_points_[i].color.z, 1);
+
+		for (int j = 0; j < cell_vertices.size() - 2; j++)
+		{
+			Mesh::Vertex new_vertex2;
+			new_vertex2.position = D3DXVECTOR4(cell_vertices[j+1].x, cell_vertices[j+1].y, 0, 1);
+			new_vertex2.color = D3DXVECTOR4(site_points_[i].color.x, site_points_[i].color.y, site_points_[i].color.z, 1);
+
+			Mesh::Vertex new_vertex3;
+			new_vertex3.position = D3DXVECTOR4(cell_vertices[j+2].x, cell_vertices[j+2].y, 0, 1);
+			new_vertex3.color = D3DXVECTOR4(site_points_[i].color.x, site_points_[i].color.y, site_points_[i].color.z, 1);
+
+			indices.push_back(vertices.size());
+			vertices.push_back(new_vertex1);
+			indices.push_back(vertices.size());
+			vertices.push_back(new_vertex2);
+			indices.push_back(vertices.size());
+			vertices.push_back(new_vertex3);
+		}
+	}
+
+	voronoi_mesh->create_from_buffers(vertices, indices);
+	return voronoi_mesh;
+}
+
 Mesh * VoronoiSolver::get_edge_line_mesh(float smoothing_amount)
 {
 	Mesh *line_mesh = new Mesh();
@@ -168,6 +205,124 @@ Mesh * VoronoiSolver::get_edge_line_mesh(float smoothing_amount)
 
 	line_mesh->create_from_buffers(vertices, indices);
 	return line_mesh;
+}
+
+void VoronoiSolver::set_site_colors(const std::vector<D3DXVECTOR3>& colors)
+{
+	_ASSERT(colors.size() == site_points_.size());
+	for (int i = 0; i < colors.size(); i++)
+	{
+		site_points_[i].color = colors[i];
+	}
+}
+
+void VoronoiSolver::write_to_file(std::string name)
+{
+	std::vector<VoronoiCellInfo> voronoi_cells;
+	for (voronoi_diagram<double>::const_cell_iterator it = vd_->cells().begin(); it != vd_->cells().end(); ++it)
+	{
+		const voronoi_diagram<double>::cell_type& cell = *it;
+		const voronoi_diagram<double>::edge_type* edge = cell.incident_edge();
+		// This is convenient way to iterate edges around Voronoi cell.
+
+		if (cell.contains_point() && edge && edge->vertex0())
+		{
+			VoronoiCellInfo cell_info;
+			cell_info.center = site_points_[cell.source_index()].point;
+
+			const voronoi_diagram<double>::edge_type* cur_edge = edge;
+
+			while (cur_edge)
+			{
+				const voronoi_diagram<double>::vertex_type* v0 = cur_edge->vertex0();
+
+				if (v0)
+				{
+					cell_info.vertices.push_back(D3DXVECTOR2(v0->x(), v0->y()));
+				}
+
+				cur_edge = cur_edge->next();
+
+				if (cur_edge == cell.incident_edge())
+				{
+					break;
+				}
+			}
+
+			voronoi_cells.push_back(cell_info);
+		}
+	}
+
+	ofstream file(name, ios::out | ios::binary);
+
+	int cell_count = voronoi_cells.size();
+	file.write((char*)&cell_count,sizeof(int));
+	for (int i = 0; i < voronoi_cells.size(); i++)
+	{
+		float center_x = voronoi_cells[i].center.x;
+		float center_y = voronoi_cells[i].center.y;
+
+		file.write((char*)&center_x, sizeof(float));
+		file.write((char*)&center_y, sizeof(float));
+
+		int count = voronoi_cells[i].vertices.size();
+		file.write((char*)&count, sizeof(int));
+
+		for (int j = 0; j < count; j++)
+		{
+			float x = voronoi_cells[i].vertices[j].x;
+			float y = voronoi_cells[i].vertices[j].y;
+
+			file.write((char*)&x, sizeof(float));
+			file.write((char*)&y, sizeof(float));
+		}
+	}
+
+	file.close();
+}
+
+void VoronoiSolver::read_from_file(std::string name, std::vector<VoronoiCellInfo>& voronoi_cells)
+{
+	site_points_.clear();
+
+	ifstream file(name, ios::in | ios::binary);
+
+	int cell_count = 0;
+	file.read((char*)&cell_count, sizeof(int));
+
+	for (int i = 0; i < cell_count; i++)
+	{
+		VoronoiCellInfo new_cell;
+		
+		float center_x, center_y;
+		file.read((char*)&center_x, sizeof(float));
+		file.read((char*)&center_y, sizeof(float));
+		
+		new_cell.center = D3DXVECTOR2(center_x, center_y);
+
+		int vertices_count;
+		file.read((char*)&vertices_count, sizeof(int));
+
+		for (int j = 0; j < vertices_count; j++)
+		{
+			float vert_x, vert_y;
+			file.read((char*)&vert_x, sizeof(float));
+			file.read((char*)&vert_y, sizeof(float));
+
+			new_cell.vertices.push_back(D3DXVECTOR2(vert_x, vert_y));
+		}
+
+		voronoi_cells.push_back(new_cell);
+
+		VoronoiSite new_site;
+		new_site.point = new_cell.center;
+		new_site.color = D3DXVECTOR3(1, 1, 1);
+
+		site_points_.push_back(new_site);
+	}
+
+	file.close();
+
 }
 
 void VoronoiSolver::increment_uniformity(std::vector<VoronoiSite>& new_points)
