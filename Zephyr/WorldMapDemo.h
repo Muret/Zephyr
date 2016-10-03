@@ -10,6 +10,7 @@ using namespace Evolution;
 
 class FreeCameraController;
 class Scene;
+class WorldInstance;
 
 class WorldMapDemo : public DemoBase
 {
@@ -47,13 +48,10 @@ private:
 
 	void read_voronoi_from_file(std::string name);
 
-	static const int max_precision;
-	static const int half_max_precision;
-	static const float inv_half_max_precision;
+	void tick_world();
 
 	//Evolution
-	WorldInstance *world_instance_;
-
+	Evolution::WorldInstance *world_instance_;
 };
 
 #endif

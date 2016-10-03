@@ -6,21 +6,19 @@
 #include "ResourceManager.h"
 #include "Renderer.h"
 #include "Noise.h"
-
-const int WorldMapDemo::max_precision = RAND_MAX;
-const int WorldMapDemo::half_max_precision = max_precision / 2;
-const float WorldMapDemo::inv_half_max_precision = 1.0f / half_max_precision;
+#include "World.h"
 
 WorldMapDemo::WorldMapDemo() : DemoBase("WorldMapDemo")
 {
 	camera_controller_ = nullptr;
 	last_voronoi_mesh_ = nullptr;
 	seed_ = 0;
-	number_of_smooth_operations_ = 4;
+	number_of_smooth_operations_ = 0;
 	smoothing_amount_ = 0.5f;
 	noise_octave_count_ = 5;
 	center_height_modifier_ = 1.0f;
 	show_site_centers_ = false;
+	number_of_sites_ = 40000;
 }
 
 WorldMapDemo::~WorldMapDemo()
@@ -40,10 +38,9 @@ void WorldMapDemo::initialize()
 	renderer->set_scene_to_render(scene_);
 	renderer->set_camera_controller(camera_controller_);
 
-	number_of_sites_ = 7000;
 	//create_random_world_map();
 
-	//read_voronoi_from_file("voronoi.bin");
+	read_voronoi_from_file("voronoi.bin");
 }
 
 void WorldMapDemo::tick(float dt)
@@ -88,14 +85,14 @@ void WorldMapDemo::tick(float dt)
 		read_voronoi_from_file("voronoi.bin");
 	}
 
-
-
 	if (recolor)
 	{
 		recolor_world_map();
 	}
 
 	ImGui::End();
+
+	tick_world();
 }
 
 void WorldMapDemo::on_key_up(char key)
@@ -109,17 +106,11 @@ void WorldMapDemo::create_random_world_map()
 	srand(seed_);
 	for (int i = 0; i < number_of_sites_; i++)
 	{
-		int x_int = (rand() % half_max_precision) * 2;
-		x_int -= half_max_precision;
-	
-		int y_int = (rand() % half_max_precision) * 2;
-		y_int -= half_max_precision;
-	
-		float x = (float)x_int * inv_half_max_precision;
-		float y = (float)y_int * inv_half_max_precision;
+		float x = (float(rand() % RAND_MAX) / (float)RAND_MAX) * 2.0f - 1.0f;
+		float y = (float(rand() % RAND_MAX) / (float)RAND_MAX) * 2.0f - 1.0f;
 	
 		VoronoiSolver::VoronoiSite new_site;
-		new_site.point = D3DXVECTOR2(x_int, y_int);
+		new_site.point = D3DXVECTOR3(x, y, 0);
 		new_site.color = D3DXVECTOR3(0, 0, 0);
 		cur_sites_.push_back(new_site);
 	}
@@ -127,10 +118,11 @@ void WorldMapDemo::create_random_world_map()
 	cur_solver_.calculate(cur_sites_);
 	for (int i = 0; i < number_of_smooth_operations_; i++)
 	{
-		cur_sites_.clear();
-		cur_solver_.increment_uniformity(cur_sites_);
-		cur_solver_.calculate(cur_sites_);
+		cur_solver_.increment_uniformity();
 	}
+
+	cur_sites_.clear();
+	cur_solver_.get_site_points(cur_sites_);
 
 	recolor_world_map();
 }
@@ -151,14 +143,14 @@ void WorldMapDemo::recolor_world_map()
 	std::vector<D3DXVECTOR3> new_colors;
 	for (int i = 0; i < number_of_sites_; i++)
 	{
-		D3DXVECTOR2 current_position = cur_sites_[i].point * inv_half_max_precision;
+		D3DXVECTOR2 current_position = cur_sites_[i].point;
 		float distance_to_center = abs(D3DXVec2Dot(&current_position, &current_position));
 
 		float height = noise_gen.get_heightmap_value(current_position);
+		cur_sites_[i].point.z = height;
 
 		D3DXVECTOR4 color = get_color_of_point(height);
 		new_colors.push_back(D3DXVECTOR3(color.x, color.y, color.z));
-
 	}
 
 	cur_solver_.set_site_colors(new_colors);
@@ -173,8 +165,8 @@ void WorldMapDemo::recolor_world_map()
 			int x_int = cur_sites_[i].point.x;
 			int y_int = cur_sites_[i].point.y;
 
-			float x = (float)x_int * inv_half_max_precision;
-			float y = (float)y_int * inv_half_max_precision;
+			float x = (float)x_int;
+			float y = (float)y_int;
 
 			D3DXMATRIX new_frame;
 			D3DXMatrixIdentity(&new_frame);
@@ -190,17 +182,9 @@ void WorldMapDemo::recolor_world_map()
 		}
 	}
 
-	D3DXMATRIX voronoi_mesh_frame;
-	D3DXMatrixIdentity(&voronoi_mesh_frame);
-	voronoi_mesh_frame.m[0][0] = (1.0f / (float)half_max_precision);
-	voronoi_mesh_frame.m[1][1] = (1.0f / (float)half_max_precision);
-	voronoi_mesh_frame.m[2][2] = (1.0f / (float)half_max_precision);
-
 	last_voronoi_mesh_ = cur_solver_.get_triangulated_voronoi_mesh();
 	//last_voronoi_mesh_ = cur_solver_.get_edge_line_mesh(smoothing_amount_);
-	last_voronoi_mesh_->set_frame(voronoi_mesh_frame);
 	scene_->add_mesh(last_voronoi_mesh_);
-	//last_voronoi_mesh_->set_wireframe(true);
 }
 
 D3DXVECTOR4 WorldMapDemo::get_color_of_point(float value) const
@@ -220,14 +204,13 @@ D3DXVECTOR4 WorldMapDemo::get_color_of_point(float value) const
 	};
 
 	static std::vector<ColorPoint> points;
-	points.push_back(ColorPoint(-1, -0.25, D3DXVECTOR3(0, 0, 128) / 255.0f));
-	points.push_back(ColorPoint(-0.25, 0, D3DXVECTOR3(0, 255, 255) / 255.0f));
-	points.push_back(ColorPoint(0, 0.0625, D3DXVECTOR3(0, 128, 255) / 255.0f));
-	points.push_back(ColorPoint(0.0625, 0.125, D3DXVECTOR3(240, 240, 64) / 255.0f));
-	points.push_back(ColorPoint(0.125, 0.3750, D3DXVECTOR3(32, 160, 0) / 255.0f));
-	points.push_back(ColorPoint(0.3750, 0.750, D3DXVECTOR3(224, 224, 0) / 255.0f));
-	points.push_back(ColorPoint(0.750, 1, D3DXVECTOR3(128, 128, 128) / 255.0f));
-	points.push_back(ColorPoint(1, 10, D3DXVECTOR3(255, 255, 255) / 255.0f));
+	points.push_back(ColorPoint(-1, -0.25, D3DXVECTOR3(0, 0, 128) / 255.0f));					//sea
+	points.push_back(ColorPoint(-0.25, 0, D3DXVECTOR3(0, 255, 255) / 255.0f));					//shore
+	points.push_back(ColorPoint(0, 0.125, D3DXVECTOR3(240, 240, 64) / 255.0f));					//sand
+	points.push_back(ColorPoint(0.125, 0.3750, D3DXVECTOR3(32, 160, 0) / 255.0f));				//grass
+	points.push_back(ColorPoint(0.3750, 0.750, D3DXVECTOR3(16, 80, 0) / 255.0f));				//forest
+	points.push_back(ColorPoint(0.750, 1, D3DXVECTOR3(128, 128, 128) / 255.0f));				//rocky
+	points.push_back(ColorPoint(1, 10, D3DXVECTOR3(255, 255, 255) / 255.0f));					//snow
 
 	for (int i = 0; i < points.size() - 1; i++)
 	{
@@ -246,37 +229,51 @@ void WorldMapDemo::read_voronoi_from_file(std::string name)
 	SAFE_DELETE(last_voronoi_mesh_);
 	scene_->clear_meshes();
 
-	std::vector<VoronoiSolver::VoronoiCellInfo> sites;
-	cur_solver_.read_from_file(name, sites);
+	cur_solver_.read_from_file(name);
 
-	NoiseInstance::NoiseGeneratorParams noise_params;
-	noise_params.seed_ = seed_;
-	noise_params.number_of_octaves_ = noise_octave_count_;
-	noise_params.noise_frequency = noise_frequency_;
+	cur_solver_.get_site_points(cur_sites_);
 
-	NoiseInstance noise_gen;
-	noise_gen.build_2d_heightmap(D3DXVECTOR2(-1, -1), D3DXVECTOR2(1, 1), D3DXVECTOR2(2048, 1024), noise_params);
+	//NoiseInstance::NoiseGeneratorParams noise_params;
+	//noise_params.seed_ = seed_;
+	//noise_params.number_of_octaves_ = noise_octave_count_;
+	//noise_params.noise_frequency = noise_frequency_;
+	//
+	//NoiseInstance noise_gen;
+	//noise_gen.build_2d_heightmap(D3DXVECTOR2(-1, -1), D3DXVECTOR2(1, 1), D3DXVECTOR2(2048, 1024), noise_params);
+	//
+	//std::vector<D3DXVECTOR3> new_colors;
+	//for (int i = 0; i < cur_sites_.size(); i++)
+	//{
+	//	float height = noise_gen.get_heightmap_value(D3DXVECTOR2(cur_sites_[i].point.x , cur_sites_[i].point.y));
+	//
+	//	D3DXVECTOR4 color = get_color_of_point(height);
+	//	new_colors.push_back(D3DXVECTOR3(color.x, color.y, color.z));
+	//}
 
-	std::vector<D3DXVECTOR3> new_colors;
-	for (int i = 0; i < sites.size(); i++)
+	//cur_solver_.set_site_colors(new_colors);
+
+	last_voronoi_mesh_ = cur_solver_.get_triangulated_voronoi_mesh();
+	scene_->add_mesh(last_voronoi_mesh_);
+
+}
+
+void WorldMapDemo::tick_world()
+{
+	ImGui::Begin("World Simulation");
+
+	//ImGui::Columns(3, "Mixed");
+
+	if (ImGui::Button("Start"))
 	{
-		float height = noise_gen.get_heightmap_value(sites[i].center * inv_half_max_precision);
-
-		D3DXVECTOR4 color = get_color_of_point(height);
-		new_colors.push_back(D3DXVECTOR3(color.x, color.y, color.z));
+		world_instance_ = new Evolution::WorldInstance(seed_, cur_sites_);
 	}
 
-	cur_solver_.set_site_colors(new_colors);
+	ImGui::End();
 
-	D3DXMATRIX voronoi_mesh_frame;
-	D3DXMatrixIdentity(&voronoi_mesh_frame);
-	voronoi_mesh_frame.m[0][0] = (1.0f / (float)half_max_precision);
-	voronoi_mesh_frame.m[1][1] = (1.0f / (float)half_max_precision);
-	voronoi_mesh_frame.m[2][2] = (1.0f / (float)half_max_precision);
-
-	last_voronoi_mesh_ = cur_solver_.get_triangulated_voronoi_mesh(sites);
-	last_voronoi_mesh_->set_frame(voronoi_mesh_frame);
-	scene_->add_mesh(last_voronoi_mesh_);
+	if (world_instance_)
+	{
+		world_instance_->tick();
+	}
 
 }
 

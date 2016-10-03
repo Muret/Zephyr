@@ -72,30 +72,28 @@ public:
 	
 	struct VoronoiSite
 	{
-		D3DXVECTOR2 point;
+		D3DXVECTOR3 point;
 		D3DXVECTOR3 color;
-	};
-
-	struct VoronoiCellInfo
-	{
-		D3DXVECTOR2 center;
-		std::vector<D3DXVECTOR2> vertices;
+		vector<D3DXVECTOR2> vertices;
+		vector<int> neighbours;
 	};
 
 	VoronoiSolver();
 	~VoronoiSolver();
 
 	void calculate(const std::vector<VoronoiSite> &points);
-	void increment_uniformity(std::vector<VoronoiSite> &new_points);
+	void increment_uniformity();
 
 	Mesh* get_triangulated_voronoi_mesh();
-	Mesh* get_triangulated_voronoi_mesh(const std::vector<VoronoiCellInfo> &voronoi_cells);
 	Mesh* get_edge_line_mesh(float smoothing_amount);
 
 	void set_site_colors(const std::vector<D3DXVECTOR3> &color);
+	void get_site_points(std::vector<VoronoiSite> &) const;
 
 	void write_to_file(std::string name);
-	void read_from_file(std::string name, std::vector<VoronoiCellInfo> &voronoi_cells);
+	void read_from_file(std::string name);
+
+	static const float scale_amount;
 
 private:
 	voronoi_diagram<double> *vd_;
