@@ -21,7 +21,7 @@ void KeyChain::pre_tick()
 
 bool KeyChain::key(int key) const
 {
-	_ASSERT(key >= 0 && key < 256);
+	ZEPHYR_ASSERT(key >= 0 && key < 256);
 	return keys[key];
 }
 

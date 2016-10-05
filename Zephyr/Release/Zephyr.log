@@ -1,51 +1,59 @@
-﻿  CatmullClark.cpp
-CatmullClark.cpp(97): warning C4018: '<' : signed/unsigned mismatch
-CatmullClark.cpp(106): warning C4018: '<' : signed/unsigned mismatch
-CatmullClark.cpp(138): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
-CatmullClark.cpp(183): warning C4244: 'argument' : conversion from 'int' to 'FLOAT', possible loss of data
-CatmullClark.cpp(191): warning C4244: 'argument' : conversion from 'int' to 'FLOAT', possible loss of data
-CatmullClark.cpp(195): warning C4244: 'argument' : conversion from 'int' to 'FLOAT', possible loss of data
-CatmullClark.cpp(199): warning C4018: '<' : signed/unsigned mismatch
-CatmullClark.cpp(222): warning C4018: '<' : signed/unsigned mismatch
-CatmullClark.cpp(249): warning C4101: 'edge_3' : unreferenced local variable
-CatmullClark.cpp(247): warning C4101: 'edge_2' : unreferenced local variable
-CatmullClark.cpp(281): warning C4101: 'edge_3' : unreferenced local variable
-CatmullClark.cpp(279): warning C4101: 'edge_2' : unreferenced local variable
-CatmullClark.cpp(314): warning C4018: '<' : signed/unsigned mismatch
-CatmullClark.cpp(346): warning C4018: '<' : signed/unsigned mismatch
-CatmullClark.cpp(424): warning C4018: '<' : signed/unsigned mismatch
-CatmullClark.cpp(487): warning C4018: '<' : signed/unsigned mismatch
-CatmullClark.cpp(496): warning C4018: '<' : signed/unsigned mismatch
-CatmullClark.cpp(506): warning C4018: '<' : signed/unsigned mismatch
-CatmullClark.cpp(511): warning C4018: '<' : signed/unsigned mismatch
-CatmullClark.cpp(540): warning C4018: '<' : signed/unsigned mismatch
-  CatmullClark_Demo.cpp
-  Demo.cpp
-  FBXSceneImporter.cpp
-FBXSceneImporter.cpp(276): warning C4244: '=' : conversion from 'fbxsdk::FbxDouble' to 'FLOAT', possible loss of data
-FBXSceneImporter.cpp(277): warning C4244: '=' : conversion from 'fbxsdk::FbxDouble' to 'FLOAT', possible loss of data
-FBXSceneImporter.cpp(278): warning C4244: '=' : conversion from 'fbxsdk::FbxDouble' to 'FLOAT', possible loss of data
-FBXSceneImporter.cpp(351): warning C4244: 'argument' : conversion from 'fbxsdk::FbxDouble' to 'FLOAT', possible loss of data
-FBXSceneImporter.cpp(543): warning C4244: 'argument' : conversion from 'fbxsdk::FbxDouble' to 'FLOAT', possible loss of data
-FBXSceneImporter.cpp(563): warning C4244: '=' : conversion from 'fbxsdk::FbxDouble' to 'float', possible loss of data
-FBXSceneImporter.cpp(575): warning C4244: 'argument' : conversion from 'fbxsdk::FbxDouble' to 'FLOAT', possible loss of data
-FBXSceneImporter.cpp(576): warning C4244: 'argument' : conversion from 'fbxsdk::FbxDouble' to 'FLOAT', possible loss of data
-FBXSceneImporter.cpp(586): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
-FBXSceneImporter.cpp(587): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
-FBXSceneImporter.cpp(588): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
-FBXSceneImporter.cpp(592): warning C4244: '=' : conversion from 'fbxsdk::FbxDouble' to 'float', possible loss of data
-FBXSceneImporter.cpp(593): warning C4244: '=' : conversion from 'fbxsdk::FbxDouble' to 'float', possible loss of data
-FBXSceneImporter.cpp(594): warning C4244: '=' : conversion from 'fbxsdk::FbxDouble' to 'float', possible loss of data
-FBXSceneImporter.cpp(595): warning C4244: '=' : conversion from 'fbxsdk::FbxDouble' to 'float', possible loss of data
-FBXSceneImporter.cpp(597): warning C4244: '=' : conversion from 'fbxsdk::FbxDouble' to 'float', possible loss of data
-FBXSceneImporter.cpp(598): warning C4244: '=' : conversion from 'fbxsdk::FbxDouble' to 'float', possible loss of data
-FBXSceneImporter.cpp(599): warning C4244: '=' : conversion from 'fbxsdk::FbxDouble' to 'float', possible loss of data
-FBXSceneImporter.cpp(600): warning C4244: '=' : conversion from 'fbxsdk::FbxDouble' to 'float', possible loss of data
-FBXSceneImporter.cpp(602): warning C4244: '=' : conversion from 'fbxsdk::FbxDouble' to 'float', possible loss of data
-FBXSceneImporter.cpp(603): warning C4244: '=' : conversion from 'fbxsdk::FbxDouble' to 'float', possible loss of data
-FBXSceneImporter.cpp(604): warning C4244: '=' : conversion from 'fbxsdk::FbxDouble' to 'float', possible loss of data
-FBXSceneImporter.cpp(605): warning C4244: '=' : conversion from 'fbxsdk::FbxDouble' to 'float', possible loss of data
-FBXSceneImporter.cpp(607): warning C4244: '=' : conversion from 'fbxsdk::FbxDouble' to 'float', possible loss of data
-FBXSceneImporter.cpp(608): warning C4244: '=' : conversion from 'fbxsdk::FbxDouble' to 'float', possible loss of data
-FBXSceneImporter.cpp(609): warning C4244: '=' : conversion from 'fbxsdk::FbxDouble' to 'float', possible loss of data
-FBXSceneImporter.cpp(610): warning C4244: '=' : conversion from 'fbxsdk::FbxDouble' to 'float', possible loss of data
+﻿  World.cpp
+c:\users\murat\documents\github\zephyr\zephyr\World.h(436): warning C4244: 'return' : conversion from 'const float' to 'int', possible loss of data
+World.cpp(51): warning C4305: 'argument' : truncation from 'double' to 'float'
+World.cpp(52): warning C4305: 'argument' : truncation from 'double' to 'float'
+World.cpp(57): warning C4305: 'argument' : truncation from 'double' to 'float'
+World.cpp(84): warning C4244: 'initializing' : conversion from 'float' to 'int', possible loss of data
+World.cpp(95): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+World.cpp(97): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
+World.cpp(131): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+World.cpp(132): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
+World.cpp(138): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+World.cpp(139): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
+World.cpp(221): warning C4018: '<' : signed/unsigned mismatch
+World.cpp(245): warning C4018: '<' : signed/unsigned mismatch
+World.cpp(280): warning C4244: 'initializing' : conversion from 'float' to 'int', possible loss of data
+World.cpp(321): warning C4018: '<' : signed/unsigned mismatch
+World.cpp(349): warning C4018: '<' : signed/unsigned mismatch
+World.cpp(354): warning C4018: '<' : signed/unsigned mismatch
+World.cpp(421): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+World.cpp(433): warning C4244: 'initializing' : conversion from 'float' to 'int', possible loss of data
+World.cpp(435): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+World.cpp(457): warning C4018: '<' : signed/unsigned mismatch
+World.cpp(485): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+World.cpp(486): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+World.cpp(487): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+World.cpp(489): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+World.cpp(501): warning C4244: 'initializing' : conversion from 'float' to 'int', possible loss of data
+World.cpp(565): warning C4305: '*=' : truncation from 'double' to 'float'
+World.cpp(607): warning C4244: '=' : conversion from 'int' to 'float', possible loss of data
+World.cpp(613): warning C4244: 'initializing' : conversion from 'int' to 'float', possible loss of data
+World.cpp(614): warning C4018: '<' : signed/unsigned mismatch
+World.cpp(623): warning C4018: '<' : signed/unsigned mismatch
+World.cpp(637): warning C4305: 'initializing' : truncation from 'double' to 'const float'
+World.cpp(641): warning C4018: '<' : signed/unsigned mismatch
+World.cpp(650): warning C4018: '<' : signed/unsigned mismatch
+World.cpp(678): warning C4018: '<' : signed/unsigned mismatch
+World.cpp(684): warning C4244: 'initializing' : conversion from 'float' to 'int', possible loss of data
+World.cpp(722): warning C4018: '<' : signed/unsigned mismatch
+World.cpp(738): warning C4244: 'initializing' : conversion from 'float' to 'int', possible loss of data
+World.cpp(754): warning C4018: '<' : signed/unsigned mismatch
+World.cpp(763): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+World.cpp(773): warning C4018: '<' : signed/unsigned mismatch
+World.cpp(789): warning C4018: '<' : signed/unsigned mismatch
+World.cpp(997): warning C4305: 'argument' : truncation from 'double' to 'float'
+World.cpp(998): warning C4305: 'argument' : truncation from 'double' to 'float'
+World.cpp(1001): warning C4018: '<' : signed/unsigned mismatch
+World.cpp(1005): warning C4018: '<' : signed/unsigned mismatch
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\utility(157): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+          World.cpp(51) : see reference to function template instantiation 'std::pair<std::string,float>::pair<const char*,double,void>(std::pair<const char *,double> &&)' being compiled
+          World.cpp(51) : see reference to function template instantiation 'std::pair<std::string,float>::pair<const char*,double,void>(std::pair<const char *,double> &&)' being compiled
+  Generating code
+c:\users\murat\documents\github\zephyr\zephyr\d11.cpp(388): warning C4715: 'init_engine' : not all control paths return a value
+  Finished generating code
+DXUT.lib(DXUT.obj) : warning LNK4099: PDB 'dxut.pdb' was not found with 'DXUT.lib(DXUT.obj)' or at 'C:\Users\Murat\Documents\GitHub\Zephyr\Release\dxut.pdb'; linking object as if no debug info
+DXUT.lib(DXUTmisc.obj) : warning LNK4099: PDB 'dxut.pdb' was not found with 'DXUT.lib(DXUTmisc.obj)' or at 'C:\Users\Murat\Documents\GitHub\Zephyr\Release\dxut.pdb'; linking object as if no debug info
+DXUT.lib(DXUTDevice11.obj) : warning LNK4099: PDB 'dxut.pdb' was not found with 'DXUT.lib(DXUTDevice11.obj)' or at 'C:\Users\Murat\Documents\GitHub\Zephyr\Release\dxut.pdb'; linking object as if no debug info
+DXUT.lib(DXErr.obj) : warning LNK4099: PDB 'dxut.pdb' was not found with 'DXUT.lib(DXErr.obj)' or at 'C:\Users\Murat\Documents\GitHub\Zephyr\Release\dxut.pdb'; linking object as if no debug info
+DXUT.lib(Screengrab.obj) : warning LNK4099: PDB 'dxut.pdb' was not found with 'DXUT.lib(Screengrab.obj)' or at 'C:\Users\Murat\Documents\GitHub\Zephyr\Release\dxut.pdb'; linking object as if no debug info
+  Zephyr.vcxproj -> C:\Users\Murat\Documents\GitHub\Zephyr\Release\Zephyr.exe

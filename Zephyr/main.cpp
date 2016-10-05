@@ -69,6 +69,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pScmdline,
 
 		key_chain.tick();
 
+		//ImGui::ShowTestWindow();
+
 		Utilities::tick();
 
 		current_demo->tick(0);

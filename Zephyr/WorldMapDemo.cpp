@@ -41,6 +41,7 @@ void WorldMapDemo::initialize()
 	//create_random_world_map();
 
 	read_voronoi_from_file("voronoi.bin");
+	world_instance_ = new Evolution::WorldInstance(seed_, cur_sites_);
 }
 
 void WorldMapDemo::tick(float dt)
@@ -259,16 +260,6 @@ void WorldMapDemo::read_voronoi_from_file(std::string name)
 
 void WorldMapDemo::tick_world()
 {
-	ImGui::Begin("World Simulation");
-
-	//ImGui::Columns(3, "Mixed");
-
-	if (ImGui::Button("Start"))
-	{
-		world_instance_ = new Evolution::WorldInstance(seed_, cur_sites_);
-	}
-
-	ImGui::End();
 
 	if (world_instance_)
 	{

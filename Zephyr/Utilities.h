@@ -24,6 +24,25 @@ public:
 
 	static void tick();
 
+	static string formatted_string(const char* fmt, ...)
+	{
+		int size = 2048;
+		char* buffer = 0;
+		buffer = new char[size];
+		va_list vl;
+		va_start(vl, fmt);
+		int nsize = vsnprintf(buffer, size, fmt, vl);
+		if (size <= nsize) { //fail delete buffer and try again
+			delete[] buffer;
+			buffer = 0;
+			buffer = new char[nsize + 1]; //+1 for /0
+			nsize = vsnprintf(buffer, size, fmt, vl);
+		}
+		std::string ret(buffer);
+		va_end(vl);
+		delete[] buffer;
+		return ret;
+	}
 
 private:
 	static D3DXVECTOR4 debug_vector;

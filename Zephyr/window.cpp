@@ -48,8 +48,8 @@ void openWindow()
 
 
 	// If windowed then set it to 800x600 resolution.
-	g_screenWidth = 1024;
-	g_screenHeight = 1024;
+	g_screenWidth = 1920;
+	g_screenHeight = 1080;
 
 	// Place the window in the middle of the screen.
 	posX = 500;
@@ -60,7 +60,7 @@ void openWindow()
 	g_hwnd = CreateWindowEx(	0,
 								"Demo",    // name of the window class
 								"Muret Demo",   // title of the window
-								WS_OVERLAPPEDWINDOW,    // window style
+								WS_POPUP,    // window style
 								posX,    // x-position of the window
 								posY,    // y-position of the window
 								g_screenWidth,    // width of the window
@@ -69,6 +69,8 @@ void openWindow()
 								NULL,    // we aren't using menus, NULL
 								g_hinstance,    // application handles
 								NULL);    // used with multiple windows, NULL
+
+	MoveWindow(g_hwnd, 0, 0, g_screenWidth, g_screenHeight, true);
 
 	int TimmerID = SetTimer( g_hwnd , 0 , 1000 , NULL);
 

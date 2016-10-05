@@ -203,7 +203,7 @@ Mesh * VoronoiSolver::get_edge_line_mesh(float smoothing_amount)
 
 void VoronoiSolver::set_site_colors(const std::vector<D3DXVECTOR3>& colors)
 {
-	_ASSERT(colors.size() == site_points_.size());
+	ZEPHYR_ASSERT(colors.size() == site_points_.size());
 	for (int i = 0; i < colors.size(); i++)
 	{
 		site_points_[i].color = colors[i];

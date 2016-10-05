@@ -226,7 +226,7 @@ void GPUVoxelOcctree::create_debug_render_mesh()
 			offset.z *= z_index;
 			D3DXVECTOR3 next_middle = cur_middle + offset;
 
-			_ASSERT(child_index != 0);
+			ZEPHYR_ASSERT(child_index != 0);
 
 			if (cur_child_node->is_leaf_index)
 			{
@@ -301,9 +301,9 @@ D3DXVECTOR3 GPUVoxelOcctree::sample_brick(float * brick_set, const D3DXVECTOR3 &
 		return D3DXVECTOR4(data[linear_index], data[linear_index + 1], data[linear_index + 2], data[linear_index + 3]);
 	};
 
-	_ASSERT(inside_index.x >= 0 && inside_index.x <= 1);
-	_ASSERT(inside_index.y >= 0 && inside_index.y <= 1);
-	_ASSERT(inside_index.z >= 0 && inside_index.z <= 1);
+	ZEPHYR_ASSERT(inside_index.x >= 0 && inside_index.x <= 1);
+	ZEPHYR_ASSERT(inside_index.y >= 0 && inside_index.y <= 1);
+	ZEPHYR_ASSERT(inside_index.z >= 0 && inside_index.z <= 1);
 
 	D3DXVECTOR4 result = D3DXVECTOR4(0, 0, 0, 0);
 

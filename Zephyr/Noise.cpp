@@ -57,8 +57,8 @@ void NoiseInstance::build_2d_heightmap(const D3DXVECTOR2 & min, const D3DXVECTOR
 
 float NoiseInstance::get_heightmap_value(const D3DXVECTOR2 & pos)
 {
-	_ASSERT(pos.x < max_.x && pos.y < max_.y);
-	_ASSERT(pos.x > min_.x && pos.y > min_.y);
+	ZEPHYR_ASSERT(pos.x < max_.x && pos.y < max_.y);
+	ZEPHYR_ASSERT(pos.x > min_.x && pos.y > min_.y);
 
 	D3DXVECTOR2 length = max_ - min_;
 	int pixel_x = (pos.x - min_.x) / length.x * resolution_.x;

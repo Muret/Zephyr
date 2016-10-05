@@ -150,7 +150,7 @@ void GPUBasedPipeline::GPUBasedRenderer::set_scene(Scene * scene)
 			}
 			else
 			{
-				_ASSERT(false);
+				ZEPHYR_ASSERT(false);
 			}
 
 		}

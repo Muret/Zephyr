@@ -67,7 +67,7 @@ void GPUBuffer::create_buffer(int bytewidth, int number_of_elements, void *initi
 	init_data.SysMemSlicePitch = 0;
 
 	HRESULT res = g_device->CreateBuffer(&desc, initial_data ? &init_data : NULL, &buffer_);
-	_ASSERT(SUCCEEDED(res));
+	ZEPHYR_ASSERT(SUCCEEDED(res));
 
 	uav_ = nullptr;
 
@@ -93,7 +93,7 @@ void GPUBuffer::create_buffer(int bytewidth, int number_of_elements, void *initi
 		}
 
 		res = g_device->CreateUnorderedAccessView(buffer_, &uav_desc, &uav_);
-		_ASSERT(SUCCEEDED(res));
+		ZEPHYR_ASSERT(SUCCEEDED(res));
 	}
 }
 
@@ -107,7 +107,7 @@ void GPUBuffer::update_data(void * data, int size)
 	result = g_deviceContext->Map(buffer_, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 	if (FAILED(result))
 	{
-		_ASSERT(false);
+		ZEPHYR_ASSERT(false);
 		return;
 	}
 
@@ -124,7 +124,7 @@ void GPUBuffer::update_data(void * data, int size)
 
 void GPUBuffer::set_as_uav(int slot, shaderType type, unsigned int initial_count /*= -1*/)
 {
-	_ASSERT(uav_ != nullptr);
+	ZEPHYR_ASSERT(uav_ != nullptr);
 
 	if (type == shader_type_pixel)
 	{
@@ -136,7 +136,7 @@ void GPUBuffer::set_as_uav(int slot, shaderType type, unsigned int initial_count
 	}
 	else
 	{
-		_ASSERT(false);
+		ZEPHYR_ASSERT(false);
 	}
 }
 
@@ -158,7 +158,7 @@ int GPUBuffer::get_current_element_count() const
 
 void GPUBuffer::set_as_constant_buffer(int slot)
 {
-	_ASSERT(creation_flags_ & CreationFlags::constant_buffer);
+	ZEPHYR_ASSERT(creation_flags_ & CreationFlags::constant_buffer);
 
 	SetConstantBufferToSlot(slot, buffer_);
 }

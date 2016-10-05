@@ -1428,7 +1428,7 @@ void SetRenderViews(ID3D11RenderTargetView *view, ID3D11DepthStencilView *depth_
 
 void SetUAVToPixelShader(ID3D11UnorderedAccessView *uav, int uav_slot, int index /*= -1*/)
 {
-	_ASSERT(uav_slot >= 4);
+	ZEPHYR_ASSERT(uav_slot >= 4);
 
 	currentUAViews[uav_slot - 4] = uav;
 	currentUAVIndexes[uav_slot - 4] = index;

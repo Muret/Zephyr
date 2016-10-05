@@ -66,7 +66,7 @@ void Texture::create(const D3DXVECTOR3 &dimension, void *data, DXGI_FORMAT forma
 		}
 
 		bool res = g_device->CreateUnorderedAccessView(texture_object_, &uav_desc, &texture_uav_);
-		_ASSERT(SUCCEEDED(res));
+		ZEPHYR_ASSERT(SUCCEEDED(res));
 	}
 
 	format_ = format;
@@ -112,7 +112,7 @@ ID3D11RenderTargetView* Texture::get_rt() const
 
 void Texture::set_as_uav(int slot, shaderType type, unsigned int initial_count /*= -1*/)
 {
-	_ASSERT(uav_ != nullptr);
+	ZEPHYR_ASSERT(uav_ != nullptr);
 
 	if (type == shader_type_pixel)
 	{
@@ -124,7 +124,7 @@ void Texture::set_as_uav(int slot, shaderType type, unsigned int initial_count /
 	}
 	else
 	{
-		_ASSERT(false);
+		ZEPHYR_ASSERT(false);
 	}
 }
 
@@ -139,7 +139,7 @@ void Texture::get_data(void * data, int length)
 
 	D3D11_MAPPED_SUBRESOURCE info;
 	bool result = g_deviceContext->Map(data_accesor_staging_texture_->get_texture_object(), 0, D3D11_MAP_READ, 0, &info);
-	_ASSERT(result);
+	ZEPHYR_ASSERT(result);
 
 	memcpy(data, info.pData, length);
 

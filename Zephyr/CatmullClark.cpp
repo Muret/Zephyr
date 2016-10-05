@@ -446,7 +446,7 @@ bool CatmullClark::get_common_face_indexes_of_an_edge(const CC_MeshRepresenation
 		return false;
 	}
 
-	_ASSERT(false);
+	ZEPHYR_ASSERT(false);
 	return false;
 }
 
@@ -461,7 +461,7 @@ int CatmullClark::get_last_vertex_from_face(const CC_Face &face, int v1, int v2)
 	vertices.erase(find(vertices.begin(), vertices.end(), v1));
 	vertices.erase(find(vertices.begin(), vertices.end(), v2));
 
-	_ASSERT(vertices.size() == 1);
+	ZEPHYR_ASSERT(vertices.size() == 1);
 	return vertices[0];
 }
 
@@ -558,7 +558,7 @@ bool CatmullClark::get_twin_edge_midpoint(const CC_MeshRepresenation &mesh_r, in
 		}
 	}
 
-	_ASSERT(false);
+	ZEPHYR_ASSERT(false);
 	return false;
 
 }

@@ -24,6 +24,7 @@ namespace Evolution
 		float get_knowledge(int index) const;
 
 		void tick();
+		void render_gui();
 
 	private:
 		std::map<int, float> knowledge_set_;
@@ -62,6 +63,8 @@ namespace Evolution
 			return type_;
 		}
 
+		int get_associated_knowledge_id() const;
+
 	private:
 		Type type_;
 		int index_;
@@ -92,7 +95,7 @@ namespace Evolution
 	public:
 		Action(string name);
 
-		virtual float execute(std::vector<int> int_parameters, Pop *executer, float spent_hours) = 0;
+		virtual float execute(std::vector<int> int_parameters, Pop *executer, float spent_hours, string &log) = 0;
 	};
 
 	class TravelAction : public Action
@@ -100,7 +103,7 @@ namespace Evolution
 	public:
 		TravelAction() : Action("Travel") {}
 
-		virtual float execute(std::vector<int> int_parameters, Pop *executer, float spent_hours) override;
+		virtual float execute(std::vector<int> int_parameters, Pop *executer, float spent_hours, string &log) override;
 	};
 
 	class ObserveAction : public Action
@@ -108,7 +111,7 @@ namespace Evolution
 	public:
 		ObserveAction() : Action("Observe") {}
 		
-		virtual float execute(std::vector<int> int_parameters, Pop *executer, float spent_hours) override;
+		virtual float execute(std::vector<int> int_parameters, Pop *executer, float spent_hours, string &log) override;
 	};
 
 	class HuntAction : public Action
@@ -116,16 +119,22 @@ namespace Evolution
 	public:
 		HuntAction();
 
-		virtual float execute(std::vector<int> int_parameters, Pop *executer, float spent_hours) override;
+		virtual float execute(std::vector<int> int_parameters, Pop *executer, float spent_hours, string &log) override;
 
 	private:
 		std::map<int, int> animal_index_to_hunting_knowledge_index_;
+		int global_hunting_knowledge_id_;
 	};
 
 	class Knowledge : public ObjectDefition
 	{
 	public:
 		Knowledge(string name, ObjectDefition::Type knowledge_type);
+
+		ObjectDefition::Type get_knowledge_type() const
+		{
+			return knowledge_type_;
+		}
 
 	private:
 		ObjectDefition::Type knowledge_type_;
@@ -146,7 +155,7 @@ namespace Evolution
 	};
 
 
-	class Animal : ObjectDefition
+	class Animal : public ObjectDefition
 	{
 	public:
 		Animal( string name, initializer_list<pair<string,float>> plain_item_yield, float hunt_difficulty);
@@ -190,21 +199,22 @@ namespace Evolution
 	class ActionDecision
 	{
 	public:
-		ActionDecision(Action *act, initializer_list<int> params) : action_(act), params_(params)  {}
+		ActionDecision(Action *act, initializer_list<int> params, float priority_weight = 0) : action_(act), params_(params) , priority_weight_(priority_weight) {}
 
 		Action *action_;
 		vector<int> params_;
+		float priority_weight_;
 	};
 
 	class Pop
 	{
 	public:
-		Pop(int count);
+		Pop(int count, int pop_id);
 
 		void tick();
 		void decide();
 
-		void give_plain_items(vector<pair<int, float>> items);
+		void give_plain_items(vector<pair<int, float>> &items);
 		void give_plain_item(int item_index, float amount);
 		void set_current_tile(int index);
 		void add_knowledge(int knowledge_index, float amount);
@@ -212,7 +222,7 @@ namespace Evolution
 		int get_current_tile() const;
 		const KnowledgeHistory& get_knowledge() const;
 		float get_plain_item_amount(int index) const;
-		int get_pop_count() const;
+		float get_pop_count() const;
 
 		void set_needs(const vector<Need*> &needs)
 		{
@@ -220,11 +230,29 @@ namespace Evolution
 		}
 
 		bool can_inventory_saatisfy_need(Need* need) const;
+		void get_plain_item_ids(vector<int> &ids) const
+		{
+			for (auto it = plain_items_owned_.begin(); it != plain_items_owned_.end(); it++)
+			{
+				if (it->second > 0)
+				{
+					ids.push_back(it->first);
+				}
+			}
+		}
+
+		int get_pop_id() const
+		{
+			return pop_id_;
+		}
+
+		void render_gui();
 
 	private:
-		int pop_count_;
+		float pop_count_;
 		float health_value_;
 
+		int pop_id_;
 		int current_tile_;
 
 		KnowledgeHistory knowledge_;
@@ -235,9 +263,12 @@ namespace Evolution
 		std::vector<Need*> needs_;
 
 		vector<ActionDecision> cur_frame_decisions_;
+		vector<ActionDecision> free_time_decisions_;
+
+		std::vector<string> action_logs_;
 	};
 
-	class Tile
+	class Tile : public ObjectDefition
 	{
 	public:
 		Tile(const D3DXVECTOR3 &center, int tile_index, vector<int> neighbours_, Climate *climate);
@@ -246,9 +277,25 @@ namespace Evolution
 		int get_animal_population(int animal_index) const;
 
 		void get_animal_ids_in_tile(vector<int> &animal_indeces) const;
+		void get_plant_ids_in_tile(vector<int> &animal_indeces) const;
 		const D3DXVECTOR3 get_position() const
 		{
 			return center_;
+		}
+
+		void add_living_pop(int i)
+		{
+			living_pops_.push_back(i);
+		}
+
+		void remove_living_pop(int i)
+		{
+			ZEPHYR_ASSERT(living_pops_.find(i) != living_pops_.end());
+		}
+
+		void get_living_pops(vector<int> &pops)
+		{
+			pops = living_pops_;
 		}
 
 		void set_neighbours();
@@ -263,6 +310,15 @@ namespace Evolution
 			return climate_;
 		}
 
+		int get_tile_knowledge() const
+		{
+			return tile_knowledge_;
+		}
+
+		void get_things_in_tile(vector<int> &things_in_tile);
+
+		void render_gui();
+
 	private:
 		D3DXVECTOR3 center_;
 		int tile_index_;
@@ -271,13 +327,17 @@ namespace Evolution
 
 		map<int, int> animal_pop_;
 		map<int, int> plant_pop_;
+
+		int tile_knowledge_;
+
+		vector<int> living_pops_;
 	};
 
 	class Climate : public ObjectDefition
 	{
 	public:
 		Climate(string name, initializer_list<pair<string, int>> animal_pop, initializer_list<pair<string, int>> fauna, 
-			float min_height, float max_height, D3DXVECTOR3 rgb);
+			float min_height, float max_height, D3DXVECTOR3 rgb, float hunting_difficulty);
 
 		float get_min() const
 		{
@@ -299,7 +359,12 @@ namespace Evolution
 			return fauna_;
 		}
 
-	private:
+		float get_hunting_difficulty() const
+		{
+			return hunt_difficulty_;
+		}
+
+	private: 
 
 		map<int, int> animal_pop_;
 		map<int, int> fauna_;
@@ -307,6 +372,7 @@ namespace Evolution
 		float max_height_;
 		float middle_height_;
 		D3DXVECTOR3 rgb_;
+		float hunt_difficulty_;
 	};
 
 	class Geography
@@ -350,7 +416,7 @@ namespace Evolution
 			auto it = index_to_object_map_.find(index);
 			if (it == index_to_object_map_.end())
 			{
-				_ASSERT(false);
+				ZEPHYR_ASSERT(false);
 				return nullptr;
 			}
 
@@ -361,6 +427,14 @@ namespace Evolution
 
 		void register_object_definition(ObjectDefition *object);
 		void tick();
+
+		void toggle_tile_render();
+
+		void tick_aux();
+		int get_days_per_tick() const
+		{
+			return days_per_tick_;
+		}
 
 	private:
 		int last_index_;
@@ -373,6 +447,12 @@ namespace Evolution
 		vector<Pop*> pops_;
 
 		Geography* geography_;
+		
+		bool tile_render_on_;
+		bool automatic_tick_;
+		const float days_per_tick_;
+
+
 	};
 
 
