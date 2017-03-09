@@ -6,6 +6,23 @@
 #include <sstream>
 #include "includes.h"
 
+#include <chrono>
+typedef std::chrono::high_resolution_clock Clock;
+
+#define SCOPE_TIMER(name) ScopeTimer timer(name)
+
+class ScopeTimer
+{
+public:
+	ScopeTimer(string name);
+	~ScopeTimer();
+
+	std::chrono::time_point<std::chrono::system_clock> start;
+
+
+	string name_;
+};
+
 class Utilities
 {
 public:
@@ -17,6 +34,7 @@ public:
 	static void get_folders_under_folder(string path, vector<string> &names);
 	static string get_file_name_from_path(string path);
 	static string get_file_name_from_path_wo_extension(string path);
+	static string get_extension_from_path(string path);
 
 	static D3DXVECTOR4 get_debug_vector();
 

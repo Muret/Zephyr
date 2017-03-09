@@ -50,7 +50,7 @@ GPUBasedPipeline::GPUBasedRenderer::~GPUBasedRenderer()
 
 void GPUBasedPipeline::GPUBasedRenderer::set_scene(Scene * scene)
 {
-	Mesh *first_mesh = scene->get_meshes()[0];
+	Mesh *first_mesh = cur_frame_rendered_meshes_[0].mesh;
 	BaseMesh *base_mesh = pre_compute_mesh_sections(first_mesh);
 
 	base_meshes_.push_back(base_mesh);
@@ -168,7 +168,7 @@ void GPUBasedPipeline::GPUBasedRenderer::tick(float dt)
 
 inline void GPUBasedPipeline::GPUBasedRenderer::gbuffer_render()
 {
-	invalidate_srv(shaderType::shader_type_pixel);
+	invalidate_srv(shaderType::pixel);
 
 	gbuffer_albedo_texture->set_as_render_target(0);
 	gbuffer_normal_texture->set_as_render_target(1);
@@ -181,7 +181,7 @@ inline void GPUBasedPipeline::GPUBasedRenderer::gbuffer_render()
 
 	SetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-	const vector<Mesh*> &meshes_to_render = scene_to_render->get_meshes();
+	
 
 	//compute shader to cull per section
 	{

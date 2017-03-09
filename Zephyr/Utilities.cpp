@@ -125,6 +125,12 @@ std::string Utilities::get_file_name_from_path_wo_extension(string path)
 	return filename;
 }
 
+string Utilities::get_extension_from_path(string path)
+{
+	string ext = path.substr(path.find_last_of(".") + 1, path.length());
+	return ext;
+}
+
 D3DXVECTOR4 Utilities::get_debug_vector()
 {
 	return debug_vector;
@@ -188,4 +194,18 @@ D3DXVECTOR3 operator*(const D3DXVECTOR3 &lhs, const D3DXVECTOR3 &rhs)
 float vec3_len(const D3DXVECTOR3 &vec)
 {
 	return D3DXVec3Length(&vec);
+}
+
+ScopeTimer::ScopeTimer(string name)
+{
+	start = std::chrono::system_clock::now();
+	name_ = name;
+}
+
+ScopeTimer::~ScopeTimer()
+{
+	std::chrono::time_point<std::chrono::system_clock> end = std::chrono::system_clock::now();
+	std::chrono::duration<double> elapsed_seconds = end - start;
+
+	double ms = elapsed_seconds.count() * 1000;
 }

@@ -25,8 +25,8 @@ public:
 
 private:
 
-	noise::module::Perlin noise_instance_;
-	noise::utils::NoiseMap height_map_;
+	//noise::module::Perlin noise_instance_;
+	//noise::utils::NoiseMap height_map_;
 	D3DXVECTOR2 min_;
 	D3DXVECTOR2 max_;
 	D3DXVECTOR2 resolution_;

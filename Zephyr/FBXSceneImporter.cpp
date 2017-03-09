@@ -8,6 +8,7 @@
 #include "ResourceManager.h"
 #include "Utilities.h"
 #include "Camera.h"
+#include "MeshGroup.h"
 
 FBXSceneImporter::FBXSceneImporter(std::string file_name)
 {
@@ -160,7 +161,12 @@ void FBXSceneImporter::read_node(FbxNode* pNode)
 		FbxNodeAttribute* pAttribute = pNode->GetNodeAttributeByIndex(i);
 		FbxNodeAttribute::EType attribute_type = pAttribute->GetAttributeType();
 
-		if (attribute_type == FbxNodeAttribute::eMesh)
+		if (attribute_type == FbxNodeAttribute::eLODGroup)
+		{
+			FbxLODGroup *pLodGroup = (FbxLODGroup*)pAttribute;
+			read_lod_group(pNode, pLodGroup);
+		}
+		else if (attribute_type == FbxNodeAttribute::eMesh)
 		{
 			FbxMesh* pMesh = (FbxMesh*)pAttribute;
 			read_mesh(pNode, pMesh);
@@ -243,7 +249,7 @@ void FBXSceneImporter::read_node(FbxNode* pNode)
 	//vector_to_fill.push_back(new_mesh);
 //}
 
-void FBXSceneImporter::read_mesh(FbxNode *pNode, FbxMesh* pMesh)
+Mesh* FBXSceneImporter::read_mesh(FbxNode *pNode, FbxMesh* pMesh)
 {
 	std::vector<Mesh::Vertex> vertices;
 	std::vector<int> indices;
@@ -259,6 +265,11 @@ void FBXSceneImporter::read_mesh(FbxNode *pNode, FbxMesh* pMesh)
 	int controlPointCount = pMesh->GetControlPointsCount();
 
 	int vertexID = 0;
+
+	FbxStringList UVSetNameList;
+
+	// Get the name of each set of UV coords
+	pMesh->GetUVSetNames(UVSetNameList);
 
 	for (int polygon = polygonCount - 1; polygon > -1; polygon--)
 	{
@@ -284,54 +295,65 @@ void FBXSceneImporter::read_mesh(FbxNode *pNode, FbxMesh* pMesh)
 
 			for (int uvElement = 0; uvElement < uvElementCount; uvElement++)
 			{
-				FbxGeometryElementUV* geomElementUV = pMesh->GetElementUV(uvElement);
+				FbxGeometryElementNormal* geomElementNormal = pMesh->GetElementNormal(uvElement);
 
-				FbxLayerElement::EMappingMode mapMode = geomElementUV->GetMappingMode();
-				FbxLayerElement::EReferenceMode refMode = geomElementUV->GetReferenceMode();
+				FbxLayerElement::EMappingMode mapMode = geomElementNormal->GetMappingMode();
+				FbxLayerElement::EReferenceMode refMode = geomElementNormal->GetReferenceMode();
 
-				if (FbxGeometryElement::eByControlPoint == mapMode)
-				{
-					switch (geomElementUV->GetReferenceMode())
-					{
-					case FbxGeometryElement::eDirect:
-					{
-						vertex.texture_coord.x = static_cast<float>(geomElementUV->GetDirectArray().GetAt(ctrlPointIndex).mData[0]);
-						vertex.texture_coord.y = static_cast<float>(geomElementUV->GetDirectArray().GetAt(ctrlPointIndex).mData[1]);
-					}
-					break;
+				FbxVector2 uv;
+				bool uv_mapped = false;
+				pMesh->GetPolygonVertexUV(polygon, polyVert, UVSetNameList.GetStringAt(0), uv, uv_mapped);
 
-					case FbxGeometryElement::eIndexToDirect:
-					{
-						int index = geomElementUV->GetIndexArray().GetAt(ctrlPointIndex);
-						vertex.texture_coord.x = static_cast<float>(geomElementUV->GetDirectArray().GetAt(index).mData[0]);
-						vertex.texture_coord.y = static_cast<float>(geomElementUV->GetDirectArray().GetAt(index).mData[1]);
-					}
-					break;
+				vertex.texture_coord = D3DXVECTOR4(uv[0], uv[1], 0 , 0);
 
-					default:
-						throw std::exception("Invalid Reference");
-					}
-				}
-				if (FbxGeometryElement::eByPolygonVertex == mapMode)
-				{
-					int directIndex = -1;
-					if (FbxGeometryElement::eDirect == refMode)
-					{
-						directIndex = vertexID;
-					}
-					else if (FbxGeometryElement::eIndexToDirect == refMode)
-					{
-						directIndex = geomElementUV->GetIndexArray().GetAt(vertexID);
-					}
-
-					// If we got an index
-					if (directIndex != -1)
-					{
-						FbxVector4 texture_coord = geomElementUV->GetDirectArray().GetAt(directIndex);
-
-						vertex.texture_coord = D3DXVECTOR4((float)texture_coord.mData[0], (float)texture_coord.mData[1], 0, 0);
-					}
-				}
+				//FbxGeometryElementUV* geomElementUV = pMesh->GetElementUV(uvElement);
+				//
+				//FbxLayerElement::EMappingMode mapMode = geomElementUV->GetMappingMode();
+				//FbxLayerElement::EReferenceMode refMode = geomElementUV->GetReferenceMode();
+				//
+				//if (FbxGeometryElement::eByControlPoint == mapMode)
+				//{
+				//	switch (geomElementUV->GetReferenceMode())
+				//	{
+				//	case FbxGeometryElement::eDirect:
+				//	{
+				//		vertex.texture_coord.x = static_cast<float>(geomElementUV->GetDirectArray().GetAt(ctrlPointIndex).mData[0]);
+				//		vertex.texture_coord.y = static_cast<float>(geomElementUV->GetDirectArray().GetAt(ctrlPointIndex).mData[1]);
+				//	}
+				//	break;
+				//
+				//	case FbxGeometryElement::eIndexToDirect:
+				//	{
+				//		int index = geomElementUV->GetIndexArray().GetAt(ctrlPointIndex);
+				//		vertex.texture_coord.x = static_cast<float>(geomElementUV->GetDirectArray().GetAt(index).mData[0]);
+				//		vertex.texture_coord.y = static_cast<float>(geomElementUV->GetDirectArray().GetAt(index).mData[1]);
+				//	}
+				//	break;
+				//
+				//	default:
+				//		throw std::exception("Invalid Reference");
+				//	}
+				//}
+				//if (FbxGeometryElement::eByPolygonVertex == mapMode)
+				//{
+				//	int directIndex = -1;
+				//	if (FbxGeometryElement::eDirect == refMode)
+				//	{
+				//		directIndex = vertexID;
+				//	}
+				//	else if (FbxGeometryElement::eIndexToDirect == refMode)
+				//	{
+				//		directIndex = geomElementUV->GetIndexArray().GetAt(vertexID);
+				//	}
+				//
+				//	// If we got an index
+				//	if (directIndex != -1)
+				//	{
+				//		FbxVector4 texture_coord = geomElementUV->GetDirectArray().GetAt(directIndex);
+				//
+				//		vertex.texture_coord = D3DXVECTOR4((float)texture_coord.mData[0], (float)texture_coord.mData[1], 0, 0);
+				//	}
+				//}
 			}
 
 			// Grab normals
@@ -437,22 +459,9 @@ void FBXSceneImporter::read_mesh(FbxNode *pNode, FbxMesh* pMesh)
 			}
 
 			size_t size = vertices.size();
-			size_t i = size;
+			vertices.push_back(vertex);
+			indices.push_back(size);
 
-			//for (i = 0; i < size; i++)
-			//{
-			//	if (vertex == vertices[i])
-			//	{
-			//		break;
-			//	}
-			//}
-			//
-			if (i == size)
-			{
-				vertices.push_back(vertex);
-			}
-
-			indices.push_back(i);
 			++vertexID;
 		}
 
@@ -474,8 +483,9 @@ void FBXSceneImporter::read_mesh(FbxNode *pNode, FbxMesh* pMesh)
 	}
 
 	get_transformation_matrix(pNode, new_mesh);
-	cout << "Read mesh : " << new_mesh->get_name() << "\n";
+	std::cout << "Read mesh : " << new_mesh->get_name() << "\n";
 
+	return new_mesh;
 }
 
 Material* FBXSceneImporter::read_material(FbxNode *pNode, FbxSurfaceMaterial* material)
@@ -619,7 +629,49 @@ void FBXSceneImporter::read_camera(FbxNode *pNode, FbxCamera* pCamera)
 	scene_to_fill->add_camera(new_camera);
 }
 
+void FBXSceneImporter::read_lod_group(FbxNode * pNode, FbxLODGroup * pLodGroup)
+{
+	const char* nodeName = pLodGroup->GetName();
+	MeshGroup *m_group = new MeshGroup(nodeName);
+
+	int mesh_count = 0;
+
+	for (int i = 0; i < pNode->GetChildCount(); i++)
+	{
+		FbxNode* lChildNode = pNode->GetChild(i);
+		for (int i = 0; i < pNode->GetNodeAttributeCount(); i++)
+		{
+			FbxNodeAttribute* pAttribute = lChildNode->GetNodeAttributeByIndex(i);
+			FbxNodeAttribute::EType attribute_type = pAttribute->GetAttributeType();
+
+			if (attribute_type == FbxNodeAttribute::eMesh)
+			{
+				FbxMesh* pMesh = (FbxMesh*)pAttribute;
+				Mesh * mesh = read_mesh(lChildNode, pMesh);
+
+				float distance = 0;
+				if (mesh_count > 0)
+				{
+					FbxDistance lThreshVal;
+					pLodGroup->GetThreshold(mesh_count - 1, lThreshVal);
+					distance = lThreshVal.value();
+				}
+
+				m_group->add_lod_mesh_with_start_distance(mesh, distance);
+				mesh_count++;
+			}
+		}
+	}
+
+	scene_to_fill->add_mesh_group(m_group);
+}
+
 const vector<Mesh*> FBXSceneImporter::get_scene_meshes() const
 {
 	return scene_to_fill->get_meshes();
+}
+
+const vector<MeshGroup*> FBXSceneImporter::get_scene_mesh_groups() const
+{
+	return scene_to_fill->get_mesh_groups();
 }

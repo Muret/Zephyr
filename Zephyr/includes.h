@@ -28,6 +28,7 @@
 #include <functional>
 #include <array>
 #include <iostream>
+#include <set>
 
 #pragma comment(lib, "dxgi.lib")
 #pragma comment(lib, "D3D11.lib")
@@ -48,7 +49,7 @@ D3DXVECTOR3 operator*(const D3DXVECTOR3 &lhs, const D3DXVECTOR3 &rhs);
 
 #define ZEPHYR_ASSERT(px)
 
-#define SAFEZEPHYR_ASSERT(px) if(!(px)) {ZEPHYR_ASSERT(px);} else 
+#define ZEPHYR_SAFE_ASSERT(px) if(!(px)) {ZEPHYR_ASSERT(px);} else 
 
 
 

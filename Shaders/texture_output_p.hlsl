@@ -14,6 +14,7 @@ float4 main(PixelInputType input) : SV_TARGET
 		res = float4(diffuse_texture.SampleLevel(PointSampler, input.tex_coord.xy, 0).rgb, 1);
 	}
 
+	res.x = saturate(res - 0.98) * 50.0f;
 	return res;
 
 }

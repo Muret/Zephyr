@@ -55,9 +55,9 @@ void GPUVoxelOcctree::construct(Scene * scene)
 	const BoundingBox &bb = scene->get_bb();
 
 	construction_shader_->set_shaders();
-	nodes_buffer_->set_as_uav(4, shaderType::shader_type_pixel, 0);
-	node_allocate_requests_buffer_->set_as_uav(5, shaderType::shader_type_pixel, 0);
-	leaf_bricks_3d->set_as_uav(7, shaderType::shader_type_pixel, 0);
+	nodes_buffer_->set_as_uav(4, shaderType::pixel, 0);
+	node_allocate_requests_buffer_->set_as_uav(5, shaderType::pixel, 0);
+	leaf_bricks_3d->set_as_uav(7, shaderType::pixel, 0);
 
 	SetDepthStencilView(nullptr);
 
@@ -80,9 +80,9 @@ void GPUVoxelOcctree::construct(Scene * scene)
 	}
 
 	construction_shader_->set_shaders();
-	nodes_buffer_->set_as_uav(4, shaderType::shader_type_pixel);
-	node_allocate_requests_buffer_->set_as_uav(5, shaderType::shader_type_pixel, 0);
-	leaf_bricks_3d->set_as_uav(7, shaderType::shader_type_pixel);
+	nodes_buffer_->set_as_uav(4, shaderType::pixel);
+	node_allocate_requests_buffer_->set_as_uav(5, shaderType::pixel, 0);
+	leaf_bricks_3d->set_as_uav(7, shaderType::pixel);
 
 	//render from -y
 	{
@@ -101,9 +101,9 @@ void GPUVoxelOcctree::construct(Scene * scene)
 	}
 
 	construction_shader_->set_shaders();
-	nodes_buffer_->set_as_uav(4, shaderType::shader_type_pixel);
-	node_allocate_requests_buffer_->set_as_uav(5, shaderType::shader_type_pixel, 0);
-	leaf_bricks_3d->set_as_uav(7, shaderType::shader_type_pixel);
+	nodes_buffer_->set_as_uav(4, shaderType::pixel);
+	node_allocate_requests_buffer_->set_as_uav(5, shaderType::pixel, 0);
+	leaf_bricks_3d->set_as_uav(7, shaderType::pixel);
 
 	//render from -z
 	{
@@ -155,11 +155,11 @@ void GPUVoxelOcctree::build_octree_from_side_aux(const Camera &cam)
 		int number_of_groups = ceil(float(count) / 256.0f);
 		deferred_cs_shader_->set_shaders();
 
-		nodes_buffer_->set_as_uav(4, shaderType::shader_type_compute);
+		nodes_buffer_->set_as_uav(4, shaderType::compute);
 		setCShaderUAVResources(&reseter, 1, 5);
-		input_buffer->set_as_uav(6, shaderType::shader_type_compute);
-		output_buffer->set_as_uav(5, shaderType::shader_type_compute, 0);
-		leaf_bricks_3d->set_as_uav(7, shaderType::shader_type_compute);
+		input_buffer->set_as_uav(6, shaderType::compute);
+		output_buffer->set_as_uav(5, shaderType::compute, 0);
+		leaf_bricks_3d->set_as_uav(7, shaderType::compute);
 
 		DispatchComputeShader(number_of_groups, 1, 1);
 

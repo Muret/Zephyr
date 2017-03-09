@@ -75,12 +75,14 @@ enum rasterState
 };
 
 
-enum shaderType
+enum class shaderType : unsigned long long
 {
-	shader_type_vertex,
-	shader_type_pixel,
-	shader_type_compute,
+	vertex = 0,
+	pixel,
+	compute,
+	count,
 };
+
 
 using namespace std;
 
@@ -183,7 +185,10 @@ void UnMapBuffer(ID3D11Buffer *buffer);
 UINT64 GetQueryData(ID3D11Query *query_object);
 
 void SetViewPort(int w_start, int h_start, int width, int height);
+
 void SetViewPortToDefault();
+
+void SetScissorTest(int w_start, int h_start, int width, int height);
 
 void SetVertexBuffer(ID3D11Buffer *  vertex_buffer, int vertex_size);
 
@@ -226,6 +231,9 @@ ID3D11DepthStencilView* GetDefaultDepthView();
 void setCShaderUAVResources(ID3D11UnorderedAccessView **uav_list, int number_of_resources, int start_index);
 
 void SetCShaderRV(ID3D11ShaderResourceView **uav_list, int number_of_resources);
+
+bool check_srv_cache(ID3D11ShaderResourceView **uav_list, int number_of_resources, shaderType shader_type, int slot);
+void set_srv_cache(ID3D11ShaderResourceView **uav_list, int number_of_resources, shaderType shader_type, int slot);
 
 void SetSRV(ID3D11ShaderResourceView **uav_list, int number_of_resources, shaderType shader_type, int slot);
 void SetSRV(Texture *texture, shaderType shader_type, int slot);

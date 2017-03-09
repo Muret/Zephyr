@@ -17,6 +17,7 @@ public:
 	D3DXVECTOR4 get_max() const;
 
 	void enlarge_bb_with_bb(const BoundingBox &bb);
+	float get_sphere_radius() const;
 
 private:
 

@@ -36,6 +36,9 @@ public:
 
 	void create_from_buffers(const std::vector<Vertex> &vertices, const std::vector<int> &indices);
 
+	void write_to_file(ofstream &file);
+	void read_from_file(ifstream &file);
+
 	void set_mesh_type(MeshType type)
 	{
 		mesh_type_ = type;
@@ -70,11 +73,11 @@ public:
 	const D3DXMATRIX& get_frame() const;
 
 	const BoundingBox& get_bb() const;
+	void validate_bounding_box();
 
 	static void add_cube_mesh(vector<Mesh::Vertex> &vertices, vector<int> &indices, const D3DXVECTOR3 &center, const D3DXVECTOR3 &half_length, const D3DXVECTOR4 &color);
 private:
 
-	void validate_bounding_box();
 
 	Material *mesh_material_;
 
@@ -89,6 +92,7 @@ private:
 	std::vector<Vertex> vertices_;
 	std::vector<int> indices_;
 
+	int index_count_;
 	string name_;
 
 	D3DXVECTOR4 color_multiplier_;

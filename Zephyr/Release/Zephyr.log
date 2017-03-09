@@ -1,53 +1,419 @@
-﻿  World.cpp
-c:\users\murat\documents\github\zephyr\zephyr\World.h(436): warning C4244: 'return' : conversion from 'const float' to 'int', possible loss of data
-World.cpp(51): warning C4305: 'argument' : truncation from 'double' to 'float'
+﻿  BoundingBox.cpp
+  Camera.cpp
+Camera.cpp(46): warning C4244: 'argument' : conversion from 'double' to 'FLOAT', possible loss of data
+  CatmullClark.cpp
+CatmullClark.cpp(97): warning C4018: '<' : signed/unsigned mismatch
+CatmullClark.cpp(106): warning C4018: '<' : signed/unsigned mismatch
+CatmullClark.cpp(138): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+CatmullClark.cpp(183): warning C4244: 'argument' : conversion from 'int' to 'FLOAT', possible loss of data
+CatmullClark.cpp(191): warning C4244: 'argument' : conversion from 'int' to 'FLOAT', possible loss of data
+CatmullClark.cpp(195): warning C4244: 'argument' : conversion from 'int' to 'FLOAT', possible loss of data
+CatmullClark.cpp(199): warning C4018: '<' : signed/unsigned mismatch
+CatmullClark.cpp(222): warning C4018: '<' : signed/unsigned mismatch
+CatmullClark.cpp(249): warning C4101: 'edge_3' : unreferenced local variable
+CatmullClark.cpp(247): warning C4101: 'edge_2' : unreferenced local variable
+CatmullClark.cpp(281): warning C4101: 'edge_3' : unreferenced local variable
+CatmullClark.cpp(279): warning C4101: 'edge_2' : unreferenced local variable
+CatmullClark.cpp(314): warning C4018: '<' : signed/unsigned mismatch
+CatmullClark.cpp(346): warning C4018: '<' : signed/unsigned mismatch
+CatmullClark.cpp(424): warning C4018: '<' : signed/unsigned mismatch
+CatmullClark.cpp(487): warning C4018: '<' : signed/unsigned mismatch
+CatmullClark.cpp(496): warning C4018: '<' : signed/unsigned mismatch
+CatmullClark.cpp(506): warning C4018: '<' : signed/unsigned mismatch
+CatmullClark.cpp(511): warning C4018: '<' : signed/unsigned mismatch
+CatmullClark.cpp(540): warning C4018: '<' : signed/unsigned mismatch
+  CatmullClark_Demo.cpp
+  Demo.cpp
+  FBXSceneImporter.cpp
+FBXSceneImporter.cpp(276): warning C4244: '=' : conversion from 'fbxsdk::FbxDouble' to 'FLOAT', possible loss of data
+FBXSceneImporter.cpp(277): warning C4244: '=' : conversion from 'fbxsdk::FbxDouble' to 'FLOAT', possible loss of data
+FBXSceneImporter.cpp(278): warning C4244: '=' : conversion from 'fbxsdk::FbxDouble' to 'FLOAT', possible loss of data
+FBXSceneImporter.cpp(351): warning C4244: 'argument' : conversion from 'fbxsdk::FbxDouble' to 'FLOAT', possible loss of data
+FBXSceneImporter.cpp(543): warning C4244: 'argument' : conversion from 'fbxsdk::FbxDouble' to 'FLOAT', possible loss of data
+FBXSceneImporter.cpp(563): warning C4244: '=' : conversion from 'fbxsdk::FbxDouble' to 'float', possible loss of data
+FBXSceneImporter.cpp(575): warning C4244: 'argument' : conversion from 'fbxsdk::FbxDouble' to 'FLOAT', possible loss of data
+FBXSceneImporter.cpp(576): warning C4244: 'argument' : conversion from 'fbxsdk::FbxDouble' to 'FLOAT', possible loss of data
+FBXSceneImporter.cpp(586): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+FBXSceneImporter.cpp(587): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+FBXSceneImporter.cpp(588): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+FBXSceneImporter.cpp(592): warning C4244: '=' : conversion from 'fbxsdk::FbxDouble' to 'float', possible loss of data
+FBXSceneImporter.cpp(593): warning C4244: '=' : conversion from 'fbxsdk::FbxDouble' to 'float', possible loss of data
+FBXSceneImporter.cpp(594): warning C4244: '=' : conversion from 'fbxsdk::FbxDouble' to 'float', possible loss of data
+FBXSceneImporter.cpp(595): warning C4244: '=' : conversion from 'fbxsdk::FbxDouble' to 'float', possible loss of data
+FBXSceneImporter.cpp(597): warning C4244: '=' : conversion from 'fbxsdk::FbxDouble' to 'float', possible loss of data
+FBXSceneImporter.cpp(598): warning C4244: '=' : conversion from 'fbxsdk::FbxDouble' to 'float', possible loss of data
+FBXSceneImporter.cpp(599): warning C4244: '=' : conversion from 'fbxsdk::FbxDouble' to 'float', possible loss of data
+FBXSceneImporter.cpp(600): warning C4244: '=' : conversion from 'fbxsdk::FbxDouble' to 'float', possible loss of data
+FBXSceneImporter.cpp(602): warning C4244: '=' : conversion from 'fbxsdk::FbxDouble' to 'float', possible loss of data
+FBXSceneImporter.cpp(603): warning C4244: '=' : conversion from 'fbxsdk::FbxDouble' to 'float', possible loss of data
+FBXSceneImporter.cpp(604): warning C4244: '=' : conversion from 'fbxsdk::FbxDouble' to 'float', possible loss of data
+FBXSceneImporter.cpp(605): warning C4244: '=' : conversion from 'fbxsdk::FbxDouble' to 'float', possible loss of data
+FBXSceneImporter.cpp(607): warning C4244: '=' : conversion from 'fbxsdk::FbxDouble' to 'float', possible loss of data
+FBXSceneImporter.cpp(608): warning C4244: '=' : conversion from 'fbxsdk::FbxDouble' to 'float', possible loss of data
+FBXSceneImporter.cpp(609): warning C4244: '=' : conversion from 'fbxsdk::FbxDouble' to 'float', possible loss of data
+FBXSceneImporter.cpp(610): warning C4244: '=' : conversion from 'fbxsdk::FbxDouble' to 'float', possible loss of data
+  FreeCameraController.cpp
+FreeCameraController.cpp(25): warning C4244: '+=' : conversion from 'double' to 'float', possible loss of data
+FreeCameraController.cpp(26): warning C4244: '-=' : conversion from 'double' to 'float', possible loss of data
+FreeCameraController.cpp(30): warning C4305: '-=' : truncation from 'double' to 'float'
+FreeCameraController.cpp(35): warning C4305: '-=' : truncation from 'double' to 'float'
+FreeCameraController.cpp(44): warning C4305: 'argument' : truncation from 'double' to 'FLOAT'
+FreeCameraController.cpp(49): warning C4305: 'argument' : truncation from 'double' to 'FLOAT'
+FreeCameraController.cpp(54): warning C4305: 'argument' : truncation from 'double' to 'FLOAT'
+FreeCameraController.cpp(59): warning C4305: 'argument' : truncation from 'double' to 'FLOAT'
+FreeCameraController.cpp(64): warning C4305: 'argument' : truncation from 'double' to 'FLOAT'
+FreeCameraController.cpp(69): warning C4305: 'argument' : truncation from 'double' to 'FLOAT'
+  GPUBasedPipeline.cpp
+GPUBasedPipeline.cpp(34): warning C4018: '<' : signed/unsigned mismatch
+GPUBasedPipeline.cpp(64): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+GPUBasedPipeline.cpp(65): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+GPUBasedPipeline.cpp(66): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+GPUBasedPipeline.cpp(85): warning C4018: '<' : signed/unsigned mismatch
+GPUBasedPipeline.cpp(95): warning C4018: '<' : signed/unsigned mismatch
+GPUBasedPipeline.cpp(119): warning C4244: '=' : conversion from 'int' to 'FLOAT', possible loss of data
+GPUBasedPipeline.cpp(120): warning C4244: '=' : conversion from 'int' to 'FLOAT', possible loss of data
+GPUBasedPipeline.cpp(133): warning C4018: '<' : signed/unsigned mismatch
+GPUBasedPipeline.cpp(139): warning C4018: '<' : signed/unsigned mismatch
+GPUBasedPipeline.cpp(149): warning C4244: '=' : conversion from 'int' to 'FLOAT', possible loss of data
+GPUBasedPipeline.cpp(231): warning C4018: '<' : signed/unsigned mismatch
+GPUBasedPipeline.cpp(242): warning C4018: '<' : signed/unsigned mismatch
+GPUBasedPipeline.cpp(265): warning C4244: 'argument' : conversion from 'float' to '__w64 int', possible loss of data
+GPUBasedPipeline.cpp(266): warning C4244: 'argument' : conversion from 'float' to '__w64 int', possible loss of data
+GPUBasedPipeline.cpp(276): warning C4018: '<' : signed/unsigned mismatch
+GPUBasedPipeline.cpp(280): warning C4244: '=' : conversion from 'int' to 'FLOAT', possible loss of data
+  GPUBasedPipelineDemo.cpp
+  GPUBuffer.cpp
+  GPUVCT.cpp
+  GPUVoxelOcctree.cpp
+GPUVoxelOcctree.cpp(21): warning C4244: 'initializing' : conversion from 'const float' to 'const int', possible loss of data
+GPUVoxelOcctree.cpp(38): warning C4244: 'initializing' : conversion from 'double' to 'int', possible loss of data
+GPUVoxelOcctree.cpp(41): warning C4244: 'argument' : conversion from 'double' to 'FLOAT', possible loss of data
+GPUVoxelOcctree.cpp(64): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
+GPUVoxelOcctree.cpp(68): warning C4244: 'argument' : conversion from 'double' to 'FLOAT', possible loss of data
+GPUVoxelOcctree.cpp(73): warning C4305: 'argument' : truncation from 'double' to 'float'
+GPUVoxelOcctree.cpp(89): warning C4244: 'argument' : conversion from 'double' to 'FLOAT', possible loss of data
+GPUVoxelOcctree.cpp(94): warning C4305: 'argument' : truncation from 'double' to 'float'
+GPUVoxelOcctree.cpp(110): warning C4244: 'argument' : conversion from 'double' to 'FLOAT', possible loss of data
+GPUVoxelOcctree.cpp(115): warning C4305: 'argument' : truncation from 'double' to 'float'
+GPUVoxelOcctree.cpp(130): warning C4018: '<' : signed/unsigned mismatch
+GPUVoxelOcctree.cpp(155): warning C4244: 'initializing' : conversion from 'float' to 'int', possible loss of data
+GPUVoxelOcctree.cpp(254): warning C4018: '<' : signed/unsigned mismatch
+GPUVoxelOcctree.cpp(341): warning C4927: illegal conversion; more than one user-defined conversion has been implicitly applied
+          while calling the constructor 'D3DXVECTOR3::D3DXVECTOR3(const FLOAT *)'
+          c:\users\murat\documents\github\dependencies\microsoft directx sdk (june 2010)\include\d3dx10math.h(199) : see declaration of 'D3DXVECTOR3::D3DXVECTOR3'
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\xrefwrap(283): warning C4244: 'return' : conversion from 'float' to 'int', possible loss of data
+          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\functional(228) : see reference to function template instantiation '_Ret std::_Callable_obj<GPUVoxelOcctree::sample_brick::<lambda_244fb64c92e579ba02bf10c5438dc1d0>,false>::_ApplyX<_Rx,const D3DXVECTOR3&>(const D3DXVECTOR3 &)' being compiled
+          with
+          [
+              _Ret=int
+  ,            _Rx=int
+          ]
+          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\functional(228) : see reference to function template instantiation '_Ret std::_Callable_obj<GPUVoxelOcctree::sample_brick::<lambda_244fb64c92e579ba02bf10c5438dc1d0>,false>::_ApplyX<_Rx,const D3DXVECTOR3&>(const D3DXVECTOR3 &)' being compiled
+          with
+          [
+              _Ret=int
+  ,            _Rx=int
+          ]
+          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\functional(226) : while compiling class template member function 'int std::_Func_impl<_MyWrapper,_Alloc,_Ret,const D3DXVECTOR3 &>::_Do_call(const D3DXVECTOR3 &)'
+          with
+          [
+              _Alloc=std::allocator<std::_Func_class<int,const D3DXVECTOR3 &>>
+  ,            _Ret=int
+          ]
+          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\functional(495) : see reference to class template instantiation 'std::_Func_impl<_MyWrapper,_Alloc,_Ret,const D3DXVECTOR3 &>' being compiled
+          with
+          [
+              _Alloc=std::allocator<std::_Func_class<int,const D3DXVECTOR3 &>>
+  ,            _Ret=int
+          ]
+          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\functional(396) : see reference to function template instantiation 'void std::_Func_class<_Ret,const D3DXVECTOR3 &>::_Do_alloc<_Myimpl,_Ty,_Alloc>(_Fty &&,_Alloc)' being compiled
+          with
+          [
+              _Ret=int
+  ,            _Ty=GPUVoxelOcctree::sample_brick::<lambda_244fb64c92e579ba02bf10c5438dc1d0>
+  ,            _Alloc=std::allocator<std::_Func_class<int,const D3DXVECTOR3 &>>
+  ,            _Fty=GPUVoxelOcctree::sample_brick::<lambda_244fb64c92e579ba02bf10c5438dc1d0>
+          ]
+          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\functional(396) : see reference to function template instantiation 'void std::_Func_class<_Ret,const D3DXVECTOR3 &>::_Do_alloc<_Myimpl,_Ty,_Alloc>(_Fty &&,_Alloc)' being compiled
+          with
+          [
+              _Ret=int
+  ,            _Ty=GPUVoxelOcctree::sample_brick::<lambda_244fb64c92e579ba02bf10c5438dc1d0>
+  ,            _Alloc=std::allocator<std::_Func_class<int,const D3DXVECTOR3 &>>
+  ,            _Fty=GPUVoxelOcctree::sample_brick::<lambda_244fb64c92e579ba02bf10c5438dc1d0>
+          ]
+          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\functional(385) : see reference to function template instantiation 'void std::_Func_class<_Ret,const D3DXVECTOR3 &>::_Reset_alloc<_Ty,std::allocator<std::_Func_class<_Ret,const D3DXVECTOR3 &>>>(_Fty &&,_Alloc)' being compiled
+          with
+          [
+              _Ret=int
+  ,            _Ty=GPUVoxelOcctree::sample_brick::<lambda_244fb64c92e579ba02bf10c5438dc1d0>
+  ,            _Fty=GPUVoxelOcctree::sample_brick::<lambda_244fb64c92e579ba02bf10c5438dc1d0>
+  ,            _Alloc=std::allocator<std::_Func_class<int,const D3DXVECTOR3 &>>
+          ]
+          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\functional(385) : see reference to function template instantiation 'void std::_Func_class<_Ret,const D3DXVECTOR3 &>::_Reset_alloc<_Ty,std::allocator<std::_Func_class<_Ret,const D3DXVECTOR3 &>>>(_Fty &&,_Alloc)' being compiled
+          with
+          [
+              _Ret=int
+  ,            _Ty=GPUVoxelOcctree::sample_brick::<lambda_244fb64c92e579ba02bf10c5438dc1d0>
+  ,            _Fty=GPUVoxelOcctree::sample_brick::<lambda_244fb64c92e579ba02bf10c5438dc1d0>
+  ,            _Alloc=std::allocator<std::_Func_class<int,const D3DXVECTOR3 &>>
+          ]
+          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\functional(671) : see reference to function template instantiation 'void std::_Func_class<_Ret,const D3DXVECTOR3 &>::_Reset<_Ty>(_Fty &&)' being compiled
+          with
+          [
+              _Ret=int
+  ,            _Ty=GPUVoxelOcctree::sample_brick::<lambda_244fb64c92e579ba02bf10c5438dc1d0>
+  ,            _Fty=GPUVoxelOcctree::sample_brick::<lambda_244fb64c92e579ba02bf10c5438dc1d0>
+          ]
+          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\functional(671) : see reference to function template instantiation 'void std::_Func_class<_Ret,const D3DXVECTOR3 &>::_Reset<_Ty>(_Fty &&)' being compiled
+          with
+          [
+              _Ret=int
+  ,            _Ty=GPUVoxelOcctree::sample_brick::<lambda_244fb64c92e579ba02bf10c5438dc1d0>
+  ,            _Fty=GPUVoxelOcctree::sample_brick::<lambda_244fb64c92e579ba02bf10c5438dc1d0>
+          ]
+          GPUVoxelOcctree.cpp(297) : see reference to function template instantiation 'std::function<int (const D3DXVECTOR3 &)>::function<GPUVoxelOcctree::sample_brick::<lambda_244fb64c92e579ba02bf10c5438dc1d0>>(_Fx &&)' being compiled
+          with
+          [
+              _Fx=GPUVoxelOcctree::sample_brick::<lambda_244fb64c92e579ba02bf10c5438dc1d0>
+          ]
+          GPUVoxelOcctree.cpp(297) : see reference to function template instantiation 'std::function<int (const D3DXVECTOR3 &)>::function<GPUVoxelOcctree::sample_brick::<lambda_244fb64c92e579ba02bf10c5438dc1d0>>(_Fx &&)' being compiled
+          with
+          [
+              _Fx=GPUVoxelOcctree::sample_brick::<lambda_244fb64c92e579ba02bf10c5438dc1d0>
+          ]
+  GUI.cpp
+  KeyChain.cpp
+KeyChain.cpp(25): warning C4800: 'const char' : forcing value to bool 'true' or 'false' (performance warning)
+KeyChain.cpp(70): warning C4244: 'argument' : conversion from 'LONG' to 'FLOAT', possible loss of data
+  Light.cpp
+  Material.cpp
+  Mesh.cpp
+Mesh.cpp(68): warning C4018: '<' : signed/unsigned mismatch
+Mesh.cpp(89): warning C4018: '<' : signed/unsigned mismatch
+Mesh.cpp(129): warning C4244: 'argument' : conversion from 'double' to 'FLOAT', possible loss of data
+Mesh.cpp(232): warning C4018: '<' : signed/unsigned mismatch
+  Noise.cpp
+c:\users\murat\documents\github\zephyr\zephyr\libnoise/noiseutils.h(1217): warning C4244: 'initializing' : conversion from 'const double' to 'float', possible loss of data
+Noise.cpp(14): warning C4244: 'return' : conversion from 'double' to 'float', possible loss of data
+Noise.cpp(52): warning C4244: 'argument' : conversion from 'const FLOAT' to 'int', possible loss of data
+Noise.cpp(64): warning C4244: 'initializing' : conversion from 'const FLOAT' to 'int', possible loss of data
+Noise.cpp(65): warning C4244: 'initializing' : conversion from 'const FLOAT' to 'int', possible loss of data
+  Renderer.cpp
+Renderer.cpp(23): warning C4244: 'argument' : conversion from 'int' to 'FLOAT', possible loss of data
+Renderer.cpp(24): warning C4244: 'argument' : conversion from 'int' to 'FLOAT', possible loss of data
+Renderer.cpp(25): warning C4244: 'argument' : conversion from 'int' to 'FLOAT', possible loss of data
+Renderer.cpp(27): warning C4244: 'argument' : conversion from 'int' to 'FLOAT', possible loss of data
+Renderer.cpp(66): warning C4018: '<' : signed/unsigned mismatch
+Renderer.cpp(91): warning C4018: '<' : signed/unsigned mismatch
+Renderer.cpp(135): warning C4018: '<' : signed/unsigned mismatch
+Renderer.cpp(155): warning C4018: '<' : signed/unsigned mismatch
+Renderer.cpp(161): warning C4305: 'argument' : truncation from 'double' to 'FLOAT'
+Renderer.cpp(162): warning C4305: 'argument' : truncation from 'double' to 'FLOAT'
+Renderer.cpp(165): warning C4305: '+=' : truncation from 'double' to 'FLOAT'
+Renderer.cpp(168): warning C4305: '+=' : truncation from 'double' to 'FLOAT'
+Renderer.cpp(194): warning C4018: '<' : signed/unsigned mismatch
+Renderer.cpp(222): warning C4018: '<' : signed/unsigned mismatch
+Renderer.cpp(332): warning C4244: '=' : conversion from 'double' to 'FLOAT', possible loss of data
+Renderer.cpp(333): warning C4244: '=' : conversion from 'double' to 'FLOAT', possible loss of data
+  ResourceManager.cpp
+ResourceManager.cpp(28): warning C4018: '<' : signed/unsigned mismatch
+ResourceManager.cpp(42): warning C4018: '<' : signed/unsigned mismatch
+ResourceManager.cpp(72): warning C4018: '<' : signed/unsigned mismatch
+ResourceManager.cpp(80): warning C4018: '<' : signed/unsigned mismatch
+ResourceManager.cpp(169): warning C4018: '<' : signed/unsigned mismatch
+ResourceManager.cpp(173): warning C4018: '<' : signed/unsigned mismatch
+ResourceManager.cpp(177): warning C4018: '<' : signed/unsigned mismatch
+ResourceManager.cpp(192): warning C4018: '<' : signed/unsigned mismatch
+ResourceManager.cpp(205): warning C4018: '<' : signed/unsigned mismatch
+  Compiling...
+  SSR.cpp
+SSR.cpp(15): warning C4244: '=' : conversion from 'double' to 'int', possible loss of data
+SSR.cpp(17): warning C4244: 'argument' : conversion from 'int' to 'FLOAT', possible loss of data
+SSR.cpp(18): warning C4244: 'argument' : conversion from 'int' to 'FLOAT', possible loss of data
+SSR.cpp(114): warning C4305: 'argument' : truncation from 'double' to 'FLOAT'
+SSR.cpp(115): warning C4305: 'argument' : truncation from 'double' to 'FLOAT'
+  SSR_Demo.cpp
+  Shader.cpp
+  Texture.cpp
+Texture.cpp(25): warning C4244: 'argument' : conversion from 'const float' to 'int', possible loss of data
+Texture.cpp(29): warning C4244: 'argument' : conversion from 'const float' to 'int', possible loss of data
+Texture.cpp(68): warning C4800: 'HRESULT' : forcing value to bool 'true' or 'false' (performance warning)
+Texture.cpp(141): warning C4800: 'HRESULT' : forcing value to bool 'true' or 'false' (performance warning)
+  TextureLoader.cpp
+TextureLoader.cpp(63): warning C4244: 'argument' : conversion from 'unsigned int' to 'FLOAT', possible loss of data
+  Utilities.cpp
+Utilities.cpp(140): warning C4305: 'initializing' : truncation from 'double' to 'float'
+Utilities.cpp(144): warning C4244: '+=' : conversion from 'double' to 'FLOAT', possible loss of data
+Utilities.cpp(148): warning C4244: '+=' : conversion from 'double' to 'FLOAT', possible loss of data
+Utilities.cpp(152): warning C4244: '+=' : conversion from 'double' to 'FLOAT', possible loss of data
+Utilities.cpp(156): warning C4244: '+=' : conversion from 'double' to 'FLOAT', possible loss of data
+Utilities.cpp(161): warning C4244: '-=' : conversion from 'double' to 'FLOAT', possible loss of data
+Utilities.cpp(165): warning C4244: '-=' : conversion from 'double' to 'FLOAT', possible loss of data
+Utilities.cpp(169): warning C4244: '-=' : conversion from 'double' to 'FLOAT', possible loss of data
+Utilities.cpp(173): warning C4244: '-=' : conversion from 'double' to 'FLOAT', possible loss of data
+  VCT_Demo.cpp
+  VoronoiSolver.cpp
+VoronoiSolver.cpp(25): warning C4018: '<' : signed/unsigned mismatch
+VoronoiSolver.cpp(72): warning C4244: 'argument' : conversion from 'const double' to 'FLOAT', possible loss of data
+VoronoiSolver.cpp(93): warning C4018: '<' : signed/unsigned mismatch
+VoronoiSolver.cpp(103): warning C4018: '<' : signed/unsigned mismatch
+VoronoiSolver.cpp(140): warning C4244: 'argument' : conversion from 'const double' to 'FLOAT', possible loss of data
+VoronoiSolver.cpp(141): warning C4244: 'argument' : conversion from 'const double' to 'FLOAT', possible loss of data
+VoronoiSolver.cpp(207): warning C4018: '<' : signed/unsigned mismatch
+VoronoiSolver.cpp(215): warning C4018: '<' : signed/unsigned mismatch
+VoronoiSolver.cpp(227): warning C4018: '<' : signed/unsigned mismatch
+VoronoiSolver.cpp(350): warning C4244: 'argument' : conversion from 'const double' to 'FLOAT', possible loss of data
+C:\Users\Murat\Documents\GitHub\Dependencies\boost_1_61_0\boost/polygon/voronoi.hpp(38): warning C4244: 'argument' : conversion from 'float' to 'const int', possible loss of data
+          C:\Users\Murat\Documents\GitHub\Dependencies\boost_1_61_0\boost/polygon/voronoi.hpp(53) : see reference to function template instantiation 'unsigned int boost::polygon::insert<Point,VB>(const Point &,VB *)' being compiled
+          with
+          [
+              VB=boost::polygon::default_voronoi_builder
+  ,            Point=Point
+          ]
+          C:\Users\Murat\Documents\GitHub\Dependencies\boost_1_61_0\boost/polygon/voronoi.hpp(150) : see reference to function template instantiation 'void boost::polygon::insert<PointIterator,boost::polygon::default_voronoi_builder>(const PointIterator,const PointIterator,VB *)' being compiled
+          with
+          [
+              PointIterator=std::_Vector_iterator<std::_Vector_val<std::_Simple_types<Point>>>
+  ,            VB=boost::polygon::default_voronoi_builder
+          ]
+          VoronoiSolver.cpp(36) : see reference to function template instantiation 'void boost::polygon::construct_voronoi<std::_Vector_iterator<std::_Vector_val<std::_Simple_types<Point>>>,std::_Vector_iterator<std::_Vector_val<std::_Simple_types<Segment>>>,boost::polygon::voronoi_diagram<double,boost::polygon::voronoi_diagram_traits<T>>>(const PointIterator,const PointIterator,const SegmentIterator,const SegmentIterator,VD *)' being compiled
+          with
+          [
+              T=double
+  ,            PointIterator=std::_Vector_iterator<std::_Vector_val<std::_Simple_types<Point>>>
+  ,            SegmentIterator=std::_Vector_iterator<std::_Vector_val<std::_Simple_types<Segment>>>
+  ,            VD=boost::polygon::voronoi_diagram<double,boost::polygon::voronoi_diagram_traits<double>>
+          ]
+C:\Users\Murat\Documents\GitHub\Dependencies\boost_1_61_0\boost/polygon/voronoi.hpp(68): warning C4244: 'argument' : conversion from 'float' to 'const int', possible loss of data
+          C:\Users\Murat\Documents\GitHub\Dependencies\boost_1_61_0\boost/polygon/voronoi.hpp(85) : see reference to function template instantiation 'unsigned int boost::polygon::insert<Segment,VB>(const Segment &,VB *)' being compiled
+          with
+          [
+              VB=boost::polygon::default_voronoi_builder
+  ,            Segment=Segment
+          ]
+          C:\Users\Murat\Documents\GitHub\Dependencies\boost_1_61_0\boost/polygon/voronoi.hpp(151) : see reference to function template instantiation 'void boost::polygon::insert<SegmentIterator,boost::polygon::default_voronoi_builder>(const SegmentIterator,const SegmentIterator,VB *)' being compiled
+          with
+          [
+              SegmentIterator=std::_Vector_iterator<std::_Vector_val<std::_Simple_types<Segment>>>
+  ,            VB=boost::polygon::default_voronoi_builder
+          ]
+  World.cpp
+c:\users\murat\documents\github\zephyr\zephyr\World.h(503): warning C4244: 'return' : conversion from 'const float' to 'int', possible loss of data
 World.cpp(52): warning C4305: 'argument' : truncation from 'double' to 'float'
-World.cpp(57): warning C4305: 'argument' : truncation from 'double' to 'float'
-World.cpp(84): warning C4244: 'initializing' : conversion from 'float' to 'int', possible loss of data
-World.cpp(95): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
-World.cpp(97): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
-World.cpp(131): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
-World.cpp(132): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
-World.cpp(138): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
-World.cpp(139): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
-World.cpp(221): warning C4018: '<' : signed/unsigned mismatch
-World.cpp(245): warning C4018: '<' : signed/unsigned mismatch
-World.cpp(280): warning C4244: 'initializing' : conversion from 'float' to 'int', possible loss of data
-World.cpp(321): warning C4018: '<' : signed/unsigned mismatch
-World.cpp(349): warning C4018: '<' : signed/unsigned mismatch
-World.cpp(354): warning C4018: '<' : signed/unsigned mismatch
-World.cpp(421): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
-World.cpp(433): warning C4244: 'initializing' : conversion from 'float' to 'int', possible loss of data
-World.cpp(435): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
-World.cpp(457): warning C4018: '<' : signed/unsigned mismatch
-World.cpp(485): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
-World.cpp(486): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
-World.cpp(487): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
-World.cpp(489): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
-World.cpp(501): warning C4244: 'initializing' : conversion from 'float' to 'int', possible loss of data
-World.cpp(565): warning C4305: '*=' : truncation from 'double' to 'float'
-World.cpp(607): warning C4244: '=' : conversion from 'int' to 'float', possible loss of data
-World.cpp(613): warning C4244: 'initializing' : conversion from 'int' to 'float', possible loss of data
-World.cpp(614): warning C4018: '<' : signed/unsigned mismatch
-World.cpp(623): warning C4018: '<' : signed/unsigned mismatch
-World.cpp(637): warning C4305: 'initializing' : truncation from 'double' to 'const float'
-World.cpp(641): warning C4018: '<' : signed/unsigned mismatch
-World.cpp(650): warning C4018: '<' : signed/unsigned mismatch
-World.cpp(678): warning C4018: '<' : signed/unsigned mismatch
-World.cpp(684): warning C4244: 'initializing' : conversion from 'float' to 'int', possible loss of data
-World.cpp(722): warning C4018: '<' : signed/unsigned mismatch
-World.cpp(738): warning C4244: 'initializing' : conversion from 'float' to 'int', possible loss of data
-World.cpp(754): warning C4018: '<' : signed/unsigned mismatch
-World.cpp(763): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
-World.cpp(773): warning C4018: '<' : signed/unsigned mismatch
-World.cpp(789): warning C4018: '<' : signed/unsigned mismatch
-World.cpp(997): warning C4305: 'argument' : truncation from 'double' to 'float'
-World.cpp(998): warning C4305: 'argument' : truncation from 'double' to 'float'
-World.cpp(1001): warning C4018: '<' : signed/unsigned mismatch
-World.cpp(1005): warning C4018: '<' : signed/unsigned mismatch
+World.cpp(53): warning C4305: 'argument' : truncation from 'double' to 'float'
+World.cpp(58): warning C4305: 'argument' : truncation from 'double' to 'float'
+World.cpp(59): warning C4305: 'argument' : truncation from 'double' to 'float'
+World.cpp(103): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+World.cpp(105): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
+World.cpp(144): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+World.cpp(151): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+World.cpp(158): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+World.cpp(181): warning C4244: 'return' : conversion from 'const float' to 'int', possible loss of data
+World.cpp(252): warning C4018: '<' : signed/unsigned mismatch
+World.cpp(276): warning C4018: '<' : signed/unsigned mismatch
+World.cpp(352): warning C4018: '<' : signed/unsigned mismatch
+World.cpp(380): warning C4018: '<' : signed/unsigned mismatch
+World.cpp(385): warning C4018: '<' : signed/unsigned mismatch
+World.cpp(452): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+World.cpp(466): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+World.cpp(488): warning C4018: '<' : signed/unsigned mismatch
+World.cpp(517): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+World.cpp(518): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+World.cpp(519): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+World.cpp(521): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+World.cpp(534): warning C4244: 'initializing' : conversion from 'float' to 'int', possible loss of data
+World.cpp(571): warning C4018: '<' : signed/unsigned mismatch
+World.cpp(598): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+World.cpp(599): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+World.cpp(627): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+World.cpp(684): warning C4305: '*=' : truncation from 'double' to 'float'
+World.cpp(726): warning C4244: '=' : conversion from 'int' to 'float', possible loss of data
+World.cpp(732): warning C4244: 'initializing' : conversion from 'int' to 'float', possible loss of data
+World.cpp(733): warning C4018: '<' : signed/unsigned mismatch
+World.cpp(742): warning C4018: '<' : signed/unsigned mismatch
+World.cpp(756): warning C4305: 'initializing' : truncation from 'double' to 'const float'
+World.cpp(760): warning C4018: '<' : signed/unsigned mismatch
+World.cpp(769): warning C4018: '<' : signed/unsigned mismatch
+World.cpp(797): warning C4018: '<' : signed/unsigned mismatch
+World.cpp(803): warning C4244: 'initializing' : conversion from 'float' to 'int', possible loss of data
+World.cpp(842): warning C4018: '<' : signed/unsigned mismatch
+World.cpp(875): warning C4018: '<' : signed/unsigned mismatch
+World.cpp(889): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+World.cpp(905): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+World.cpp(914): warning C4018: '<' : signed/unsigned mismatch
+World.cpp(930): warning C4018: '<' : signed/unsigned mismatch
+World.cpp(1134): warning C4018: '<' : signed/unsigned mismatch
+World.cpp(1144): warning C4244: 'initializing' : conversion from 'double' to 'const float', possible loss of data
+World.cpp(1186): warning C4305: 'argument' : truncation from 'double' to 'float'
+World.cpp(1187): warning C4305: 'argument' : truncation from 'double' to 'float'
+World.cpp(1190): warning C4018: '<' : signed/unsigned mismatch
+World.cpp(1194): warning C4018: '<' : signed/unsigned mismatch
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\utility(157): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
-          World.cpp(51) : see reference to function template instantiation 'std::pair<std::string,float>::pair<const char*,double,void>(std::pair<const char *,double> &&)' being compiled
-          World.cpp(51) : see reference to function template instantiation 'std::pair<std::string,float>::pair<const char*,double,void>(std::pair<const char *,double> &&)' being compiled
+          World.cpp(52) : see reference to function template instantiation 'std::pair<std::string,float>::pair<const char*,double,void>(std::pair<const char *,double> &&)' being compiled
+          World.cpp(52) : see reference to function template instantiation 'std::pair<std::string,float>::pair<const char*,double,void>(std::pair<const char *,double> &&)' being compiled
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\utility(157): warning C4244: 'initializing' : conversion from 'int' to 'float', possible loss of data
+          World.cpp(58) : see reference to function template instantiation 'std::pair<std::string,float>::pair<const char*,int,void>(std::pair<const char *,int> &&)' being compiled
+          World.cpp(58) : see reference to function template instantiation 'std::pair<std::string,float>::pair<const char*,int,void>(std::pair<const char *,int> &&)' being compiled
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\tuple(80): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\tuple(258) : see reference to function template instantiation 'std::_Tuple_val<_This>::_Tuple_val<_Ty>(_Other &&)' being compiled
+          with
+          [
+              _This=float
+  ,            _Ty=double
+  ,            _Other=double
+          ]
+          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\tuple(258) : see reference to function template instantiation 'std::_Tuple_val<_This>::_Tuple_val<_Ty>(_Other &&)' being compiled
+          with
+          [
+              _This=float
+  ,            _Ty=double
+  ,            _Other=double
+          ]
+          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\tuple(258) : see reference to function template instantiation 'std::tuple<float,float,float>::tuple<double,double,double,std::_Tuple_enable<std::tuple<>,std::tuple<>>::type>(std::tuple<double,double,double> &&)' being compiled
+          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\tuple(258) : see reference to function template instantiation 'std::tuple<float,float,float>::tuple<double,double,double,std::_Tuple_enable<std::tuple<>,std::tuple<>>::type>(std::tuple<double,double,double> &&)' being compiled
+          World.cpp(64) : see reference to function template instantiation 'std::tuple<std::string,float,float,float>::tuple<const char*,double,double,double,std::_Tuple_enable<std::tuple<>,std::tuple<>>::type>(std::tuple<const char *,double,double,double> &&)' being compiled
+          World.cpp(64) : see reference to function template instantiation 'std::tuple<std::string,float,float,float>::tuple<const char*,double,double,double,std::_Tuple_enable<std::tuple<>,std::tuple<>>::type>(std::tuple<const char *,double,double,double> &&)' being compiled
+  WorldMapDemo.cpp
+c:\users\murat\documents\github\zephyr\zephyr\World.h(503): warning C4244: 'return' : conversion from 'const float' to 'int', possible loss of data
+c:\users\murat\documents\github\zephyr\zephyr\libnoise/noiseutils.h(1217): warning C4244: 'initializing' : conversion from 'const double' to 'float', possible loss of data
+WorldMapDemo.cpp(166): warning C4244: 'initializing' : conversion from 'float' to 'int', possible loss of data
+WorldMapDemo.cpp(167): warning C4244: 'initializing' : conversion from 'float' to 'int', possible loss of data
+WorldMapDemo.cpp(216): warning C4018: '<' : signed/unsigned mismatch
+WorldMapDemo.cpp(221): warning C4927: illegal conversion; more than one user-defined conversion has been implicitly applied
+          while calling the constructor 'D3DXVECTOR4::D3DXVECTOR4(const FLOAT *)'
+          c:\users\murat\documents\github\dependencies\microsoft directx sdk (june 2010)\include\d3dx10math.h(274) : see declaration of 'D3DXVECTOR4::D3DXVECTOR4'
+WorldMapDemo.cpp(225): warning C4927: illegal conversion; more than one user-defined conversion has been implicitly applied
+          while calling the constructor 'D3DXVECTOR4::D3DXVECTOR4(const FLOAT *)'
+          c:\users\murat\documents\github\dependencies\microsoft directx sdk (june 2010)\include\d3dx10math.h(274) : see declaration of 'D3DXVECTOR4::D3DXVECTOR4'
+  d11.cpp
+d11.cpp(367): warning C4305: 'argument' : truncation from 'double' to 'FLOAT'
+d11.cpp(373): warning C4305: 'argument' : truncation from 'double' to 'FLOAT'
+d11.cpp(546): warning C4101: 'i' : unreferenced local variable
+d11.cpp(546): warning C4101: 'bufferSize' : unreferenced local variable
+d11.cpp(798): warning C4244: 'initializing' : conversion from 'std::streamoff' to 'size_t', possible loss of data
+d11.cpp(786): warning C4101: 'matrixBufferDesc' : unreferenced local variable
+d11.cpp(874): warning C4244: 'initializing' : conversion from 'std::streamoff' to 'size_t', possible loss of data
+d11.cpp(882): warning C4800: 'HRESULT' : forcing value to bool 'true' or 'false' (performance warning)
+d11.cpp(926): warning C4244: 'initializing' : conversion from 'std::streamoff' to 'size_t', possible loss of data
+d11.cpp(918): warning C4101: 'errorMessage' : unreferenced local variable
+d11.cpp(955): warning C4244: 'initializing' : conversion from 'std::streamoff' to 'size_t', possible loss of data
+d11.cpp(947): warning C4101: 'errorMessage' : unreferenced local variable
+d11.cpp(984): warning C4244: 'initializing' : conversion from 'std::streamoff' to 'size_t', possible loss of data
+d11.cpp(976): warning C4101: 'errorMessage' : unreferenced local variable
+d11.cpp(1291): warning C4244: '=' : conversion from 'int' to 'FLOAT', possible loss of data
+d11.cpp(1292): warning C4244: '=' : conversion from 'int' to 'FLOAT', possible loss of data
+d11.cpp(1293): warning C4244: '=' : conversion from 'int' to 'FLOAT', possible loss of data
+d11.cpp(1294): warning C4244: '=' : conversion from 'int' to 'FLOAT', possible loss of data
+d11.cpp(1385): warning C4101: 'bufferNumber' : unreferenced local variable
+d11.cpp(1545): warning C4244: '=' : conversion from 'const float' to 'UINT', possible loss of data
+d11.cpp(1547): warning C4244: '=' : conversion from 'const float' to 'UINT', possible loss of data
+d11.cpp(1549): warning C4244: '=' : conversion from 'const float' to 'UINT', possible loss of data
+d11.cpp(1620): warning C4244: 'argument' : conversion from 'FLOAT' to 'int', possible loss of data
+  globals.cpp
+  main.cpp
+c:\users\murat\documents\github\zephyr\zephyr\World.h(503): warning C4244: 'return' : conversion from 'const float' to 'int', possible loss of data
+  window.cpp
   Generating code
 c:\users\murat\documents\github\zephyr\zephyr\d11.cpp(388): warning C4715: 'init_engine' : not all control paths return a value
   Finished generating code

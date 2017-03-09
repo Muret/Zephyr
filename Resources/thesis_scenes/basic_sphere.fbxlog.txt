@@ -1,0 +1,18 @@
+<node name= pSphere1
+	<attribute type= mesh name=  />
+</node>
+<node name= camera1
+	<attribute type= camera name= camera1 />
+</node>
+<node name= group
+	<attribute type= null name=  />
+	<node name= pasted__pSphere1
+		<attribute type= mesh name=  />
+	</node>
+</node>
+<node name= pPlane1
+	<attribute type= mesh name=  />
+</node>
+<node name= pointLight1
+	<attribute type= light name=  />
+</node>

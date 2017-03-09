@@ -7,6 +7,7 @@
 class Mesh;
 class Material;
 class Scene;
+class MeshGroup;
 
 class FBXSceneImporter
 {
@@ -16,9 +17,10 @@ public:
 
 	//read functions
 	void read_node(FbxNode* pNode);
-	void read_mesh(FbxNode *pNode, FbxMesh* pMesh);
+	Mesh* read_mesh(FbxNode *pNode, FbxMesh* pMesh);
 	void read_light(FbxNode *pNode, FbxLight* pMesh);
 	void read_camera(FbxNode *pNode, FbxCamera* pCamera);
+	void read_lod_group(FbxNode *pNode, FbxLODGroup *pLodGroup);
 
 	void get_transformation_matrix(FbxNode * pNode, Mesh * new_mesh);
 
@@ -31,6 +33,7 @@ public:
 	void PrintAttribute(FbxNodeAttribute* pAttribute);
 
 	const vector<Mesh*> get_scene_meshes() const;
+	const vector<MeshGroup*> get_scene_mesh_groups() const;
 
 private:
 

@@ -33,7 +33,7 @@ Texture* TextureLoader::create_texture_from_file()
 	if (fif == FIF_UNKNOWN)
 		return nullptr;
 
-
+	
 
 	//check that the plugin has reading capabilities and load the file
 	if (FreeImage_FIFSupportsReading(fif))
@@ -41,6 +41,14 @@ Texture* TextureLoader::create_texture_from_file()
 	//if the image failed to load, return failure
 	if (!dib)
 		return nullptr;
+
+	FREE_IMAGE_TYPE type = FreeImage_GetImageType(dib);
+
+	if (type != FIT_BITMAP)
+	{
+		int a = 5;
+		return nullptr;
+	}
 
 	unsigned red_mask, green_mask, blue_mask;
 	red_mask = FreeImage_GetRedMask(dib);
@@ -58,6 +66,11 @@ Texture* TextureLoader::create_texture_from_file()
 	//get the image width and height
 	width = FreeImage_GetWidth(rgba_dib);
 	height = FreeImage_GetHeight(rgba_dib);
+
+	if (bits == nullptr)
+	{
+		return nullptr;
+	}
 
 	Texture *text = new Texture();
 	text->create(D3DXVECTOR3(width, height, 1), bits, DXGI_FORMAT_R32G32B32A32_FLOAT, 0);

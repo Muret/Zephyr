@@ -3,6 +3,7 @@
 #define _CAMERA_H_
 
 #include "d11.h"
+#include "BoundingBox.h"
 
 class Camera
 {
@@ -47,6 +48,7 @@ public:
 
 	void set_ortho_params(float left, float right, float top, float bottom, float near_v, float far_);
 
+	void check_bb_in_frustum(const BoundingBox &bb);
 
 protected:
 	//camera parameters

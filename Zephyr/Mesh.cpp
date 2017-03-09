@@ -34,8 +34,9 @@ Mesh::Mesh(const Mesh * original_mesh)
 	color_multiplier_ = original_mesh->color_multiplier_;
 	bb = original_mesh->bb;
 
-	indices_ = original_mesh->indices_;
 	mesh_type_ = original_mesh->mesh_type_;
+
+	index_count_ = original_mesh->index_count_;
 }
 
 void Mesh::create_from_buffers(const std::vector<Vertex> &vertices, const std::vector<int> &indices)
@@ -55,8 +56,62 @@ void Mesh::create_from_buffers(const std::vector<Vertex> &vertices, const std::v
 		index_buffer_ = nullptr;
 	}
 
-	validate_bounding_box();
+	index_count_ = indices.size();
 
+	validate_bounding_box();
+}
+
+void Mesh::write_to_file(ofstream &file)
+{
+	int name_length = name_.length();
+	file.write((char*)&name_length, sizeof(int));
+	file.write((char*)name_.c_str(), name_length * sizeof(char));
+
+	int index_count = indices_.size();
+	file.write((char*)&index_count, sizeof(int));
+	for (int i = 0; i < index_count; i++)
+	{
+		file.write((char*)&indices_[i], sizeof(int));
+	}
+
+	int vertex_count = vertices_.size();
+	file.write((char*)&vertex_count, sizeof(int));
+	for (int i = 0; i < vertex_count; i++)
+	{
+		file.write((char*)&vertices_[i], sizeof(Vertex));
+	}
+
+	mesh_material_->write_to_file(file);
+}
+
+void Mesh::read_from_file(ifstream &file)
+{
+	indices_.clear();
+	vertices_.clear();
+	int text = 0;
+
+	int name_length;
+	file.read((char*)&name_length, sizeof(int));
+
+	char *buffer = new char[name_length + 2];
+	memset(buffer, 0, name_length + 2);
+
+	//name_.reserve(name_length + 2);
+	file.read((char*)buffer, name_length * sizeof(char));
+	name_ = buffer;
+
+	file.read((char*)&index_count_, sizeof(int));
+	indices_.resize(index_count_);
+	file.read((char*)&indices_[0], sizeof(int) * index_count_);
+
+	int vertex_count = 0;
+	file.read((char*)&vertex_count, sizeof(int));
+	vertices_.resize(vertex_count);
+	file.read((char*)&vertices_[0], sizeof(Vertex) * vertex_count);
+
+	Material *new_material = new Material();
+	new_material->read_from_file(file);
+	set_material(new_material);
 }
 
 ID3D11Buffer* Mesh::get_vertex_buffer() const
@@ -109,7 +164,7 @@ int Mesh::get_vertex_count() const
 
 int Mesh::get_index_count() const
 {
-	return indices_.size();
+	return index_count_;
 }
 
 void Mesh::set_material(Material *mesh_material)

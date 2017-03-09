@@ -51,6 +51,7 @@ ID3D11DepthStencilView *currentDepthStencilView = nullptr;
 ID3D11UnorderedAccessView *currentUAViews[max_uav_bound];
 UINT currentUAVIndexes[max_uav_bound];
 
+vector<ID3D11ShaderResourceView*> shader_resource_view_cache_[(int)shaderType::count];
 
 ID3DUserDefinedAnnotation *pPerf;
 
@@ -73,7 +74,7 @@ bool init_engine()
 	IDXGIFactory* factory;
 	IDXGIAdapter* adapter;
 	IDXGIOutput* adapterOutput;
-	unsigned int numModes, i, numerator, denominator, stringLength;
+	size_t numModes, i, numerator, denominator, stringLength;
 	DXGI_MODE_DESC* displayModeList;
 	DXGI_ADAPTER_DESC adapterDesc;
 	int error;
@@ -107,6 +108,11 @@ bool init_engine()
 	g_depthStencilView = 0;
 	g_rasterState = 0;
 
+	for (int i = 0; i < (int)shaderType::count; i++)
+	{
+		shader_resource_view_cache_[i].resize(64);
+		memset(&shader_resource_view_cache_[i][0], 0, 64 * sizeof(ID3D11ShaderResourceView*));
+	}
 
 	// Create a DirectX graphics interface factory.
 	result = CreateDXGIFactory(__uuidof(IDXGIFactory), (void**) &factory);
@@ -130,11 +136,14 @@ bool init_engine()
 	}
 
 	// Get the number of modes that fit the DXGI_FORMAT_R8G8B8A8_UNORM display format for the adapter output (monitor).
-	result = adapterOutput->GetDisplayModeList(DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_ENUM_MODES_INTERLACED, &numModes, NULL);
+	UINT modes;
+	result = adapterOutput->GetDisplayModeList(DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_ENUM_MODES_INTERLACED, &modes, NULL);
 	if (FAILED(result))
 	{
 		return false;
 	}
+
+	numModes = modes;
 
 	// Create a list to hold all the possible display modes for this monitor/video card combination.
 	displayModeList = new DXGI_MODE_DESC[numModes];
@@ -144,7 +153,7 @@ bool init_engine()
 	}
 
 	// Now fill the display mode list structures.
-	result = adapterOutput->GetDisplayModeList(DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_ENUM_MODES_INTERLACED, &numModes, displayModeList);
+	result = adapterOutput->GetDisplayModeList(DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_ENUM_MODES_INTERLACED, (UINT*)&numModes, displayModeList);
 	if (FAILED(result))
 	{
 		return false;
@@ -527,7 +536,7 @@ void clearScreen(D3DXVECTOR4 col /*=D3DXVECTOR4(0,0,0,0) */, float depth /*= 1*/
 	color[2] = col.z;
 	color[3] = col.w;
 
-	if (currentRenderTargetViews != nullptr)
+	if (currentRenderTargetViews != nullptr && currentRenderTargetViews[0] != nullptr)
 	{
 		g_deviceContext->ClearRenderTargetView(currentRenderTargetViews[0], color);
 	}
@@ -913,6 +922,11 @@ ID3D11Buffer * CreateIndexBuffer(int index_count, void *data, int index_struct_s
 
 ID3D11PixelShader* CreatePixelShader(std::string shader_name)
 {
+	if (shader_name.length() == 0)
+	{
+		return nullptr;
+	}
+
 	HRESULT result;
 
 	ID3D10Blob* errorMessage;
@@ -1298,6 +1312,17 @@ void SetViewPort(int w_start, int h_start, int width, int height)
 	g_deviceContext->RSSetViewports(1, &viewport);
 }
 
+void SetScissorTest(int w_start, int h_start, int width, int height)
+{
+	D3D11_RECT scissor_rect;
+	scissor_rect.left = w_start;
+	scissor_rect.right = w_start + width;
+	scissor_rect.bottom = h_start;
+	scissor_rect.top = h_start + height;
+
+	g_deviceContext->RSSetScissorRects(1, &scissor_rect);
+}
+
 void SetVertexBuffer(ID3D11Buffer *  vertex_buffer, int vertex_size)
 {
 	// Set vertex buffer stride and offset.
@@ -1349,16 +1374,44 @@ void SetCShaderRV(ID3D11ShaderResourceView **srv_list, int number_of_resources)
 	g_deviceContext->CSSetShaderResources( 0, number_of_resources, srv_list);
 }
 
+bool check_srv_cache(ID3D11ShaderResourceView ** uav_list, int number_of_resources, shaderType shader_type, int slot)
+{
+	for (int i = 0; i < number_of_resources; i++)
+	{
+		if (shader_resource_view_cache_[(int)shader_type][slot + i] != uav_list[i])
+		{
+			return false;
+		}
+	}
+
+	return true;
+}
+
+void set_srv_cache(ID3D11ShaderResourceView ** uav_list, int number_of_resources, shaderType shader_type, int slot)
+{
+	for (int i = 0; i < number_of_resources; i++)
+	{
+		shader_resource_view_cache_[(int)shader_type][slot + i] = uav_list[i];
+	}
+}
+
 void SetSRV(ID3D11ShaderResourceView **uav_list, int number_of_resources, shaderType shader_type, int slot)
 {
-	if (shader_type == shader_type_vertex)
+	if (check_srv_cache(uav_list, number_of_resources, shader_type, slot))
+	{
+		return;
+	}
+
+	if (shader_type == shaderType::vertex)
 	{
 		g_deviceContext->VSSetShaderResources(slot, number_of_resources, uav_list);
 	}
-	else if (shader_type == shader_type_pixel)
+	else if (shader_type == shaderType::pixel)
 	{
 		g_deviceContext->PSSetShaderResources(slot, number_of_resources, uav_list);
 	}
+
+	set_srv_cache(uav_list, number_of_resources, shader_type, slot);
 }
 
 void SetSRV(Texture *texture, shaderType shader_type, int slot)
@@ -1593,6 +1646,7 @@ ID3D11DepthStencilView* GetDefaultDepthStencilView()
 void SetViewPortToDefault()
 {
 	SetViewPort(0,0,g_screenWidth, g_screenHeight);
+	g_deviceContext->RSSetScissorRects(0, nullptr);
 }
 
 void invalidate_srv(shaderType shader_type)
@@ -1601,7 +1655,7 @@ void invalidate_srv(shaderType shader_type)
 
 	ID3D11ShaderResourceView *nullsrv[max_srv_used];
 	memset(nullsrv, 0, max_srv_used * sizeof(ID3D11ShaderResourceView *));
-	SetSRV(nullsrv, max_srv_used, shader_type_pixel, 0);
+	SetSRV(nullsrv, max_srv_used, shaderType::pixel, 0);
 }
 
 void CopyStructureCount(ID3D11Buffer *dest_buffer, int offset, ID3D11UnorderedAccessView *uav)
@@ -1612,7 +1666,7 @@ void CopyStructureCount(ID3D11Buffer *dest_buffer, int offset, ID3D11UnorderedAc
 void TextureOutputToScreenFunctionality::OutputTextureToScreen(ID3D11ShaderResourceView* texture, D3DXVECTOR4 pos, D3DXVECTOR4 scale, int forced_lod, ID3D11PixelShader *enforced_pixel_shader)
 {
 	SetDepthState(depth_state_disable_test_disable_write);
-	SetSRV(&texture, 1, shaderType::shader_type_pixel, 0);
+	SetSRV(&texture, 1, shaderType::pixel, 0);
 
 	D3DXMATRIX matrix;
 	D3DXMatrixIdentity(&matrix);
@@ -1633,7 +1687,7 @@ void TextureOutputToScreenFunctionality::OutputTextureToScreen(ID3D11ShaderResou
 	RenderIndexed(6);
 
 	ID3D11ShaderResourceView *null_srv = nullptr;
-	SetSRV(&null_srv, 1, shaderType::shader_type_pixel, 0);
+	SetSRV(&null_srv, 1, shaderType::pixel, 0);
 }
 
 TextureOutputToScreenFunctionality::TextureOutputToScreenFunctionality()

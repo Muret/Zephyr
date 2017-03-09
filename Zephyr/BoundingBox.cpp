@@ -43,3 +43,9 @@ void BoundingBox::enlarge_bb_with_bb(const BoundingBox & bb)
 	enlarge_bb_with_point(bb.get_max());
 	enlarge_bb_with_point(bb.get_min());
 }
+
+float BoundingBox::get_sphere_radius() const
+{
+	D3DXVECTOR3 dist = max_ - min_;
+	return max(max(dist.x, dist.y), dist.z);
+}

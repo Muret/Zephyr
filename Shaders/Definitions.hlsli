@@ -24,6 +24,9 @@ cbuffer FrameConstantsBuffer : register (b0)
 	float4 g_screen_texture_half_pixel_forced_mipmap;
 	float4 g_near_far_padding2;
 	float4 g_debug_vector;
+
+	float4 g_screen_tile_size;
+	float4 g_screen_tile_info[64];	
 };
 
 cbuffer MeshConstantsBuffer : register (b1)
@@ -39,6 +42,7 @@ cbuffer MeshConstantsBuffer : register (b1)
 	float4 g_diffuse_color;
 	float4 g_bb_min;
 	float4 g_bb_max;
+	float4 g_current_tile_info;
 };
 
 cbuffer LightingConstantsBuffer : register (b2)
@@ -46,6 +50,8 @@ cbuffer LightingConstantsBuffer : register (b2)
 	float4 g_ws_light_position;
 	float4 g_ss_light_position;
 	float4 g_light_color;
+	matrix g_light_view_projection_matrix;
+	matrix g_light_view_projection_matrix_inv;
 };
 
 //////////////
@@ -81,6 +87,8 @@ Texture2D diffuse_texture : register(t0);
 Texture2D normal_texture : register(t1);
 Texture2D specular_texture : register(t2);
 Texture2D screen_texture : register(t3);
+Texture2D depth_texture : register(t4);
+Texture2D light_shadow_depth_texture : register(t5);
 
 //samplers
 SamplerState PointSampler : register(s0)
@@ -93,8 +101,8 @@ SamplerState PointSampler : register(s0)
 SamplerState LinearSampler : register(s1)
 {
 	Filter = MIN_MAG_MIP_LINEAR;
-	AddressU = Clamp;
-	AddressV = Clamp;
+	AddressU = Repeat;
+	AddressV = Repeat;
 };
 
 #endif

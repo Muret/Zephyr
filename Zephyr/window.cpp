@@ -48,8 +48,8 @@ void openWindow()
 
 
 	// If windowed then set it to 800x600 resolution.
-	g_screenWidth = 1920;
-	g_screenHeight = 1080;
+	g_screenWidth = 1024;
+	g_screenHeight = 1024;
 
 	// Place the window in the middle of the screen.
 	posX = 500;

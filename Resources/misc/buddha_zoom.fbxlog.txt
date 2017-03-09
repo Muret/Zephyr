@@ -1,0 +1,9 @@
+<node name= start_camera
+	<attribute type= camera name= start_camera />
+</node>
+<node name= pSphere1
+	<attribute type= mesh name=  />
+</node>
+<node name= pSphere2
+	<attribute type= mesh name=  />
+</node>

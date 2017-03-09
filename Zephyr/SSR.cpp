@@ -31,7 +31,7 @@ void SSR::post_render()
 
 	SetDepthStencilView(nullptr);
 	ssr_post_fx_pass->set_shaders();
-	hi_z_depth_texture->set_srv_to_shader(shader_type_pixel, 4);
+	hi_z_depth_texture->set_srv_to_shader(shaderType::pixel, 4);
 
 	SetViewPortToDefault();
 	RenderFullScreenQuad();
@@ -54,7 +54,7 @@ void SSR::generate_depth_mipmap_textures()
 	Texture *currentOutput = hi_z_depth_texture_ping_pong[0];
 	Texture *currentInput = hi_z_depth_texture_ping_pong[1];
 
-	invalidate_srv(shader_type_pixel);
+	invalidate_srv(shaderType::pixel);
 
 	int res = g_screenWidth;
 	for (int i = 0; i < render_count; i++)
@@ -62,17 +62,17 @@ void SSR::generate_depth_mipmap_textures()
 		if (i == 0)
 		{
 			ID3D11ShaderResourceView *view = GetDepthTextureSRV();
-			SetSRV(&view, 1, shaderType::shader_type_pixel, 0);
+			SetSRV(&view, 1, shaderType::pixel, 0);
 			currentOutput->set_as_render_target(0);
 			depth_root_copy_shader->set_shaders();
 		}
 		else
 		{
 			ID3D11ShaderResourceView *null_srv = nullptr;
-			SetSRV(&null_srv, 1, shaderType::shader_type_pixel, 0);
+			SetSRV(&null_srv, 1, shaderType::pixel, 0);
 
 			currentOutput->set_as_render_target(0, i);
-			currentInput->set_srv_to_shader(shader_type_pixel, 0, i - 1);
+			currentInput->set_srv_to_shader(shaderType::pixel, 0, i - 1);
 
 			hi_z_depth_gen_shader->set_shaders();
 		}
@@ -92,7 +92,7 @@ void SSR::generate_depth_mipmap_textures()
 	for (int i = 1; i < render_count; i += 2)
 	{
 		currentOutput->set_as_render_target(0, i);
-		currentInput->set_srv_to_shader(shader_type_pixel, 0, i);
+		currentInput->set_srv_to_shader(shaderType::pixel, 0, i);
 
 		depth_root_copy_shader->set_shaders();
 

@@ -1,0 +1,23 @@
+﻿  d11.cpp
+d11.cpp(376): warning C4305: 'argument' : truncation from 'double' to 'FLOAT'
+d11.cpp(382): warning C4305: 'argument' : truncation from 'double' to 'FLOAT'
+d11.cpp(555): warning C4101: 'i' : unreferenced local variable
+d11.cpp(555): warning C4101: 'bufferSize' : unreferenced local variable
+d11.cpp(795): warning C4101: 'matrixBufferDesc' : unreferenced local variable
+d11.cpp(891): warning C4800: 'HRESULT' : forcing value to bool 'true' or 'false' (performance warning)
+d11.cpp(927): warning C4101: 'errorMessage' : unreferenced local variable
+d11.cpp(956): warning C4101: 'errorMessage' : unreferenced local variable
+d11.cpp(985): warning C4101: 'errorMessage' : unreferenced local variable
+d11.cpp(1300): warning C4244: '=' : conversion from 'int' to 'FLOAT', possible loss of data
+d11.cpp(1301): warning C4244: '=' : conversion from 'int' to 'FLOAT', possible loss of data
+d11.cpp(1302): warning C4244: '=' : conversion from 'int' to 'FLOAT', possible loss of data
+d11.cpp(1303): warning C4244: '=' : conversion from 'int' to 'FLOAT', possible loss of data
+d11.cpp(1422): warning C4101: 'bufferNumber' : unreferenced local variable
+d11.cpp(1582): warning C4244: '=' : conversion from 'const float' to 'UINT', possible loss of data
+d11.cpp(1584): warning C4244: '=' : conversion from 'const float' to 'UINT', possible loss of data
+d11.cpp(1586): warning C4244: '=' : conversion from 'const float' to 'UINT', possible loss of data
+d11.cpp(1657): warning C4244: 'argument' : conversion from 'FLOAT' to 'int', possible loss of data
+  Generating code
+c:\users\murat\documents\github\zephyr\zephyr\d11.cpp(397): warning C4715: 'init_engine' : not all control paths return a value
+  Finished generating code
+  Zephyr.vcxproj -> C:\Users\Murat\Documents\GitHub\Zephyr\x64\Release\Zephyr.exe

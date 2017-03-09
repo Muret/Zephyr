@@ -114,11 +114,11 @@ void Texture::set_as_uav(int slot, shaderType type, unsigned int initial_count /
 {
 	ZEPHYR_ASSERT(uav_ != nullptr);
 
-	if (type == shader_type_pixel)
+	if (type == shaderType::pixel)
 	{
 		SetUAVToPixelShader(texture_uav_, slot, initial_count);
 	}
-	else if (type == shader_type_compute)
+	else if (type == shaderType::compute)
 	{
 		g_deviceContext->CSSetUnorderedAccessViews(slot, 1, &texture_uav_, &initial_count);
 	}

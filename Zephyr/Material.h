@@ -26,6 +26,9 @@ public:
 	void set_textures();
 	D3DXVECTOR4 get_diffuse_color() const;
 
+	void write_to_file(ofstream &file);
+	void read_from_file(ifstream &file);
+
 	void set_enforced_gbuffer_shader(Shader *shader);
 	Shader* get_enforced_gbuffer_shader() const;
 private:

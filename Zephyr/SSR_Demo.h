@@ -22,9 +22,6 @@ public:
 private:
 	SSR *ssr_component;
 	FreeCameraController *camera_controller_;
-	GPUBasedPipeline::GPUBasedRenderer *tengri_renderer_;
-
-	void init_tengri();
 };
 
 #endif

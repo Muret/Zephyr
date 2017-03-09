@@ -15,6 +15,7 @@
 #include "KeyChain.h"
 #include "GPUBasedPipelineDemo.h"
 #include "WorldMapDemo.h"
+#include "PlaneAnimationDemo.h"
 
 #include "GUI.h"
 
@@ -48,7 +49,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pScmdline,
 
 	string path = ExePath();
 
-	current_demo = new WorldMapDemo();
+	current_demo = new SSRDemo();
 	current_demo->initialize();
 
 	MSG msg = {};
@@ -58,8 +59,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pScmdline,
 
 		while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE) > 0)
 		{
-			if(gui.handle_key_event(msg.message, msg.wParam, msg.lParam))
-			key_chain.handle_key_event(msg.message, msg.wParam);
+			if (gui.handle_key_event(msg.message, msg.wParam, msg.lParam) == false)
+			{
+				key_chain.handle_key_event(msg.message, msg.wParam);
+			}
 
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);

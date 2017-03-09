@@ -1,23 +1,32 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.21005.1
+# Visual Studio 14
+VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Zephyr", "Zephyr\Zephyr.vcxproj", "{1E262E36-8C32-4A91-BBC0-95948D9B9503}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
+		Debug|x64 = Debug|x64
 		DebugFast|Win32 = DebugFast|Win32
+		DebugFast|x64 = DebugFast|x64
 		Release|Win32 = Release|Win32
+		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{1E262E36-8C32-4A91-BBC0-95948D9B9503}.Debug|Win32.ActiveCfg = Debug|Win32
 		{1E262E36-8C32-4A91-BBC0-95948D9B9503}.Debug|Win32.Build.0 = Debug|Win32
+		{1E262E36-8C32-4A91-BBC0-95948D9B9503}.Debug|x64.ActiveCfg = Debug|x64
+		{1E262E36-8C32-4A91-BBC0-95948D9B9503}.Debug|x64.Build.0 = Debug|x64
 		{1E262E36-8C32-4A91-BBC0-95948D9B9503}.DebugFast|Win32.ActiveCfg = DebugFast|Win32
 		{1E262E36-8C32-4A91-BBC0-95948D9B9503}.DebugFast|Win32.Build.0 = DebugFast|Win32
+		{1E262E36-8C32-4A91-BBC0-95948D9B9503}.DebugFast|x64.ActiveCfg = DebugFast|x64
+		{1E262E36-8C32-4A91-BBC0-95948D9B9503}.DebugFast|x64.Build.0 = DebugFast|x64
 		{1E262E36-8C32-4A91-BBC0-95948D9B9503}.Release|Win32.ActiveCfg = Release|Win32
 		{1E262E36-8C32-4A91-BBC0-95948D9B9503}.Release|Win32.Build.0 = Release|Win32
+		{1E262E36-8C32-4A91-BBC0-95948D9B9503}.Release|x64.ActiveCfg = Release|x64
+		{1E262E36-8C32-4A91-BBC0-95948D9B9503}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
