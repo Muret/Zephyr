@@ -12,6 +12,7 @@ class Shader;
 class Scene;
 class Camera;
 class TextureQuadTree;
+class GPUBuffer;
 
 struct FrameConstantsBuffer
 {
@@ -33,7 +34,7 @@ struct FrameConstantsBuffer
 	D3DXVECTOR4 debug_vector;
 
 	D3DXVECTOR4 screen_tile_size;
-	D3DXVECTOR4 screen_tile_info[64];
+	D3DXVECTOR4 screen_tile_info[128];
 };
 
 struct MeshConstantsBuffer
@@ -138,6 +139,9 @@ protected:
 	ID3D11ShaderResourceView* light_depth_texture_srv_;
 	ID3D11Texture2D* light_depth_texture_;
 
+	GPUBuffer* per_tile_render_info_;
+	GPUBuffer* cleaner_staging_buffer_;
+
 	Texture *ds_gbuffer_texture_normal[2];
 	Texture *ds_gbuffer_texture_albedo[2];
 	Texture *ds_gbuffer_texture_specular[2];
@@ -151,13 +155,17 @@ protected:
 
 	//render options
 	bool use_postfx;
+	bool do_flicker;
 
 	//Camera stuff
 	Camera *camera_;
 
-	TextureQuadTree* gbuffer_render_quad_tree_;
-
-	map<pair<int, int>, TextureQuadTree::Tile> current_tile_data_;
+	Texture *previous_frame_light_buffer_[2];
+	TextureQuadTree* gbuffer_render_quad_tree_[2];
+	map<pair<int, int>, TextureQuadTree::Tile> current_tile_data_[2];
+	int current_tile_index_;
+	int tile_render_data_size_;
+	int *tile_render_data_;
 
 	//uniform constants
 	LightingConstantsBuffer lighting_contants_buffer_cpu;

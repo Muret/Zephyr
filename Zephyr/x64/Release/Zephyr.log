@@ -1,22 +1,383 @@
-﻿  d11.cpp
+﻿  compilation object save succeeded; see C:\Users\Murat\Documents\GitHub\Zephyr\x64\Release\direct_vertex_position.cso
+C:\Users\Murat\Documents\GitHub\Zephyr\Shaders\gbuffer_temporal_resolve.hlsl(14,19-53): warning X3576: semantics in type overridden by variable/function or enclosing type
+  
+  compilation object save succeeded; see C:\Users\Murat\Documents\GitHub\Zephyr\x64\Release\gbuffer_temporal_resolve.cso
+C:\Users\Murat\Documents\GitHub\Zephyr\Shaders\tiled_gbuffer_vertex.hlsl(20,2-28): warning X3206: implicit truncation of vector type
+  
+  compilation object save succeeded; see C:\Users\Murat\Documents\GitHub\Zephyr\x64\Release\tiled_gbuffer_vertex.cso
+C:\Users\Murat\Documents\GitHub\Zephyr\Shaders\voxel_construction_p.hlsl(11,9-45): warning X3206: implicit truncation of vector type
+C:\Users\Murat\Documents\GitHub\Zephyr\Shaders\voxel_construction_p.hlsl(12,9-28): warning X3206: implicit truncation of vector type
+C:\Users\Murat\Documents\GitHub\Zephyr\Shaders\voxel_construction_p.hlsl(13,9-35): warning X3206: implicit truncation of vector type
+  
+  compilation object save succeeded; see C:\Users\Murat\Documents\GitHub\Zephyr\x64\Release\voxel_construction_p.cso
+  compilation object save succeeded; see C:\Users\Murat\Documents\GitHub\Zephyr\x64\Release\voxel_filler_cs.cso
+  CatmullClark_Demo.cpp
+c:\users\murat\documents\github\zephyr\zephyr\TextureQuadTree.h(39): warning C4240: nonstandard extension used : access to 'TextureQuadTree::TreeNode' now defined to be 'private', previously it was defined to be 'public'
+          c:\users\murat\documents\github\zephyr\zephyr\TextureQuadTree.h(11) : see declaration of 'TextureQuadTree::TreeNode'
+c:\users\murat\documents\github\zephyr\zephyr\ResourceManager.h(82): warning C4267: 'return' : conversion from 'size_t' to 'int', possible loss of data
+  Demo.cpp
+c:\users\murat\documents\github\zephyr\zephyr\TextureQuadTree.h(39): warning C4240: nonstandard extension used : access to 'TextureQuadTree::TreeNode' now defined to be 'private', previously it was defined to be 'public'
+          c:\users\murat\documents\github\zephyr\zephyr\TextureQuadTree.h(11) : see declaration of 'TextureQuadTree::TreeNode'
+  FBXSceneImporter.cpp
+c:\users\murat\documents\github\zephyr\zephyr\TextureQuadTree.h(39): warning C4240: nonstandard extension used : access to 'TextureQuadTree::TreeNode' now defined to be 'private', previously it was defined to be 'public'
+          c:\users\murat\documents\github\zephyr\zephyr\TextureQuadTree.h(11) : see declaration of 'TextureQuadTree::TreeNode'
+c:\users\murat\documents\github\zephyr\zephyr\ResourceManager.h(82): warning C4267: 'return' : conversion from 'size_t' to 'int', possible loss of data
+FBXSceneImporter.cpp(287): warning C4244: '=' : conversion from 'fbxsdk::FbxDouble' to 'FLOAT', possible loss of data
+FBXSceneImporter.cpp(288): warning C4244: '=' : conversion from 'fbxsdk::FbxDouble' to 'FLOAT', possible loss of data
+FBXSceneImporter.cpp(289): warning C4244: '=' : conversion from 'fbxsdk::FbxDouble' to 'FLOAT', possible loss of data
+FBXSceneImporter.cpp(307): warning C4244: 'argument' : conversion from 'fbxsdk::FbxDouble' to 'FLOAT', possible loss of data
+FBXSceneImporter.cpp(373): warning C4244: 'argument' : conversion from 'fbxsdk::FbxDouble' to 'FLOAT', possible loss of data
+FBXSceneImporter.cpp(463): warning C4267: 'argument' : conversion from 'size_t' to 'const int', possible loss of data
+FBXSceneImporter.cpp(553): warning C4244: 'argument' : conversion from 'fbxsdk::FbxDouble' to 'FLOAT', possible loss of data
+FBXSceneImporter.cpp(573): warning C4244: '=' : conversion from 'fbxsdk::FbxDouble' to 'float', possible loss of data
+FBXSceneImporter.cpp(585): warning C4244: 'argument' : conversion from 'fbxsdk::FbxDouble' to 'FLOAT', possible loss of data
+FBXSceneImporter.cpp(586): warning C4244: 'argument' : conversion from 'fbxsdk::FbxDouble' to 'FLOAT', possible loss of data
+FBXSceneImporter.cpp(596): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+FBXSceneImporter.cpp(597): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+FBXSceneImporter.cpp(598): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+FBXSceneImporter.cpp(602): warning C4244: '=' : conversion from 'fbxsdk::FbxDouble' to 'float', possible loss of data
+FBXSceneImporter.cpp(603): warning C4244: '=' : conversion from 'fbxsdk::FbxDouble' to 'float', possible loss of data
+FBXSceneImporter.cpp(604): warning C4244: '=' : conversion from 'fbxsdk::FbxDouble' to 'float', possible loss of data
+FBXSceneImporter.cpp(605): warning C4244: '=' : conversion from 'fbxsdk::FbxDouble' to 'float', possible loss of data
+FBXSceneImporter.cpp(607): warning C4244: '=' : conversion from 'fbxsdk::FbxDouble' to 'float', possible loss of data
+FBXSceneImporter.cpp(608): warning C4244: '=' : conversion from 'fbxsdk::FbxDouble' to 'float', possible loss of data
+FBXSceneImporter.cpp(609): warning C4244: '=' : conversion from 'fbxsdk::FbxDouble' to 'float', possible loss of data
+FBXSceneImporter.cpp(610): warning C4244: '=' : conversion from 'fbxsdk::FbxDouble' to 'float', possible loss of data
+FBXSceneImporter.cpp(612): warning C4244: '=' : conversion from 'fbxsdk::FbxDouble' to 'float', possible loss of data
+FBXSceneImporter.cpp(613): warning C4244: '=' : conversion from 'fbxsdk::FbxDouble' to 'float', possible loss of data
+FBXSceneImporter.cpp(614): warning C4244: '=' : conversion from 'fbxsdk::FbxDouble' to 'float', possible loss of data
+FBXSceneImporter.cpp(615): warning C4244: '=' : conversion from 'fbxsdk::FbxDouble' to 'float', possible loss of data
+FBXSceneImporter.cpp(617): warning C4244: '=' : conversion from 'fbxsdk::FbxDouble' to 'float', possible loss of data
+FBXSceneImporter.cpp(618): warning C4244: '=' : conversion from 'fbxsdk::FbxDouble' to 'float', possible loss of data
+FBXSceneImporter.cpp(619): warning C4244: '=' : conversion from 'fbxsdk::FbxDouble' to 'float', possible loss of data
+FBXSceneImporter.cpp(620): warning C4244: '=' : conversion from 'fbxsdk::FbxDouble' to 'float', possible loss of data
+  GPUBasedPipeline.cpp
+c:\users\murat\documents\github\zephyr\zephyr\TextureQuadTree.h(39): warning C4240: nonstandard extension used : access to 'TextureQuadTree::TreeNode' now defined to be 'private', previously it was defined to be 'public'
+          c:\users\murat\documents\github\zephyr\zephyr\TextureQuadTree.h(11) : see declaration of 'TextureQuadTree::TreeNode'
+c:\users\murat\documents\github\zephyr\zephyr\ResourceManager.h(82): warning C4267: 'return' : conversion from 'size_t' to 'int', possible loss of data
+GPUBasedPipeline.cpp(64): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+GPUBasedPipeline.cpp(65): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+GPUBasedPipeline.cpp(66): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+GPUBasedPipeline.cpp(89): warning C4267: '=' : conversion from 'size_t' to 'int', possible loss of data
+GPUBasedPipeline.cpp(92): warning C4267: 'initializing' : conversion from 'size_t' to 'int', possible loss of data
+GPUBasedPipeline.cpp(98): warning C4267: '=' : conversion from 'size_t' to 'int', possible loss of data
+GPUBasedPipeline.cpp(106): warning C4267: '=' : conversion from 'size_t' to 'int', possible loss of data
+GPUBasedPipeline.cpp(110): warning C4267: '=' : conversion from 'size_t' to 'int', possible loss of data
+GPUBasedPipeline.cpp(119): warning C4244: '=' : conversion from 'int' to 'FLOAT', possible loss of data
+GPUBasedPipeline.cpp(120): warning C4244: '=' : conversion from 'int' to 'FLOAT', possible loss of data
+GPUBasedPipeline.cpp(125): warning C4267: 'argument' : conversion from 'size_t' to 'int', possible loss of data
+GPUBasedPipeline.cpp(126): warning C4267: 'argument' : conversion from 'size_t' to 'int', possible loss of data
+GPUBasedPipeline.cpp(127): warning C4267: 'argument' : conversion from 'size_t' to 'int', possible loss of data
+GPUBasedPipeline.cpp(128): warning C4267: 'argument' : conversion from 'size_t' to 'int', possible loss of data
+GPUBasedPipeline.cpp(149): warning C4244: '=' : conversion from 'int' to 'FLOAT', possible loss of data
+GPUBasedPipeline.cpp(265): warning C4244: 'argument' : conversion from 'float' to '__int64', possible loss of data
+GPUBasedPipeline.cpp(266): warning C4244: 'argument' : conversion from 'float' to '__int64', possible loss of data
+GPUBasedPipeline.cpp(280): warning C4244: '=' : conversion from 'int' to 'FLOAT', possible loss of data
+  GPUBasedPipelineDemo.cpp
+c:\users\murat\documents\github\zephyr\zephyr\TextureQuadTree.h(39): warning C4240: nonstandard extension used : access to 'TextureQuadTree::TreeNode' now defined to be 'private', previously it was defined to be 'public'
+          c:\users\murat\documents\github\zephyr\zephyr\TextureQuadTree.h(11) : see declaration of 'TextureQuadTree::TreeNode'
+c:\users\murat\documents\github\zephyr\zephyr\ResourceManager.h(82): warning C4267: 'return' : conversion from 'size_t' to 'int', possible loss of data
+  GPUVoxelOcctree.cpp
+c:\users\murat\documents\github\zephyr\zephyr\TextureQuadTree.h(39): warning C4240: nonstandard extension used : access to 'TextureQuadTree::TreeNode' now defined to be 'private', previously it was defined to be 'public'
+          c:\users\murat\documents\github\zephyr\zephyr\TextureQuadTree.h(11) : see declaration of 'TextureQuadTree::TreeNode'
+c:\users\murat\documents\github\zephyr\zephyr\ResourceManager.h(82): warning C4267: 'return' : conversion from 'size_t' to 'int', possible loss of data
+GPUVoxelOcctree.cpp(21): warning C4244: 'initializing' : conversion from 'const float' to 'const int', possible loss of data
+GPUVoxelOcctree.cpp(38): warning C4244: 'initializing' : conversion from 'double' to 'int', possible loss of data
+GPUVoxelOcctree.cpp(41): warning C4244: 'argument' : conversion from 'double' to 'FLOAT', possible loss of data
+GPUVoxelOcctree.cpp(64): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
+GPUVoxelOcctree.cpp(68): warning C4244: 'argument' : conversion from 'double' to 'FLOAT', possible loss of data
+GPUVoxelOcctree.cpp(73): warning C4305: 'argument' : truncation from 'double' to 'float'
+GPUVoxelOcctree.cpp(89): warning C4244: 'argument' : conversion from 'double' to 'FLOAT', possible loss of data
+GPUVoxelOcctree.cpp(94): warning C4305: 'argument' : truncation from 'double' to 'float'
+GPUVoxelOcctree.cpp(110): warning C4244: 'argument' : conversion from 'double' to 'FLOAT', possible loss of data
+GPUVoxelOcctree.cpp(115): warning C4305: 'argument' : truncation from 'double' to 'float'
+GPUVoxelOcctree.cpp(155): warning C4244: 'initializing' : conversion from 'float' to 'int', possible loss of data
+GPUVoxelOcctree.cpp(249): warning C4267: 'argument' : conversion from 'size_t' to 'int', possible loss of data
+GPUVoxelOcctree.cpp(341): warning C4927: illegal conversion; more than one user-defined conversion has been implicitly applied
+          while calling the constructor 'D3DXVECTOR3::D3DXVECTOR3(const FLOAT *)'
+          c:\users\murat\documents\github\dependencies\microsoft directx sdk (june 2010)\include\d3dx10math.h(199) : see declaration of 'D3DXVECTOR3::D3DXVECTOR3'
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\xrefwrap(283): warning C4244: 'return' : conversion from 'float' to 'int', possible loss of data
+          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\functional(228) : see reference to function template instantiation '_Ret std::_Callable_obj<GPUVoxelOcctree::sample_brick::<lambda_92f66a185d7aaea92fabf9cf74169a4e>,false>::_ApplyX<_Rx,const D3DXVECTOR3&>(const D3DXVECTOR3 &)' being compiled
+          with
+          [
+              _Ret=int
+  ,            _Rx=int
+          ]
+          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\functional(228) : see reference to function template instantiation '_Ret std::_Callable_obj<GPUVoxelOcctree::sample_brick::<lambda_92f66a185d7aaea92fabf9cf74169a4e>,false>::_ApplyX<_Rx,const D3DXVECTOR3&>(const D3DXVECTOR3 &)' being compiled
+          with
+          [
+              _Ret=int
+  ,            _Rx=int
+          ]
+          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\functional(226) : while compiling class template member function 'int std::_Func_impl<_MyWrapper,_Alloc,_Ret,const D3DXVECTOR3 &>::_Do_call(const D3DXVECTOR3 &)'
+          with
+          [
+              _Alloc=std::allocator<std::_Func_class<int,const D3DXVECTOR3 &>>
+  ,            _Ret=int
+          ]
+          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\functional(495) : see reference to class template instantiation 'std::_Func_impl<_MyWrapper,_Alloc,_Ret,const D3DXVECTOR3 &>' being compiled
+          with
+          [
+              _Alloc=std::allocator<std::_Func_class<int,const D3DXVECTOR3 &>>
+  ,            _Ret=int
+          ]
+          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\functional(396) : see reference to function template instantiation 'void std::_Func_class<_Ret,const D3DXVECTOR3 &>::_Do_alloc<_Myimpl,_Ty,_Alloc>(_Fty &&,_Alloc)' being compiled
+          with
+          [
+              _Ret=int
+  ,            _Ty=GPUVoxelOcctree::sample_brick::<lambda_92f66a185d7aaea92fabf9cf74169a4e>
+  ,            _Alloc=std::allocator<std::_Func_class<int,const D3DXVECTOR3 &>>
+  ,            _Fty=GPUVoxelOcctree::sample_brick::<lambda_92f66a185d7aaea92fabf9cf74169a4e>
+          ]
+          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\functional(396) : see reference to function template instantiation 'void std::_Func_class<_Ret,const D3DXVECTOR3 &>::_Do_alloc<_Myimpl,_Ty,_Alloc>(_Fty &&,_Alloc)' being compiled
+          with
+          [
+              _Ret=int
+  ,            _Ty=GPUVoxelOcctree::sample_brick::<lambda_92f66a185d7aaea92fabf9cf74169a4e>
+  ,            _Alloc=std::allocator<std::_Func_class<int,const D3DXVECTOR3 &>>
+  ,            _Fty=GPUVoxelOcctree::sample_brick::<lambda_92f66a185d7aaea92fabf9cf74169a4e>
+          ]
+          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\functional(385) : see reference to function template instantiation 'void std::_Func_class<_Ret,const D3DXVECTOR3 &>::_Reset_alloc<_Ty,std::allocator<std::_Func_class<_Ret,const D3DXVECTOR3 &>>>(_Fty &&,_Alloc)' being compiled
+          with
+          [
+              _Ret=int
+  ,            _Ty=GPUVoxelOcctree::sample_brick::<lambda_92f66a185d7aaea92fabf9cf74169a4e>
+  ,            _Fty=GPUVoxelOcctree::sample_brick::<lambda_92f66a185d7aaea92fabf9cf74169a4e>
+  ,            _Alloc=std::allocator<std::_Func_class<int,const D3DXVECTOR3 &>>
+          ]
+          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\functional(385) : see reference to function template instantiation 'void std::_Func_class<_Ret,const D3DXVECTOR3 &>::_Reset_alloc<_Ty,std::allocator<std::_Func_class<_Ret,const D3DXVECTOR3 &>>>(_Fty &&,_Alloc)' being compiled
+          with
+          [
+              _Ret=int
+  ,            _Ty=GPUVoxelOcctree::sample_brick::<lambda_92f66a185d7aaea92fabf9cf74169a4e>
+  ,            _Fty=GPUVoxelOcctree::sample_brick::<lambda_92f66a185d7aaea92fabf9cf74169a4e>
+  ,            _Alloc=std::allocator<std::_Func_class<int,const D3DXVECTOR3 &>>
+          ]
+          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\functional(671) : see reference to function template instantiation 'void std::_Func_class<_Ret,const D3DXVECTOR3 &>::_Reset<_Ty>(_Fty &&)' being compiled
+          with
+          [
+              _Ret=int
+  ,            _Ty=GPUVoxelOcctree::sample_brick::<lambda_92f66a185d7aaea92fabf9cf74169a4e>
+  ,            _Fty=GPUVoxelOcctree::sample_brick::<lambda_92f66a185d7aaea92fabf9cf74169a4e>
+          ]
+          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\functional(671) : see reference to function template instantiation 'void std::_Func_class<_Ret,const D3DXVECTOR3 &>::_Reset<_Ty>(_Fty &&)' being compiled
+          with
+          [
+              _Ret=int
+  ,            _Ty=GPUVoxelOcctree::sample_brick::<lambda_92f66a185d7aaea92fabf9cf74169a4e>
+  ,            _Fty=GPUVoxelOcctree::sample_brick::<lambda_92f66a185d7aaea92fabf9cf74169a4e>
+          ]
+          GPUVoxelOcctree.cpp(297) : see reference to function template instantiation 'std::function<int (const D3DXVECTOR3 &)>::function<GPUVoxelOcctree::sample_brick::<lambda_92f66a185d7aaea92fabf9cf74169a4e>>(_Fx &&)' being compiled
+          with
+          [
+              _Fx=GPUVoxelOcctree::sample_brick::<lambda_92f66a185d7aaea92fabf9cf74169a4e>
+          ]
+          GPUVoxelOcctree.cpp(297) : see reference to function template instantiation 'std::function<int (const D3DXVECTOR3 &)>::function<GPUVoxelOcctree::sample_brick::<lambda_92f66a185d7aaea92fabf9cf74169a4e>>(_Fx &&)' being compiled
+          with
+          [
+              _Fx=GPUVoxelOcctree::sample_brick::<lambda_92f66a185d7aaea92fabf9cf74169a4e>
+          ]
+  Material.cpp
+c:\users\murat\documents\github\zephyr\zephyr\TextureQuadTree.h(39): warning C4240: nonstandard extension used : access to 'TextureQuadTree::TreeNode' now defined to be 'private', previously it was defined to be 'public'
+          c:\users\murat\documents\github\zephyr\zephyr\TextureQuadTree.h(11) : see declaration of 'TextureQuadTree::TreeNode'
+c:\users\murat\documents\github\zephyr\zephyr\ResourceManager.h(82): warning C4267: 'return' : conversion from 'size_t' to 'int', possible loss of data
+Material.cpp(78): warning C4267: 'initializing' : conversion from 'size_t' to 'int', possible loss of data
+Material.cpp(84): warning C4267: 'initializing' : conversion from 'size_t' to 'int', possible loss of data
+  ObjSceneImporter.cpp
+c:\users\murat\documents\github\zephyr\zephyr\TextureQuadTree.h(39): warning C4240: nonstandard extension used : access to 'TextureQuadTree::TreeNode' now defined to be 'private', previously it was defined to be 'public'
+          c:\users\murat\documents\github\zephyr\zephyr\TextureQuadTree.h(11) : see declaration of 'TextureQuadTree::TreeNode'
+c:\users\murat\documents\github\zephyr\zephyr\ResourceManager.h(82): warning C4267: 'return' : conversion from 'size_t' to 'int', possible loss of data
+ObjSceneImporter.cpp(52): warning C4244: '=' : conversion from 'double' to 'FLOAT', possible loss of data
+ObjSceneImporter.cpp(53): warning C4244: '=' : conversion from 'double' to 'FLOAT', possible loss of data
+ObjSceneImporter.cpp(54): warning C4244: '=' : conversion from 'double' to 'FLOAT', possible loss of data
+ObjSceneImporter.cpp(109): warning C4267: 'argument' : conversion from 'size_t' to 'int', possible loss of data
+  PlaneAnimationDemo.cpp
+c:\users\murat\documents\github\zephyr\zephyr\TextureQuadTree.h(39): warning C4240: nonstandard extension used : access to 'TextureQuadTree::TreeNode' now defined to be 'private', previously it was defined to be 'public'
+          c:\users\murat\documents\github\zephyr\zephyr\TextureQuadTree.h(11) : see declaration of 'TextureQuadTree::TreeNode'
+c:\users\murat\documents\github\zephyr\zephyr\ResourceManager.h(82): warning C4267: 'return' : conversion from 'size_t' to 'int', possible loss of data
+PlaneAnimationDemo.cpp(73): warning C4305: 'initializing' : truncation from 'double' to 'float'
+PlaneAnimationDemo.cpp(106): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+PlaneAnimationDemo.cpp(136): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+PlaneAnimationDemo.cpp(137): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+PlaneAnimationDemo.cpp(138): warning C4244: 'initializing' : conversion from 'const double' to 'float', possible loss of data
+PlaneAnimationDemo.cpp(146): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+PlaneAnimationDemo.cpp(147): warning C4244: '=' : conversion from 'const double' to 'float', possible loss of data
+  Renderer.cpp
+c:\users\murat\documents\github\zephyr\zephyr\TextureQuadTree.h(39): warning C4240: nonstandard extension used : access to 'TextureQuadTree::TreeNode' now defined to be 'private', previously it was defined to be 'public'
+          c:\users\murat\documents\github\zephyr\zephyr\TextureQuadTree.h(11) : see declaration of 'TextureQuadTree::TreeNode'
+c:\users\murat\documents\github\zephyr\zephyr\ResourceManager.h(82): warning C4267: 'return' : conversion from 'size_t' to 'int', possible loss of data
+Renderer.cpp(30): warning C4244: 'argument' : conversion from 'int' to 'FLOAT', possible loss of data
+Renderer.cpp(31): warning C4244: 'argument' : conversion from 'int' to 'FLOAT', possible loss of data
+Renderer.cpp(32): warning C4244: 'argument' : conversion from 'int' to 'FLOAT', possible loss of data
+Renderer.cpp(36): warning C4244: 'argument' : conversion from 'int' to 'FLOAT', possible loss of data
+Renderer.cpp(37): warning C4244: 'argument' : conversion from 'int' to 'FLOAT', possible loss of data
+Renderer.cpp(38): warning C4244: 'argument' : conversion from 'int' to 'FLOAT', possible loss of data
+Renderer.cpp(40): warning C4244: 'argument' : conversion from 'int' to 'FLOAT', possible loss of data
+Renderer.cpp(41): warning C4244: 'argument' : conversion from 'int' to 'FLOAT', possible loss of data
+Renderer.cpp(42): warning C4244: 'argument' : conversion from 'int' to 'FLOAT', possible loss of data
+Renderer.cpp(44): warning C4244: 'argument' : conversion from 'int' to 'FLOAT', possible loss of data
+Renderer.cpp(104): warning C4244: 'argument' : conversion from 'int' to 'FLOAT', possible loss of data
+Renderer.cpp(105): warning C4244: 'argument' : conversion from 'int' to 'FLOAT', possible loss of data
+Renderer.cpp(207): warning C4244: 'initializing' : conversion from 'double' to 'int', possible loss of data
+Renderer.cpp(254): warning C4267: 'initializing' : conversion from 'size_t' to 'int', possible loss of data
+Renderer.cpp(338): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+Renderer.cpp(340): warning C4244: 'initializing' : conversion from 'FLOAT' to 'int', possible loss of data
+Renderer.cpp(341): warning C4244: 'initializing' : conversion from 'FLOAT' to 'int', possible loss of data
+Renderer.cpp(343): warning C4244: 'initializing' : conversion from 'FLOAT' to 'int', possible loss of data
+Renderer.cpp(344): warning C4244: 'initializing' : conversion from 'FLOAT' to 'int', possible loss of data
+Renderer.cpp(357): warning C4244: '=' : conversion from 'int' to 'FLOAT', possible loss of data
+Renderer.cpp(358): warning C4244: '=' : conversion from 'int' to 'FLOAT', possible loss of data
+Renderer.cpp(605): warning C4244: '=' : conversion from 'int' to 'FLOAT', possible loss of data
+Renderer.cpp(606): warning C4244: '=' : conversion from 'int' to 'FLOAT', possible loss of data
+Renderer.cpp(636): warning C4244: 'argument' : conversion from 'int' to 'FLOAT', possible loss of data
+Renderer.cpp(677): warning C4305: 'argument' : truncation from 'double' to 'FLOAT'
+Renderer.cpp(678): warning C4305: 'argument' : truncation from 'double' to 'FLOAT'
+Renderer.cpp(687): warning C4305: '-=' : truncation from 'double' to 'FLOAT'
+Renderer.cpp(906): warning C4244: '=' : conversion from 'double' to 'FLOAT', possible loss of data
+Renderer.cpp(907): warning C4244: '=' : conversion from 'double' to 'FLOAT', possible loss of data
+Renderer.cpp(1018): warning C4305: 'argument' : truncation from 'double' to 'FLOAT'
+Renderer.cpp(1090): warning C4305: 'argument' : truncation from 'double' to 'FLOAT'
+Renderer.cpp(1117): warning C4244: '=' : conversion from 'int' to 'FLOAT', possible loss of data
+Renderer.cpp(1118): warning C4244: '=' : conversion from 'int' to 'FLOAT', possible loss of data
+Renderer.cpp(1174): warning C4305: 'argument' : truncation from 'double' to 'FLOAT'
+  ResourceManager.cpp
+c:\users\murat\documents\github\zephyr\zephyr\TextureQuadTree.h(39): warning C4240: nonstandard extension used : access to 'TextureQuadTree::TreeNode' now defined to be 'private', previously it was defined to be 'public'
+          c:\users\murat\documents\github\zephyr\zephyr\TextureQuadTree.h(11) : see declaration of 'TextureQuadTree::TreeNode'
+c:\users\murat\documents\github\zephyr\zephyr\ResourceManager.h(82): warning C4267: 'return' : conversion from 'size_t' to 'int', possible loss of data
+  SSR_Demo.cpp
+c:\users\murat\documents\github\zephyr\zephyr\TextureQuadTree.h(39): warning C4240: nonstandard extension used : access to 'TextureQuadTree::TreeNode' now defined to be 'private', previously it was defined to be 'public'
+          c:\users\murat\documents\github\zephyr\zephyr\TextureQuadTree.h(11) : see declaration of 'TextureQuadTree::TreeNode'
+c:\users\murat\documents\github\zephyr\zephyr\ResourceManager.h(82): warning C4267: 'return' : conversion from 'size_t' to 'int', possible loss of data
+SSR_Demo.cpp(49): warning C4267: 'initializing' : conversion from 'size_t' to 'const int', possible loss of data
+  VCT_Demo.cpp
+c:\users\murat\documents\github\zephyr\zephyr\TextureQuadTree.h(39): warning C4240: nonstandard extension used : access to 'TextureQuadTree::TreeNode' now defined to be 'private', previously it was defined to be 'public'
+          c:\users\murat\documents\github\zephyr\zephyr\TextureQuadTree.h(11) : see declaration of 'TextureQuadTree::TreeNode'
+c:\users\murat\documents\github\zephyr\zephyr\ResourceManager.h(82): warning C4267: 'return' : conversion from 'size_t' to 'int', possible loss of data
+  World.cpp
+c:\users\murat\documents\github\zephyr\zephyr\World.h(65): warning C4800: 'const unsigned int' : forcing value to bool 'true' or 'false' (performance warning)
+c:\users\murat\documents\github\zephyr\zephyr\TextureQuadTree.h(39): warning C4240: nonstandard extension used : access to 'TextureQuadTree::TreeNode' now defined to be 'private', previously it was defined to be 'public'
+          c:\users\murat\documents\github\zephyr\zephyr\TextureQuadTree.h(11) : see declaration of 'TextureQuadTree::TreeNode'
+c:\users\murat\documents\github\zephyr\zephyr\ResourceManager.h(82): warning C4267: 'return' : conversion from 'size_t' to 'int', possible loss of data
+World.cpp(61): warning C4305: 'argument' : truncation from 'double' to 'float'
+World.cpp(62): warning C4305: 'argument' : truncation from 'double' to 'float'
+World.cpp(67): warning C4305: 'argument' : truncation from 'double' to 'float'
+World.cpp(112): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+World.cpp(114): warning C4267: 'argument' : conversion from 'size_t' to 'int', possible loss of data
+World.cpp(114): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
+World.cpp(154): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+World.cpp(161): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+World.cpp(168): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+World.cpp(191): warning C4244: 'return' : conversion from 'const float' to 'int', possible loss of data
+World.cpp(336): warning C4267: 'initializing' : conversion from 'size_t' to 'int', possible loss of data
+World.cpp(388): warning C4267: '=' : conversion from 'size_t' to 'int', possible loss of data
+World.cpp(591): warning C4244: 'initializing' : conversion from 'float' to 'int', possible loss of data
+World.cpp(614): warning C4244: 'initializing' : conversion from 'float' to 'int', possible loss of data
+World.cpp(624): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+World.cpp(636): warning C4267: 'argument' : conversion from 'size_t' to 'int', possible loss of data
+World.cpp(638): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+World.cpp(687): warning C4244: 'initializing' : conversion from 'float' to 'int', possible loss of data
+World.cpp(701): warning C4244: 'initializing' : conversion from 'float' to 'int', possible loss of data
+World.cpp(708): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
+World.cpp(797): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+World.cpp(798): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+World.cpp(799): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+World.cpp(801): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+World.cpp(828): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+World.cpp(891): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+World.cpp(920): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+World.cpp(972): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+World.cpp(973): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+World.cpp(1038): warning C4305: '*=' : truncation from 'double' to 'float'
+World.cpp(1117): warning C4244: '=' : conversion from 'int' to 'float', possible loss of data
+World.cpp(1156): warning C4305: 'initializing' : truncation from 'double' to 'const float'
+World.cpp(1247): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+World.cpp(1257): warning C4244: 'initializing' : conversion from 'double' to 'const float', possible loss of data
+World.cpp(1259): warning C4267: 'argument' : conversion from 'size_t' to 'int', possible loss of data
+World.cpp(1287): warning C4267: 'initializing' : conversion from 'size_t' to 'int', possible loss of data
+World.cpp(1314): warning C4244: 'argument' : conversion from 'int' to 'const float', possible loss of data
+World.cpp(1316): warning C4244: '*=' : conversion from 'double' to 'float', possible loss of data
+World.cpp(1324): warning C4267: 'argument' : conversion from 'size_t' to 'int', possible loss of data
+World.cpp(1380): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+World.cpp(1388): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+World.cpp(1396): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+World.cpp(1534): warning C4267: 'initializing' : conversion from 'size_t' to 'int', possible loss of data
+World.cpp(1652): warning C4244: 'initializing' : conversion from 'double' to 'const float', possible loss of data
+World.cpp(1693): warning C4305: 'argument' : truncation from 'double' to 'float'
+World.cpp(1694): warning C4305: 'argument' : truncation from 'double' to 'float'
+World.cpp(1915): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+World.cpp(1953): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+World.cpp(1954): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+World.cpp(1955): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\utility(157): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+          World.cpp(61) : see reference to function template instantiation 'std::pair<std::string,float>::pair<const char*,double,void>(std::pair<const char *,double> &&)' being compiled
+          World.cpp(61) : see reference to function template instantiation 'std::pair<std::string,float>::pair<const char*,double,void>(std::pair<const char *,double> &&)' being compiled
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\utility(157): warning C4244: 'initializing' : conversion from 'int' to 'float', possible loss of data
+          World.cpp(67) : see reference to function template instantiation 'std::pair<std::string,float>::pair<const char*,int,void>(std::pair<const char *,int> &&)' being compiled
+          World.cpp(67) : see reference to function template instantiation 'std::pair<std::string,float>::pair<const char*,int,void>(std::pair<const char *,int> &&)' being compiled
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\tuple(80): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\tuple(258) : see reference to function template instantiation 'std::_Tuple_val<_This>::_Tuple_val<_Ty>(_Other &&)' being compiled
+          with
+          [
+              _This=float
+  ,            _Ty=double
+  ,            _Other=double
+          ]
+          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\tuple(258) : see reference to function template instantiation 'std::_Tuple_val<_This>::_Tuple_val<_Ty>(_Other &&)' being compiled
+          with
+          [
+              _This=float
+  ,            _Ty=double
+  ,            _Other=double
+          ]
+          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\tuple(258) : see reference to function template instantiation 'std::tuple<float,float,float>::tuple<double,double,double,std::_Tuple_enable<std::tuple<>,std::tuple<>>::type>(std::tuple<double,double,double> &&)' being compiled
+          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\tuple(258) : see reference to function template instantiation 'std::tuple<float,float,float>::tuple<double,double,double,std::_Tuple_enable<std::tuple<>,std::tuple<>>::type>(std::tuple<double,double,double> &&)' being compiled
+          World.cpp(72) : see reference to function template instantiation 'std::tuple<std::string,float,float,float>::tuple<const char*,double,double,double,std::_Tuple_enable<std::tuple<>,std::tuple<>>::type>(std::tuple<const char *,double,double,double> &&)' being compiled
+          World.cpp(72) : see reference to function template instantiation 'std::tuple<std::string,float,float,float>::tuple<const char*,double,double,double,std::_Tuple_enable<std::tuple<>,std::tuple<>>::type>(std::tuple<const char *,double,double,double> &&)' being compiled
+  WorldMapDemo.cpp
+c:\users\murat\documents\github\zephyr\zephyr\World.h(65): warning C4800: 'const unsigned int' : forcing value to bool 'true' or 'false' (performance warning)
+c:\users\murat\documents\github\zephyr\zephyr\TextureQuadTree.h(39): warning C4240: nonstandard extension used : access to 'TextureQuadTree::TreeNode' now defined to be 'private', previously it was defined to be 'public'
+          c:\users\murat\documents\github\zephyr\zephyr\TextureQuadTree.h(11) : see declaration of 'TextureQuadTree::TreeNode'
+c:\users\murat\documents\github\zephyr\zephyr\ResourceManager.h(82): warning C4267: 'return' : conversion from 'size_t' to 'int', possible loss of data
+c:\users\murat\documents\github\zephyr\zephyr\libnoise/noiseutils.h(1217): warning C4244: 'initializing' : conversion from 'const double' to 'float', possible loss of data
+WorldMapDemo.cpp(166): warning C4244: 'initializing' : conversion from 'float' to 'int', possible loss of data
+WorldMapDemo.cpp(167): warning C4244: 'initializing' : conversion from 'float' to 'int', possible loss of data
+WorldMapDemo.cpp(221): warning C4927: illegal conversion; more than one user-defined conversion has been implicitly applied
+          while calling the constructor 'D3DXVECTOR4::D3DXVECTOR4(const FLOAT *)'
+          c:\users\murat\documents\github\dependencies\microsoft directx sdk (june 2010)\include\d3dx10math.h(274) : see declaration of 'D3DXVECTOR4::D3DXVECTOR4'
+WorldMapDemo.cpp(225): warning C4927: illegal conversion; more than one user-defined conversion has been implicitly applied
+          while calling the constructor 'D3DXVECTOR4::D3DXVECTOR4(const FLOAT *)'
+          c:\users\murat\documents\github\dependencies\microsoft directx sdk (june 2010)\include\d3dx10math.h(274) : see declaration of 'D3DXVECTOR4::D3DXVECTOR4'
+  ZRFSceneImporter.cpp
+c:\users\murat\documents\github\zephyr\zephyr\TextureQuadTree.h(39): warning C4240: nonstandard extension used : access to 'TextureQuadTree::TreeNode' now defined to be 'private', previously it was defined to be 'public'
+          c:\users\murat\documents\github\zephyr\zephyr\TextureQuadTree.h(11) : see declaration of 'TextureQuadTree::TreeNode'
+c:\users\murat\documents\github\zephyr\zephyr\ResourceManager.h(82): warning C4267: 'return' : conversion from 'size_t' to 'int', possible loss of data
+  d11.cpp
+c:\users\murat\documents\github\zephyr\zephyr\TextureQuadTree.h(39): warning C4240: nonstandard extension used : access to 'TextureQuadTree::TreeNode' now defined to be 'private', previously it was defined to be 'public'
+          c:\users\murat\documents\github\zephyr\zephyr\TextureQuadTree.h(11) : see declaration of 'TextureQuadTree::TreeNode'
 d11.cpp(376): warning C4305: 'argument' : truncation from 'double' to 'FLOAT'
 d11.cpp(382): warning C4305: 'argument' : truncation from 'double' to 'FLOAT'
-d11.cpp(555): warning C4101: 'i' : unreferenced local variable
-d11.cpp(555): warning C4101: 'bufferSize' : unreferenced local variable
-d11.cpp(795): warning C4101: 'matrixBufferDesc' : unreferenced local variable
-d11.cpp(891): warning C4800: 'HRESULT' : forcing value to bool 'true' or 'false' (performance warning)
-d11.cpp(927): warning C4101: 'errorMessage' : unreferenced local variable
-d11.cpp(956): warning C4101: 'errorMessage' : unreferenced local variable
-d11.cpp(985): warning C4101: 'errorMessage' : unreferenced local variable
-d11.cpp(1300): warning C4244: '=' : conversion from 'int' to 'FLOAT', possible loss of data
-d11.cpp(1301): warning C4244: '=' : conversion from 'int' to 'FLOAT', possible loss of data
-d11.cpp(1302): warning C4244: '=' : conversion from 'int' to 'FLOAT', possible loss of data
-d11.cpp(1303): warning C4244: '=' : conversion from 'int' to 'FLOAT', possible loss of data
-d11.cpp(1422): warning C4101: 'bufferNumber' : unreferenced local variable
-d11.cpp(1582): warning C4244: '=' : conversion from 'const float' to 'UINT', possible loss of data
-d11.cpp(1584): warning C4244: '=' : conversion from 'const float' to 'UINT', possible loss of data
-d11.cpp(1586): warning C4244: '=' : conversion from 'const float' to 'UINT', possible loss of data
-d11.cpp(1657): warning C4244: 'argument' : conversion from 'FLOAT' to 'int', possible loss of data
+d11.cpp(560): warning C4101: 'i' : unreferenced local variable
+d11.cpp(560): warning C4101: 'bufferSize' : unreferenced local variable
+d11.cpp(800): warning C4101: 'matrixBufferDesc' : unreferenced local variable
+d11.cpp(896): warning C4800: 'HRESULT' : forcing value to bool 'true' or 'false' (performance warning)
+d11.cpp(937): warning C4101: 'errorMessage' : unreferenced local variable
+d11.cpp(966): warning C4101: 'errorMessage' : unreferenced local variable
+d11.cpp(995): warning C4101: 'errorMessage' : unreferenced local variable
+d11.cpp(1310): warning C4244: '=' : conversion from 'int' to 'FLOAT', possible loss of data
+d11.cpp(1311): warning C4244: '=' : conversion from 'int' to 'FLOAT', possible loss of data
+d11.cpp(1312): warning C4244: '=' : conversion from 'int' to 'FLOAT', possible loss of data
+d11.cpp(1313): warning C4244: '=' : conversion from 'int' to 'FLOAT', possible loss of data
+d11.cpp(1443): warning C4101: 'bufferNumber' : unreferenced local variable
+d11.cpp(1603): warning C4244: '=' : conversion from 'const float' to 'UINT', possible loss of data
+d11.cpp(1605): warning C4244: '=' : conversion from 'const float' to 'UINT', possible loss of data
+d11.cpp(1607): warning C4244: '=' : conversion from 'const float' to 'UINT', possible loss of data
+d11.cpp(1679): warning C4244: 'argument' : conversion from 'FLOAT' to 'int', possible loss of data
+  main.cpp
+c:\users\murat\documents\github\zephyr\zephyr\TextureQuadTree.h(39): warning C4240: nonstandard extension used : access to 'TextureQuadTree::TreeNode' now defined to be 'private', previously it was defined to be 'public'
+          c:\users\murat\documents\github\zephyr\zephyr\TextureQuadTree.h(11) : see declaration of 'TextureQuadTree::TreeNode'
+c:\users\murat\documents\github\zephyr\zephyr\ResourceManager.h(82): warning C4267: 'return' : conversion from 'size_t' to 'int', possible loss of data
+c:\users\murat\documents\github\zephyr\zephyr\World.h(65): warning C4800: 'const unsigned int' : forcing value to bool 'true' or 'false' (performance warning)
+main.cpp(64): warning C4244: 'argument' : conversion from 'WPARAM' to 'int', possible loss of data
   Generating code
 c:\users\murat\documents\github\zephyr\zephyr\d11.cpp(397): warning C4715: 'init_engine' : not all control paths return a value
   Finished generating code

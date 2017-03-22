@@ -541,6 +541,11 @@ void clearScreen(D3DXVECTOR4 col /*=D3DXVECTOR4(0,0,0,0) */, float depth /*= 1*/
 		g_deviceContext->ClearRenderTargetView(currentRenderTargetViews[0], color);
 	}
 
+	if (currentRenderTargetViews != nullptr && currentRenderTargetViews[1] != nullptr)
+	{
+		g_deviceContext->ClearRenderTargetView(currentRenderTargetViews[1], color);
+	}
+
 	if (currentDepthStencilView != nullptr)
 	{
 		// Clear the depth buffer.

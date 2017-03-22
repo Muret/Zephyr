@@ -11,12 +11,13 @@
 #include "d11.h"
 #include "Camera.h"
 #include "GUI.h"
+#include "GPUBuffer.h"
 
 //#define USE_TILED_RENDERING
 #define USE_TILED_LIGHT_SHADOW_RENDERING
 
 #define LIGHT_SHADOW_RESOLUTION 128
-#define LIGHT_SHADOW_ATLAS_SIZE (LIGHT_SHADOW_RESOLUTION * 16)
+#define LIGHT_SHADOW_ATLAS_SIZE (LIGHT_SHADOW_RESOLUTION * 32)
 
 Renderer *renderer = NULL;
 
@@ -70,8 +71,9 @@ Renderer::Renderer()
 	draw_one_by_one_index_ = 1000;
 
 	//tile info
-	tile_size_ = 32;
-	gbuffer_render_quad_tree_ = new TextureQuadTree(LIGHT_SHADOW_ATLAS_SIZE, tile_size_ * 8);
+	tile_size_ = 16;
+	gbuffer_render_quad_tree_[0] = new TextureQuadTree(LIGHT_SHADOW_ATLAS_SIZE, tile_size_ * 8);
+	gbuffer_render_quad_tree_[1] = new TextureQuadTree(LIGHT_SHADOW_ATLAS_SIZE, tile_size_ * 8);
 
 	tile_count_x_ = LIGHT_SHADOW_RESOLUTION / tile_size_;
 	tile_count_y_ = LIGHT_SHADOW_RESOLUTION / tile_size_;
@@ -82,12 +84,27 @@ Renderer::Renderer()
 	{
 		for (int j = 0; j < tile_count_x_; j++)
 		{
-			score_per_tile_[j + i * tile_count_x_] = 4;
+			score_per_tile_[j + i * tile_count_x_] = 6;
 		}
 	}
 
+	tile_render_data_size_ = tile_count_x_ * tile_count_y_ * 2;
+
 	refresh_tile_resolutions();
 	creaate_light_shadow_depth_texture();
+
+	current_tile_index_ = 0;
+	
+	tile_render_data_ = new int[tile_render_data_size_];
+
+	memset(tile_render_data_, 0, sizeof(int) * tile_render_data_size_);
+	per_tile_render_info_ = new GPUBuffer(sizeof(int) * 2, tile_count_x_ * tile_count_y_, tile_render_data_, (UINT)::CreationFlags::structured_buffer) ;
+	cleaner_staging_buffer_ = new GPUBuffer(sizeof(int) * 2, tile_count_x_ * tile_count_y_, tile_render_data_, (UINT)::CreationFlags::staging);
+
+	previous_frame_light_buffer_[0] = new Texture(D3DXVECTOR3(g_screenWidth, g_screenHeight, 1), nullptr, DXGI_FORMAT_R8G8B8A8_UNORM, 0);
+	previous_frame_light_buffer_[1] = new Texture(D3DXVECTOR3(g_screenWidth, g_screenHeight, 1), nullptr, DXGI_FORMAT_R8G8B8A8_UNORM, 0);
+
+	do_flicker = false;
 }
 
 void Renderer::creaate_light_shadow_depth_texture()
@@ -132,6 +149,8 @@ void Renderer::render_frame()
 	show_imgui();
 #endif
 
+	refresh_tile_resolutions();
+
 	if (scene_to_render != nullptr)
 	{
 		pre_render();
@@ -149,6 +168,10 @@ void Renderer::render_frame()
 		post_render();
 	}
 
+	//Sleep(100);
+
+	current_tile_index_ = (current_tile_index_ + 1) % 2;
+
 	gui.render_frame();
 
 	end_frame();
@@ -156,45 +179,57 @@ void Renderer::render_frame()
 
 void Renderer::refresh_tile_resolutions()
 {
+	//for (int j = 0; j < tile_count_y_; j++)
+	//{
+	//	for (int i = 0; i < tile_count_x_; i++)
+	//	{
+	//		int current_tile_index = i + j * tile_count_x_;
+	//		float current_score = score_per_tile_[current_tile_index];
+	//		int size = pow(2, current_score);
+	//
+	//		pair<int, int> tile_index = make_pair(i, j);
+	//		auto prev_it = current_tile_data_[current_tile_index_].find(tile_index);
+	//		if (prev_it != current_tile_data_[current_tile_index_].end())
+	//		{
+	//			gbuffer_render_quad_tree_[current_tile_index_]->return_tile(current_tile_data_[current_tile_index_][tile_index]);
+	//			current_tile_data_[current_tile_index_].erase(prev_it);
+	//		}
+	//	}
+	//}
+
 	for (int j = 0; j < tile_count_y_; j++)
 	{
 		for (int i = 0; i < tile_count_x_; i++)
 		{
 			int current_tile_index = i + j * tile_count_x_;
-			float current_score = score_per_tile_[current_tile_index];
+			float cur_score = do_flicker ? score_per_tile_[current_tile_index] - current_tile_index_ : score_per_tile_[current_tile_index];
+			float current_score = max(cur_score, 0);
 			int size = pow(2, current_score);
 
 			pair<int, int> tile_index = make_pair(i, j);
-			auto prev_it = current_tile_data_.find(tile_index);
-			if (prev_it != current_tile_data_.end())
+
+			auto it = current_tile_data_[current_tile_index_].find(tile_index);
+			if (it != current_tile_data_[current_tile_index_].end() && it->second.size != size)
 			{
-				gbuffer_render_quad_tree_->return_tile(current_tile_data_[tile_index]);
-				current_tile_data_.erase(prev_it);
+				gbuffer_render_quad_tree_[current_tile_index_]->return_tile(current_tile_data_[current_tile_index_][tile_index]);
+				current_tile_data_[current_tile_index_].erase(it);
 			}
-		}
-	}
 
-	for (int j = 0; j < tile_count_y_; j++)
-	{
-		for (int i = 0; i < tile_count_x_; i++)
-		{
-			int current_tile_index = i + j * tile_count_x_;
-			float current_score = score_per_tile_[current_tile_index];
-			int size = pow(2, current_score);
-
-			pair<int, int> tile_index = make_pair(i, j);
-			TextureQuadTree::Tile new_tile = gbuffer_render_quad_tree_->get_tile(size);
-			if (new_tile.size != 0)
+			if (current_tile_data_[current_tile_index_].find(tile_index) == current_tile_data_[current_tile_index_].end())
 			{
-				current_tile_data_[tile_index] = new_tile;
+				TextureQuadTree::Tile new_tile = gbuffer_render_quad_tree_[current_tile_index_]->get_tile(size);
+				if (new_tile.size != 0)
+				{
+					current_tile_data_[current_tile_index_][tile_index] = new_tile;
 
-				int current_index = i + j * tile_count_x_;
-				frame_constans_buffer_cpu.screen_tile_info[current_index] = D3DXVECTOR4(new_tile.start.x, new_tile.start.y,
-					new_tile.normalized_size.x, new_tile.normalized_size.y);
-			}
-			else
-			{
-				int a = 5;
+					int current_index = i + j * tile_count_x_;
+					frame_constans_buffer_cpu.screen_tile_info[current_index] = D3DXVECTOR4(new_tile.start.x, new_tile.start.y,
+						new_tile.normalized_size.x, new_tile.normalized_size.y);
+				}
+				else
+				{
+					int a = 5;
+				}
 			}
 		}
 	}
@@ -324,11 +359,45 @@ void Renderer::tick_tilesets()
 
 	frame_constans_buffer_cpu.screen_tile_size.z = 1.0f / tile_count_x_;
 	frame_constans_buffer_cpu.screen_tile_size.w = 1.0f / tile_count_y_;
+
+	for (int j = 0; j < tile_count_y_; j++)
+	{
+		for (int i = 0; i < tile_count_x_; i++)
+		{
+			pair<int, int> tile_index = make_pair(i, j);
+			auto it = current_tile_data_[current_tile_index_].find(tile_index);
+			if (it != current_tile_data_[current_tile_index_].end())
+			{
+				const TextureQuadTree::Tile &new_tile = it->second;
+
+				int current_index = i + j * tile_count_x_;
+				frame_constans_buffer_cpu.screen_tile_info[current_index] = D3DXVECTOR4(new_tile.start.x, new_tile.start.y,
+					new_tile.normalized_size.x, new_tile.normalized_size.y);
+			}
+		}
+	}
+
+	for (int j = 0; j < tile_count_y_; j++)
+	{
+		for (int i = 0; i < tile_count_x_; i++)
+		{
+			pair<int, int> tile_index = make_pair(i, j);
+			auto it = current_tile_data_[(current_tile_index_ + 1) % 2].find(tile_index);
+			if (it != current_tile_data_[(current_tile_index_ + 1) % 2].end())
+			{
+				const TextureQuadTree::Tile &new_tile = it->second;
+
+				int current_index = i + j * tile_count_x_;
+				frame_constans_buffer_cpu.screen_tile_info[current_index + 64] = D3DXVECTOR4(new_tile.start.x, new_tile.start.y,
+					new_tile.normalized_size.x, new_tile.normalized_size.y);
+			}
+		}
+	}
 }
 
 void Renderer::show_imgui()
 {
-	ImGui::Begin("WindowInfo");
+	ImGui::Begin("Tile Render Feedback");
 	ImGui::Columns(tile_count_x_);
 
 	bool any_change = false;
@@ -337,9 +406,34 @@ void Renderer::show_imgui()
 	{
 		for (int j = 0; j < tile_count_y_; j++)
 		{
+			int index = (tile_count_y_ * j + i) * 2;
 			char data[256];
-			sprintf(data, "##name%d%d", i, j);
-			any_change |= ImGui::InputFloat(data, &score_per_tile_[i + j * tile_count_y_]);
+			sprintf(data, "##feedbackname%d%d", i, j);
+
+			float ratio = float(tile_render_data_[index + 1]) > 0 ? float(tile_render_data_[index + 1]) / float(tile_render_data_[index]) : 0;
+			ImGui::Text("%.2f - %d - %d", ratio, tile_render_data_[index] , tile_render_data_[index + 1]);
+			//any_change |= ImGui::InputFloat(data, &score_per_tile_[i + j * tile_count_y_]);
+		}
+
+		ImGui::NextColumn();
+	}
+
+	ImGui::End();
+
+	ImGui::Begin("Tile Resolutions");
+	bool do_change = ImGui::Button("Do Adaptation");
+	ImGui::SameLine();
+	ImGui::Checkbox("Do Flicker", &do_flicker);
+
+	ImGui::Columns(tile_count_x_);
+
+	for (int i = 0; i < tile_count_x_; i++)
+	{
+		for (int j = 0; j < tile_count_y_; j++)
+		{
+			char data[256];
+			sprintf(data, "##resname%d%d", i, j);
+			ImGui::InputFloat(data, &score_per_tile_[i + j * tile_count_y_]);
 		}
 
 		ImGui::NextColumn();
@@ -352,6 +446,27 @@ void Renderer::show_imgui()
 		refresh_tile_resolutions();
 	}
 
+	if (do_change)
+	{
+		for (int i = 0; i < tile_count_x_; i++)
+		{
+			for (int j = 0; j < tile_count_y_; j++)
+			{
+				int index = (tile_count_y_ * j + i) * 2;
+
+				float ratio = float(tile_render_data_[index + 1]) > 0 ? float(tile_render_data_[index + 1]) / float(tile_render_data_[index]) : 0;
+				if (ratio < 0.01 && score_per_tile_[i + j * tile_count_y_] > 0)
+				{
+					score_per_tile_[i + j * tile_count_y_] -= 1;
+				}
+
+				if (ratio > 0.02 && score_per_tile_[i + j * tile_count_y_] < 7)
+				{
+					score_per_tile_[i + j * tile_count_y_] += 1;
+				}
+			}
+		}
+	}
 }
 
 void Renderer::gbuffer_render()
@@ -480,7 +595,7 @@ void Renderer::tiled_gbuffer_render_loop()
 			}
 
 			std::pair<int, int> cur_tile = record.tiles_[j];
-			TextureQuadTree::Tile current_tile = current_tile_data_[cur_tile];
+			TextureQuadTree::Tile current_tile = current_tile_data_[current_tile_index_][cur_tile];
 
 			if (mesh_to_render->get_material())
 			{
@@ -570,7 +685,7 @@ void Renderer::post_render()
 		//OutputTextureToScreen(gbuffer_specular_texture, pos, scale);
 
 		pos.y -= 0.33;
-		OutputTextureToScreen(gbuffer_render_quad_tree_->depth_atlas_texture_srv_, pos, scale);
+		OutputTextureToScreen(gbuffer_render_quad_tree_[current_tile_index_]->depth_atlas_texture_srv_, pos, scale);
 	}
 }
 
@@ -681,7 +796,6 @@ void Renderer::full_deferred_rendering_pipeline()
 	{
 		SetRenderViews(GetDefaultRenderTargetView(), nullptr, 0);
 	}
-	clearScreen();
 
 	set_lighting_constant_values();
 	SetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -699,10 +813,16 @@ void Renderer::full_deferred_rendering_pipeline()
 	SetSRV(&depth_srv, 1, shaderType::pixel, 4);
 
 #ifdef USE_TILED_LIGHT_SHADOW_RENDERING
-	SetSRV(&gbuffer_render_quad_tree_->depth_atlas_texture_srv_, 1, shaderType::pixel, 5);
+	SetSRV(&gbuffer_render_quad_tree_[current_tile_index_]->depth_atlas_texture_srv_, 1, shaderType::pixel, 5);
+	SetSRV(&gbuffer_render_quad_tree_[(current_tile_index_ + 1) % 2]->depth_atlas_texture_srv_, 1, shaderType::pixel, 6);
+	per_tile_render_info_->set_as_uav(4, shaderType::pixel);
+	previous_frame_light_buffer_[current_tile_index_]->set_as_render_target(1);
+	//previous_frame_light_buffer_[(current_tile_index_ + 1) % 2]->set_srv_to_shader(shaderType::pixel, 6);
 #else
 	SetSRV(&light_depth_texture_srv_, 1, shaderType::pixel, 5);
 #endif
+
+	clearScreen();
 
 	//render for diffuse lighting
 	{
@@ -716,8 +836,20 @@ void Renderer::full_deferred_rendering_pipeline()
 	SetSRV(NULL, shaderType::pixel, 3);
 	SetSRV(NULL, shaderType::pixel, 4);
 	SetSRV(NULL, shaderType::pixel, 5);
+	SetSRV(NULL, shaderType::pixel, 6);
+
+	SetRenderTargetView(nullptr, 1);
+
+	SetUAVToPixelShader(NULL, 4);
 
 	SetBlendState(blend_state_enable_color_write);
+
+	per_tile_render_info_->get_data(tile_render_data_, tile_render_data_size_ * sizeof(int));
+	per_tile_render_info_->copy_contents(cleaner_staging_buffer_);
+
+	static int framme_count = 0;
+
+	framme_count++;
 }
 
 void Renderer::set_frame_constant_values()
@@ -964,7 +1096,7 @@ void Renderer::tiled_light_shadow_render()
 		SetRenderTargetView(nullptr, 2);
 
 		SetViewPort(0, 0, LIGHT_SHADOW_ATLAS_SIZE, LIGHT_SHADOW_ATLAS_SIZE);
-		SetDepthStencilView(gbuffer_render_quad_tree_->depth_atlas_texture_view_);
+		SetDepthStencilView(gbuffer_render_quad_tree_[current_tile_index_]->depth_atlas_texture_view_);
 		clearScreen();
 
 		for (int i = 0; i < cur_frame_rendered_meshes_.size() && i < draw_one_by_one_index_; i++)
@@ -975,7 +1107,7 @@ void Renderer::tiled_light_shadow_render()
 			for (int j = 0; j < record.tiles_.size(); j++)
 			{
 				std::pair<int, int> cur_tile = record.tiles_[j];
-				TextureQuadTree::Tile current_tile = current_tile_data_[cur_tile];
+				TextureQuadTree::Tile current_tile = current_tile_data_[current_tile_index_][cur_tile];
 
 				if (mesh_to_render->get_material())
 				{

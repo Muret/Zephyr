@@ -182,3 +182,8 @@ void GPUBuffer::get_data(void * data, unsigned int length)
 	memcpy(data, mapped_m, length);
 	UnMapBuffer(buffer_);
 }
+
+void GPUBuffer::copy_contents(GPUBuffer * source)
+{
+	g_deviceContext->CopyResource(this->buffer_, source->buffer_);
+}

@@ -8,9 +8,6 @@ class GPUBuffer
 {
 public:
 
-
-
-
 	GPUBuffer();
 	GPUBuffer(int bytewidth, int number_of_elements, void *initial_data, UINT creation_flags);
 
@@ -22,6 +19,8 @@ public:
 	void validate_element_count_fetch_staging_buffer() const;
 	ID3D11Buffer *get_buffer() const;
 	void get_data(void *data, unsigned int length);
+
+	void copy_contents(GPUBuffer *source);
 
 private:
 

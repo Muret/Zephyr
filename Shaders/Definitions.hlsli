@@ -26,7 +26,7 @@ cbuffer FrameConstantsBuffer : register (b0)
 	float4 g_debug_vector;
 
 	float4 g_screen_tile_size;
-	float4 g_screen_tile_info[64];	
+	float4 g_screen_tile_info[128];	
 };
 
 cbuffer MeshConstantsBuffer : register (b1)
