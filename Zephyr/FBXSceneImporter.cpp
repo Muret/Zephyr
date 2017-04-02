@@ -260,6 +260,11 @@ Mesh* FBXSceneImporter::read_mesh(FbxNode *pNode, FbxMesh* pMesh)
 	
 	new_mesh->set_name(pNode->GetName());
 
+	if (new_mesh->get_name() == "Mesh_102")
+	{
+		int a = 5;
+	}
+
 	int polygonCount = pMesh->GetPolygonCount();
 	FbxVector4* controlPoints = pMesh->GetControlPoints();
 	int controlPointCount = pMesh->GetControlPointsCount();
@@ -581,12 +586,20 @@ void FBXSceneImporter::read_light(FbxNode *pNode, FbxLight* pLight)
 {
 	FbxDouble3 color = pLight->Color.Get();
 	FbxAMatrix tr_matrix = pNode->EvaluateGlobalTransform();
-	
+
+	Light::LightType cur_type = (pLight->LightType.Get() == FbxLight::eDirectional) ? Light::type_directional : Light::type_pointlight;
 	D3DXVECTOR4 position = D3DXVECTOR4(tr_matrix[3][0], tr_matrix[3][1], tr_matrix[3][2], 1);
+
+	D3DXVECTOR4 direction = D3DXVECTOR4(0, -1, 0, 0);
+	if (cur_type == Light::type_directional)
+	{
+		direction = -D3DXVECTOR4(tr_matrix[1][0], tr_matrix[1][1], tr_matrix[1][2], 0);
+	}
+
 	D3DXVECTOR4 light_color = D3DXVECTOR4(color[0], color[1], color[2], 1);
 
 	Light *new_light = new Light();
-	new_light->create_from_file(pLight->GetName(), light_color, position);
+	new_light->create_from_file(pLight->GetName(), light_color, position, direction, cur_type);
 	scene_to_fill->add_light(new_light);
 }
 

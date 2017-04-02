@@ -13,6 +13,6 @@
 <node name= pPlane1
 	<attribute type= mesh name=  />
 </node>
-<node name= pointLight1
+<node name= directionalLight1
 	<attribute type= light name=  />
 </node>

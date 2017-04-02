@@ -16,9 +16,9 @@ public:
 	};
 
 	Texture();
-	Texture(const D3DXVECTOR3 &dimension , void *data, DXGI_FORMAT format, UINT creation_flags, int mipmap_count = 1);
+	Texture(const D3DXVECTOR3 &dimension , void *data, DXGI_FORMAT format, UINT creation_flags, int msaa_count, int mipmap_count = 1);
 
-	void create(const D3DXVECTOR3 &dimension, void *data, DXGI_FORMAT format, UINT creation_flags, int mipmap_count = 1);
+	void create(const D3DXVECTOR3 &dimension, void *data, DXGI_FORMAT format, UINT creation_flags, int msaa_count, int mipmap_count = 1);
 	void set_as_render_target( int slot, int mip_map = 0);
 	void set_srv_to_shader(shaderType type, int slot, int mip_map_to_set = 0);
 

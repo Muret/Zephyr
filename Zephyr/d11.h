@@ -50,6 +50,37 @@ struct DebugginEvent
 
 };
 
+
+enum class device_stencil_op
+{
+	keep = 0,
+	zero,
+	replace,
+	increase_clamp,
+	decrease_clamp,
+	invert,
+	increase,
+	decrease,
+	count,
+};
+
+D3D11_STENCIL_OP get_api_stencil_op(device_stencil_op op);
+
+enum class device_comparison_func
+{
+	never = 0,
+	less,
+	equal,
+	less_equal,
+	greater,
+	not_equal,
+	greater_equal,
+	always,
+	count,
+};
+
+D3D11_COMPARISON_FUNC get_api_comparison_func(device_comparison_func op);
+
 enum depthState
 {
 	depth_state_enable_test_enable_write,
@@ -120,6 +151,9 @@ void clearScreen(D3DXVECTOR4 col =D3DXVECTOR4(0,0,0,0), float depth = 1);
 
 void CreateDepthStencilStates();
 
+ID3D11DepthStencilState* CreateDepthStencilState(bool depth_test_enable, bool depth_write_enable, device_comparison_func depth_func,
+	bool stencil_test_enable, bool stencil_write_enable, device_comparison_func stencil_func,  device_stencil_op stencil_success_op);
+
 void CreateBlendStates();
 
 void CreateSamplerStates();
@@ -164,7 +198,7 @@ void CopySubResource(ID3D11Resource* source_texture, ID3D11Resource* destination
 
 void CopySubResource(Texture* source_texture, Texture* destination_texture, const D3DXVECTOR3 &dim, int destination_subresource, int source_subresource);
 
-ID3D11Texture2D *CreateTexture2D(int width, int height, void *data, DXGI_FORMAT format, UINT creation_flags, int mipmap_count = 1);
+ID3D11Texture2D *CreateTexture2D(int width, int height, void *data, DXGI_FORMAT format, UINT creation_flags, int msaa_count, int mipmap_count = 1);
 
 ID3D11Texture3D *CreateTexture3D(int width, int height, int depth, void *data, DXGI_FORMAT format, UINT creation_flags, int mipmap_count = 1);
 
@@ -206,7 +240,8 @@ void UpdateBuffer(void *data , int byteWidth, ID3D11Buffer* buffer);
 
 void setComputeConstantBuffer(ID3D11Buffer* buffer, int index);
 
-void SetDepthState(int depth_state);
+void SetDepthState(bool depth_test_enable, bool depth_write_enable, device_comparison_func depth_func, bool stencil_test_enable,
+	bool stencil_write_enable, device_comparison_func stencil_func, device_stencil_op stencil_success_op, float stencil_value);
 
 void SetBlendState(int blend_state);
 
@@ -257,6 +292,17 @@ void CopyStructureCount(ID3D11Buffer *dest_buffer, int offset, ID3D11UnorderedAc
 extern ID3D11Buffer* render_constantsBuffer;
 extern ID3D11Buffer* lighting_InfoBuffer;
 
+#define PIX_EVENT(a) ScopeProfiler scope(a, __LINE__);
+
+class ScopeProfiler
+{
+public:
+	ScopeProfiler(const char *Name, int Line);
+	~ScopeProfiler();
+
+private:
+	ScopeProfiler();
+};
 
 
 #endif

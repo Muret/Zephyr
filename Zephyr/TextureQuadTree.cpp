@@ -18,7 +18,7 @@ TextureQuadTree::TextureQuadTree(int atlas_size, int biggest_square_tile_size) :
 		}
 	}
 
-	atlas_texture_ = new Texture(D3DXVECTOR3(atlas_size_, atlas_size_, 1), nullptr, DXGI_FORMAT_R8G8B8A8_UNORM, 0);
+	atlas_texture_ = new Texture(D3DXVECTOR3(atlas_size_, atlas_size_, 1), nullptr, DXGI_FORMAT_R8G8B8A8_UNORM, 0, 1);
 
 	create_depth_texture(atlas_size_);
 }

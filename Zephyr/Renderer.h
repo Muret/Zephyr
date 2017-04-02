@@ -13,6 +13,7 @@ class Scene;
 class Camera;
 class TextureQuadTree;
 class GPUBuffer;
+class DepthTexture;
 
 struct FrameConstantsBuffer
 {
@@ -77,6 +78,10 @@ public:
 
 	Renderer();
 
+	void initialize_msaa_deferred_renderer();
+
+	void initialize_tiled_shadow_renderer();
+
 	void creaate_light_shadow_depth_texture();
 
 	void render_frame();
@@ -139,6 +144,8 @@ protected:
 	ID3D11ShaderResourceView* light_depth_texture_srv_;
 	ID3D11Texture2D* light_depth_texture_;
 
+	DepthTexture* scene_depth_target_;
+
 	GPUBuffer* per_tile_render_info_;
 	GPUBuffer* cleaner_staging_buffer_;
 
@@ -150,6 +157,7 @@ protected:
 	Shader *gbuffer_shader;
 	Shader *light_shadow_shader;
 	Shader *full_deferred_diffuse_lighting_shader;
+	Shader *full_deferred_diffuse_lighting_shader_per_msaa_sample;
 
 	Texture *screen_texture;
 

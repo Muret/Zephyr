@@ -25,8 +25,10 @@ void SSRDemo::initialize()
 	//ssr_component = new SSR();
 	//renderer->add_renderer_component(ssr_component);
 
-	Scene *scene = resource_manager.get_scene("basic_sphere"); //new Scene("demo");
+	Scene *scene = resource_manager.get_scene("sponza"); //new Scene("demo");
 	renderer->set_scene_to_render(scene);
+
+	Mesh *lion = scene->get_mesh("Mesh_102");
 
 	Camera *start_camera = scene->get_camera("camera1");
 

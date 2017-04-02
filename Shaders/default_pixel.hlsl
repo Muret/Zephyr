@@ -1,6 +1,8 @@
 
 #include "Definitions.hlsli"
 
+Texture2D diffuse_texture : register(t0);
+
 float4 main(PixelInputType input) : SV_TARGET
 {
 	float3 albedo_color = diffuse_texture.Sample(PointSampler, input.tex_coord.xy).rgb;

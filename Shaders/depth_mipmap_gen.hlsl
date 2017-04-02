@@ -1,6 +1,7 @@
 
 #include "Definitions.hlsli"
 
+Texture2D diffuse_texture : register(t0);
 
 float4 main(PixelInputType input) : SV_TARGET
 {

@@ -19,6 +19,7 @@ PixelInputType main(VertexInputType input)
 	output.tangent = input.tangent;
 	output.world_normal = mul(float4(input.normal.xyz,0), g_world_matrix);
 	output.world_position = mul(position, g_world_matrix);
+	output.ss_position = position;
 
 	return output;
 }

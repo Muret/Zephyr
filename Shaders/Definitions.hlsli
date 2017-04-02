@@ -76,19 +76,13 @@ struct PixelInputType
 	float4 world_normal	: NORMAL0;
 	float4 tangent		: TANGENT0;
 	float4 world_position : TANGENT1;
+	float4 ss_position  : TANGENT2;
 };
 
 
 
 
 //time for some textures
-
-Texture2D diffuse_texture : register(t0);
-Texture2D normal_texture : register(t1);
-Texture2D specular_texture : register(t2);
-Texture2D screen_texture : register(t3);
-Texture2D depth_texture : register(t4);
-Texture2D light_shadow_depth_texture : register(t5);
 
 //samplers
 SamplerState PointSampler : register(s0)

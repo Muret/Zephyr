@@ -73,7 +73,7 @@ Texture* TextureLoader::create_texture_from_file()
 	}
 
 	Texture *text = new Texture();
-	text->create(D3DXVECTOR3(width, height, 1), bits, DXGI_FORMAT_R32G32B32A32_FLOAT, 0);
+	text->create(D3DXVECTOR3(width, height, 1), bits, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 1);
 
 	return text;
 }

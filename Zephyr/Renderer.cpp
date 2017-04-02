@@ -12,11 +12,13 @@
 #include "Camera.h"
 #include "GUI.h"
 #include "GPUBuffer.h"
+#include "DepthTexture.h"
 
 //#define USE_TILED_RENDERING
-#define USE_TILED_LIGHT_SHADOW_RENDERING
+//#define USE_TILED_LIGHT_SHADOW_RENDERING
+#define USE_MSAA_DEFERRED_RENDERER
 
-#define LIGHT_SHADOW_RESOLUTION 128
+#define LIGHT_SHADOW_RESOLUTION 512
 #define LIGHT_SHADOW_ATLAS_SIZE (LIGHT_SHADOW_RESOLUTION * 32)
 
 Renderer *renderer = NULL;
@@ -27,21 +29,29 @@ Renderer::Renderer()
 
 	default_render_shader = new Shader("default_vertex", "default_pixel");
 
-	gbuffer_normal_texture = new Texture  (D3DXVECTOR3( g_screenWidth, g_screenHeight,1), nullptr, DXGI_FORMAT_R8G8B8A8_UNORM , 0);
-	gbuffer_specular_texture = new Texture(D3DXVECTOR3( g_screenWidth, g_screenHeight,1), nullptr, DXGI_FORMAT_R8G8B8A8_UNORM , 0);
-	gbuffer_albedo_texture = new Texture  (D3DXVECTOR3( g_screenWidth, g_screenHeight,1), nullptr, DXGI_FORMAT_R8G8B8A8_UNORM , 0);
+	int gbuffer_sample_count = 1;
+
+#ifdef USE_MSAA_DEFERRED_RENDERER
+	gbuffer_sample_count = 4;
+#endif
+
+	gbuffer_normal_texture = new Texture  (D3DXVECTOR3( g_screenWidth, g_screenHeight,1), nullptr, DXGI_FORMAT_R32G32B32A32_FLOAT , 0, gbuffer_sample_count);
+	gbuffer_specular_texture = new Texture(D3DXVECTOR3( g_screenWidth, g_screenHeight,1), nullptr, DXGI_FORMAT_R8G8B8A8_UNORM , 0, gbuffer_sample_count);
+	gbuffer_albedo_texture = new Texture  (D3DXVECTOR3( g_screenWidth, g_screenHeight,1), nullptr, DXGI_FORMAT_R8G8B8A8_UNORM , 0, gbuffer_sample_count);
+
+	scene_depth_target_ = new DepthTexture(D3DXVECTOR2(g_screenWidth, g_screenHeight), nullptr, DXGI_FORMAT_D24_UNORM_S8_UINT, gbuffer_sample_count);
 
 	cur_gbuffer_index_to_render_ = 0;
 
-	ds_gbuffer_texture_normal	[0] = new Texture(D3DXVECTOR3(g_screenWidth * 2, g_screenHeight * 2, 1), nullptr, DXGI_FORMAT_R8G8B8A8_UNORM, 0);
-	ds_gbuffer_texture_albedo	[0] = new Texture(D3DXVECTOR3(g_screenWidth * 2, g_screenHeight * 2, 1), nullptr, DXGI_FORMAT_R8G8B8A8_UNORM, 0);
-	ds_gbuffer_texture_specular	[0] = new Texture(D3DXVECTOR3(g_screenWidth * 2, g_screenHeight * 2, 1), nullptr, DXGI_FORMAT_R8G8B8A8_UNORM, 0);
+	ds_gbuffer_texture_normal	[0] = new Texture(D3DXVECTOR3(g_screenWidth * 2, g_screenHeight * 2, 1), nullptr, DXGI_FORMAT_R8G8B8A8_UNORM, 0, 1);
+	ds_gbuffer_texture_albedo	[0] = new Texture(D3DXVECTOR3(g_screenWidth * 2, g_screenHeight * 2, 1), nullptr, DXGI_FORMAT_R8G8B8A8_UNORM, 0, 1);
+	ds_gbuffer_texture_specular	[0] = new Texture(D3DXVECTOR3(g_screenWidth * 2, g_screenHeight * 2, 1), nullptr, DXGI_FORMAT_R8G8B8A8_UNORM, 0, 1);
 	
-	ds_gbuffer_texture_normal	[1] = new Texture(D3DXVECTOR3(g_screenWidth * 2, g_screenHeight * 2, 1), nullptr, DXGI_FORMAT_R8G8B8A8_UNORM, 0);
-	ds_gbuffer_texture_albedo	[1] = new Texture(D3DXVECTOR3(g_screenWidth * 2, g_screenHeight * 2, 1), nullptr, DXGI_FORMAT_R8G8B8A8_UNORM, 0);
-	ds_gbuffer_texture_specular	[1] = new Texture(D3DXVECTOR3(g_screenWidth * 2, g_screenHeight * 2, 1), nullptr, DXGI_FORMAT_R8G8B8A8_UNORM, 0);
+	ds_gbuffer_texture_normal	[1] = new Texture(D3DXVECTOR3(g_screenWidth * 2, g_screenHeight * 2, 1), nullptr, DXGI_FORMAT_R8G8B8A8_UNORM, 0, 1);
+	ds_gbuffer_texture_albedo	[1] = new Texture(D3DXVECTOR3(g_screenWidth * 2, g_screenHeight * 2, 1), nullptr, DXGI_FORMAT_R8G8B8A8_UNORM, 0, 1);
+	ds_gbuffer_texture_specular	[1] = new Texture(D3DXVECTOR3(g_screenWidth * 2, g_screenHeight * 2, 1), nullptr, DXGI_FORMAT_R8G8B8A8_UNORM, 0, 1);
 
-	screen_texture = new Texture(D3DXVECTOR3(g_screenWidth, g_screenHeight, 1), nullptr, DXGI_FORMAT_R8G8B8A8_UNORM, 0);
+	screen_texture = new Texture(D3DXVECTOR3(g_screenWidth, g_screenHeight, 1), nullptr, DXGI_FORMAT_R8G8B8A8_UNORM, 0, 1);
 	
 #ifdef USE_TILED_RENDERING
 	gbuffer_shader = new Shader("tiled_gbuffer_vertex", "tiled_gbuffer_pixel");
@@ -70,6 +80,25 @@ Renderer::Renderer()
 
 	draw_one_by_one_index_ = 1000;
 
+	creaate_light_shadow_depth_texture();
+
+#ifdef USE_TILED_LIGHT_SHADOW_RENDERING
+	initialize_tiled_shadow_renderer();
+#endif
+
+#ifdef USE_MSAA_DEFERRED_RENDERER
+	initialize_msaa_deferred_renderer();
+#endif
+
+}
+
+void Renderer::initialize_msaa_deferred_renderer()
+{
+	full_deferred_diffuse_lighting_shader_per_msaa_sample = new Shader("direct_vertex_position", "full_deferred_diffuse_lighting_per_msaa_sample");
+}
+
+void Renderer::initialize_tiled_shadow_renderer()
+{
 	//tile info
 	tile_size_ = 16;
 	gbuffer_render_quad_tree_[0] = new TextureQuadTree(LIGHT_SHADOW_ATLAS_SIZE, tile_size_ * 8);
@@ -91,18 +120,17 @@ Renderer::Renderer()
 	tile_render_data_size_ = tile_count_x_ * tile_count_y_ * 2;
 
 	refresh_tile_resolutions();
-	creaate_light_shadow_depth_texture();
 
 	current_tile_index_ = 0;
-	
+
 	tile_render_data_ = new int[tile_render_data_size_];
 
 	memset(tile_render_data_, 0, sizeof(int) * tile_render_data_size_);
-	per_tile_render_info_ = new GPUBuffer(sizeof(int) * 2, tile_count_x_ * tile_count_y_, tile_render_data_, (UINT)::CreationFlags::structured_buffer) ;
+	per_tile_render_info_ = new GPUBuffer(sizeof(int) * 2, tile_count_x_ * tile_count_y_, tile_render_data_, (UINT)::CreationFlags::structured_buffer);
 	cleaner_staging_buffer_ = new GPUBuffer(sizeof(int) * 2, tile_count_x_ * tile_count_y_, tile_render_data_, (UINT)::CreationFlags::staging);
 
-	previous_frame_light_buffer_[0] = new Texture(D3DXVECTOR3(g_screenWidth, g_screenHeight, 1), nullptr, DXGI_FORMAT_R8G8B8A8_UNORM, 0);
-	previous_frame_light_buffer_[1] = new Texture(D3DXVECTOR3(g_screenWidth, g_screenHeight, 1), nullptr, DXGI_FORMAT_R8G8B8A8_UNORM, 0);
+	previous_frame_light_buffer_[0] = new Texture(D3DXVECTOR3(g_screenWidth, g_screenHeight, 1), nullptr, DXGI_FORMAT_R8G8B8A8_UNORM, 0, 1);
+	previous_frame_light_buffer_[1] = new Texture(D3DXVECTOR3(g_screenWidth, g_screenHeight, 1), nullptr, DXGI_FORMAT_R8G8B8A8_UNORM, 0, 1);
 
 	do_flicker = false;
 }
@@ -475,16 +503,14 @@ void Renderer::gbuffer_render()
 
 	//gbuffer_render_quad_tree_->get_atlas_texture()->set_srv_to_shader(shaderType::pixel, 0);
 	
-	SetDepthStencilView(GetDefaultDepthStencilView());
+	scene_depth_target_->set_as_depth_stencil_view();
 
 #ifdef USE_TILED_RENDERING
 	gbuffer_render_quad_tree_->get_atlas_texture()->set_as_render_target(0);
-	SetDepthState(depth_state_disable_test_disable_write);
 #else
 	gbuffer_albedo_texture->set_as_render_target(0);
 	gbuffer_normal_texture->set_as_render_target(1);
 	gbuffer_specular_texture->set_as_render_target(2);
-	SetDepthState(depth_state_enable_test_enable_write);
 #endif
 
 	//gbuffer_render_quad_tree_->get_atlas_texture()->set_as_render_target(0);
@@ -493,10 +519,10 @@ void Renderer::gbuffer_render()
 	clearScreen(D3DXVECTOR4(0, 0, 0, 0));
 #ifndef USE_TILED_RENDERING
 	ClearRenderView(D3DXVECTOR4(0, 0, 0, 0), 1);
-	ClearRenderView(D3DXVECTOR4(0, 0, 0, 0),2);
+	ClearRenderView(D3DXVECTOR4(0, 0, 0, 0) ,2);
 #endif
 
-	SetDepthState(depth_state_enable_test_enable_write);
+	SetDepthState(true, true, device_comparison_func::less_equal, false, false, device_comparison_func::always, device_stencil_op::zero, 0);
 	
 	SetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
@@ -524,13 +550,16 @@ void Renderer::default_gbuffer_render_loop()
 	gbuffer_normal_texture->set_as_render_target(1);
 	gbuffer_specular_texture->set_as_render_target(2);
 
-	SetDepthStencilView(GetDefaultDepthStencilView());
 	clearScreen();
+
+	set_frame_constant_values();
 
 	for (int i = 0; i < cur_frame_rendered_meshes_.size() && i < draw_one_by_one_index_; i++)
 	{
 		Mesh *mesh_to_render = cur_frame_rendered_meshes_[i].mesh;
 		DrawRecord &record = cur_frame_rendered_meshes_[i];
+
+		PIX_EVENT(mesh_to_render->get_name().c_str());
 
 		if (mesh_to_render->get_material())
 		{
@@ -675,17 +704,21 @@ void Renderer::post_render()
 
 	{
 		D3DXVECTOR4 pos(0.01, 0.89, 0, 0);
-		D3DXVECTOR4 scale(0.3, 0.3, 1, 1);
+		D3DXVECTOR4 scale(0.1, 0.1, 1, 1);
+#ifndef USE_MSAA_DEFERRED_RENDERER
 		OutputTextureToScreen(gbuffer_normal_texture, pos, scale);
 	
-		//pos.y -= 0.11;
-		//OutputTextureToScreen(gbuffer_albedo_texture, pos, scale);
-		//
-		//pos.y -= 0.11;
-		//OutputTextureToScreen(gbuffer_specular_texture, pos, scale);
+		pos.y -= 0.11;
+		OutputTextureToScreen(gbuffer_albedo_texture, pos, scale);
+		
+		pos.y -= 0.11;
+		OutputTextureToScreen(gbuffer_specular_texture, pos, scale);
+#endif
 
+#ifdef USE_TILED_LIGHT_SHADOW_RENDERING
 		pos.y -= 0.33;
 		OutputTextureToScreen(gbuffer_render_quad_tree_[current_tile_index_]->depth_atlas_texture_srv_, pos, scale);
+#endif
 	}
 }
 
@@ -749,7 +782,7 @@ void Renderer::forward_rendering_pipeline()
 		}
 
 		clearScreen(D3DXVECTOR4(0, 0, 0, 0));
-		SetDepthState(depth_state_enable_test_enable_write);
+		SetDepthState(true, true, device_comparison_func::less_equal, false, false, device_comparison_func::always, device_stencil_op::zero, 0);
 		default_render_shader->set_shaders();
 		SetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	}
@@ -783,11 +816,17 @@ void Renderer::forward_rendering_pipeline()
 
 void Renderer::full_deferred_rendering_pipeline()
 {
+#ifdef USE_MSAA_DEFERRED_RENDERER
+	//find complex pixels, write stencil for those
+	//use 2 passes in full deferred lighting..
+#endif
+
 	SetViewPortToDefault();
 	SetDepthStencilView(nullptr);
 
 	SetBlendState(blend_state_enable_color_write);
-	SetDepthState(depth_state_disable_test_disable_write);
+	SetDepthState(false, false, device_comparison_func::always, false, false, device_comparison_func::always, device_stencil_op::zero, 0);
+
 	if (use_postfx)
 	{
 		SetRenderViews(screen_texture->get_rt(), nullptr, 0);
@@ -809,9 +848,6 @@ void Renderer::full_deferred_rendering_pipeline()
 	gbuffer_specular_texture->set_srv_to_shader(shaderType::pixel, 2);
 #endif
 
-	ID3D11ShaderResourceView *depth_srv = GetDepthTextureSRV();
-	SetSRV(&depth_srv, 1, shaderType::pixel, 4);
-
 #ifdef USE_TILED_LIGHT_SHADOW_RENDERING
 	SetSRV(&gbuffer_render_quad_tree_[current_tile_index_]->depth_atlas_texture_srv_, 1, shaderType::pixel, 5);
 	SetSRV(&gbuffer_render_quad_tree_[(current_tile_index_ + 1) % 2]->depth_atlas_texture_srv_, 1, shaderType::pixel, 6);
@@ -826,7 +862,11 @@ void Renderer::full_deferred_rendering_pipeline()
 
 	//render for diffuse lighting
 	{
+#ifdef USE_MSAA_DEFERRED_RENDERER
+		full_deferred_diffuse_lighting_shader_per_msaa_sample->set_shaders();
+#else
 		full_deferred_diffuse_lighting_shader->set_shaders();
+#endif
 		RenderFullScreenQuad();
 	}
 
@@ -844,12 +884,10 @@ void Renderer::full_deferred_rendering_pipeline()
 
 	SetBlendState(blend_state_enable_color_write);
 
+#ifdef USE_TILED_LIGHT_SHADOW_RENDERING
 	per_tile_render_info_->get_data(tile_render_data_, tile_render_data_size_ * sizeof(int));
 	per_tile_render_info_->copy_contents(cleaner_staging_buffer_);
-
-	static int framme_count = 0;
-
-	framme_count++;
+#endif
 }
 
 void Renderer::set_frame_constant_values()
@@ -897,7 +935,7 @@ void Renderer::set_lighting_constant_values()
 	{
 		Light* first_light = lights_to_render[0];
 		lighting_contants_buffer_cpu.light_color = first_light->get_color();
-		lighting_contants_buffer_cpu.ws_light_position = first_light->get_position();
+		lighting_contants_buffer_cpu.ws_light_position = first_light->get_type() == Light::type_directional ? first_light->get_direction() : first_light->get_position();
 
 		D3DXMATRIX viewProjection = camera_->get_view_projection_matrix();
 		D3DXVECTOR4 ss_light_p;
@@ -1001,21 +1039,60 @@ void Renderer::light_shadow_render()
 {
 	if (scene_to_render->get_lights().size() > 0)
 	{
-		SetDepthState(depth_state_enable_test_enable_write);
+		SetDepthState(true, true, device_comparison_func::less_equal, false, false, device_comparison_func::always, device_stencil_op::zero, 0);
 
 		Light* first_light = scene_to_render->get_lights()[0];
 		D3DXVECTOR3 light_position = first_light->get_position();
 
-		D3DXVECTOR3 gaze_vector(0, -1, 0);
-		D3DXVECTOR3 up_vector(0, 0, -1);
-		D3DXVECTOR3 right_vector(1, 0, 0);
-		D3DXVECTOR3 light_lookat = light_position + gaze_vector;
-
 		D3DXMATRIX light_view_matrix;
 		D3DXMATRIX light_projection_matrix;
 
-		D3DXMatrixLookAtRH(&light_view_matrix, &light_position, &light_lookat, &up_vector);
-		D3DXMatrixPerspectiveFovRH(&light_projection_matrix, (90.0f / 180.0f) * PI, 1, 0.01f, 100.0f);
+		if (first_light->get_type() == Light::type_pointlight)
+		{
+			D3DXVECTOR3 gaze_vector(0, -1, 0);
+			D3DXVECTOR3 up_vector(0, 0, -1);
+			D3DXVECTOR3 right_vector(1, 0, 0);
+			D3DXVECTOR3 light_lookat = light_position + gaze_vector;
+
+			D3DXMatrixLookAtRH(&light_view_matrix, &light_position, &light_lookat, &up_vector);
+			D3DXMatrixPerspectiveFovRH(&light_projection_matrix, (90.0f / 180.0f) * PI, 1, 0.01f, 1000.0f);
+		}
+		else
+		{
+			D3DXVECTOR3 right_vector(1, 0, 0);
+			D3DXVECTOR3 gaze_vector = first_light->get_direction();
+			D3DXVECTOR3 up_vector;
+
+			D3DXVec3Cross(&up_vector, &right_vector, &gaze_vector);
+			D3DXVec3Cross(&right_vector, &gaze_vector, &up_vector);
+
+			D3DXVECTOR3 light_lookat = scene_to_render->get_bb().get_max();
+			D3DXVECTOR3 light_dir(first_light->get_direction().x, first_light->get_direction().y, first_light->get_direction().z);
+			D3DXVECTOR3 light_position_to_give = light_lookat - light_dir * 500;
+
+			D3DXMatrixLookAtRH(&light_view_matrix, &light_position, &light_lookat, &up_vector);
+
+			vector<D3DXVECTOR4> bb_points_in_light_space;
+			scene_to_render->get_bb().get_points(bb_points_in_light_space);
+
+			for (int i = 0; i < bb_points_in_light_space.size(); i++)
+			{
+				D3DXVec4Transform(&bb_points_in_light_space[i], &bb_points_in_light_space[i], &light_view_matrix);
+			}
+
+			BoundingBox scene_bb_in_light_space;
+			
+			for (int i = 0; i < bb_points_in_light_space.size(); i++)
+			{
+				scene_bb_in_light_space.enlarge_bb_with_point(bb_points_in_light_space[i]);
+			}
+
+			D3DXVECTOR4 light_max = scene_bb_in_light_space.get_max();
+			D3DXVECTOR4 light_min = scene_bb_in_light_space.get_min();
+
+			D3DXMatrixOrthoRH(&light_projection_matrix, (light_max.x - light_min.x) * 3, (light_max.y - light_min.y) * 3, 0.01f, 1000.0f);
+		}
+
 
 		D3DXMATRIX light_view_projection_matrix = light_view_matrix * light_projection_matrix;
 
@@ -1073,7 +1150,7 @@ void Renderer::tiled_light_shadow_render()
 {
 	if (scene_to_render->get_lights().size() > 0)
 	{
-		SetDepthState(depth_state_enable_test_enable_write);
+		SetDepthState(true, true, device_comparison_func::less_equal, false, false, device_comparison_func::always, device_stencil_op::zero, 0);
 
 		Light* first_light = scene_to_render->get_lights()[0];
 		D3DXVECTOR3 light_position = first_light->get_position();

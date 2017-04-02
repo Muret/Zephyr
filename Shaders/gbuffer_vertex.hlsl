@@ -49,10 +49,10 @@ PixelInputType main(VertexInputType input)
 	//calculate_tiled_screen_space_position(output.position, actual_ss_pos);
 
 	output.color = input.color;
-	output.tex_coord = float4(0 , 0, 0, 0);
+	output.tex_coord = float4(input.tex_coord.xy, 0, 0);
 	output.tangent = input.tangent;
 	output.world_normal = mul(float4(input.normal.xyz,0), g_world_matrix);
-	output.world_position = mul(position, g_world_matrix);
+	output.ss_position = output.position;
 
 	return output;
 }

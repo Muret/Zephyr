@@ -162,6 +162,9 @@
     <ClCompile Include="TextureQuadTree.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="DepthTexture.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h">
@@ -305,6 +308,9 @@
     <ClInclude Include="TextureQuadTree.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="DepthTexture.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Shaders\default_pixel.hlsl">
@@ -352,6 +358,9 @@
     <FxCompile Include="..\Shaders\gbuffer_vertex.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
+    <FxCompile Include="..\Shaders\full_deferred_diffuse_lighting_per_msaa_sample.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Shaders\Definitions.hlsli">
@@ -364,6 +373,9 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="..\Shaders\vct_helpers.hlsli">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Shaders\deferred_shading_functions.hlsli">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

@@ -2,6 +2,11 @@
 #include "Definitions.hlsli"
 #include "shared_functions.hlsli"
 
+Texture2D diffuse_texture : register(t0);
+Texture2D normal_texture : register(t1);
+Texture2D specular_texture : register(t2);
+Texture2D screen_texture : register(t3);
+
 Texture2D hi_z_depth_texture : register(t4);
 
 #define cb_mipCount 11

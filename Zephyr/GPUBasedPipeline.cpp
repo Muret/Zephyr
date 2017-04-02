@@ -177,7 +177,7 @@ inline void GPUBasedPipeline::GPUBasedRenderer::gbuffer_render()
 	ClearRenderView(D3DXVECTOR4(0, 0, 0, 0), 1);
 	ClearRenderView(D3DXVECTOR4(0, 0, 0, 0), 2);
 
-	SetDepthState(depth_state_enable_test_enable_write);
+	SetDepthState(true, true, device_comparison_func::less_equal, false, false, device_comparison_func::always, device_stencil_op::zero, 0);
 
 	SetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 

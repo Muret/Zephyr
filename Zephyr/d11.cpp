@@ -55,10 +55,11 @@ vector<ID3D11ShaderResourceView*> shader_resource_view_cache_[(int)shaderType::c
 
 ID3DUserDefinedAnnotation *pPerf;
 
-ID3D11DepthStencilState *depth_states[number_of_depth_states];
 ID3D11BlendState *blend_states[number_of_blend_states];
 
 ID3D11RasterizerState *raster_states[number_of_raster_states];
+
+ID3D11DepthStencilState* depth_states[2][2][(int)device_comparison_func::count][2][2][(int)device_comparison_func::count][(int)device_stencil_op::count];
 
 enum SamplerType
 {
@@ -579,57 +580,58 @@ void OutputShaderErrorMessage(ID3D10Blob* errorMessage, HWND hwnd)
 
 void CreateDepthStencilStates()
 {
-	{
-		D3D11_DEPTH_STENCIL_DESC desc;
-		D3D11_DEPTH_STENCILOP_DESC st_desc;
-		memset(&desc, 0, sizeof(D3D11_DEPTH_STENCIL_DESC));
-		st_desc.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-		st_desc.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
-		desc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-		desc.DepthEnable = true;
-		desc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
-		g_device->CreateDepthStencilState(&desc, depth_states + depth_state_enable_test_enable_write);
-	}
-	
-	{
-		D3D11_DEPTH_STENCIL_DESC desc;
-		D3D11_DEPTH_STENCILOP_DESC st_desc;
-		memset(&desc, 0, sizeof(D3D11_DEPTH_STENCIL_DESC));
-		st_desc.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-		st_desc.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
-		desc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-		desc.DepthEnable = false;
-		desc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
-		g_device->CreateDepthStencilState(&desc, depth_states + depth_state_disable_test_enable_write);
-	}
+	//ID3D11DepthStencilState* CreateDepthStencilState(bool depth_test_enable, bool depth_write_enable, device_comparison_func depth_func, bool stencil_test_enable,
+	//	bool stencil_write_enable, device_comparison_func stencil_func, device_stencil_op stencil_success_op)
 
+	for (int depth_test_enable = 0; depth_test_enable < 2; depth_test_enable++)
 	{
-		D3D11_DEPTH_STENCIL_DESC desc;
-		D3D11_DEPTH_STENCILOP_DESC st_desc;
-		memset(&desc, 0, sizeof(D3D11_DEPTH_STENCIL_DESC));
-		st_desc.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-		st_desc.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
-		desc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
-		desc.DepthEnable = true;
-		desc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
-		desc.FrontFace = st_desc;
-		desc.BackFace = st_desc;
-		g_device->CreateDepthStencilState(&desc, depth_states + depth_state_enable_test_disable_write);
+		for (int depth_write_enable = 0; depth_write_enable < 2; depth_write_enable++)
+		{
+			for (int depth_func = 0; depth_func < (int)device_comparison_func::count; depth_func++)
+			{
+				for (int stencil_test_enable = 0; stencil_test_enable < 2; stencil_test_enable++)
+				{
+					for (int stencil_write_enable = 0; stencil_write_enable < 2; stencil_write_enable++)
+					{
+						for (int stencil_func = 0; stencil_func < (int)device_comparison_func::count; stencil_func++)
+						{
+							for (int stencil_success_op = 0; stencil_success_op < (int)device_stencil_op::count; stencil_success_op++)
+							{
+								depth_states[depth_test_enable][depth_write_enable][depth_func][stencil_test_enable][stencil_write_enable][stencil_func][stencil_success_op] =
+									CreateDepthStencilState(depth_test_enable, depth_write_enable, (device_comparison_func)depth_func, 
+										stencil_test_enable, stencil_write_enable, (device_comparison_func)stencil_func, (device_stencil_op)stencil_success_op);
+							}
+						}
+					}
+				}
+			}
+		}
 	}
+}
 
-	{
-		D3D11_DEPTH_STENCIL_DESC desc;
-		D3D11_DEPTH_STENCILOP_DESC st_desc;
-		memset(&desc, 0, sizeof(D3D11_DEPTH_STENCIL_DESC));
-		st_desc.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-		st_desc.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP; 
-		desc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-		desc.DepthEnable = false;
-		desc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
-		desc.FrontFace = st_desc;
-		desc.BackFace = st_desc;
-		g_device->CreateDepthStencilState(&desc, depth_states + depth_state_disable_test_disable_write);
-	}
+ID3D11DepthStencilState* CreateDepthStencilState(bool depth_test_enable, bool depth_write_enable, device_comparison_func depth_func, bool stencil_test_enable,
+	bool stencil_write_enable, device_comparison_func stencil_func, device_stencil_op stencil_success_op)
+{
+	D3D11_DEPTH_STENCIL_DESC desc;
+	D3D11_DEPTH_STENCILOP_DESC st_desc;
+	memset(&desc, 0, sizeof(D3D11_DEPTH_STENCIL_DESC));
+	memset(&st_desc, 0, sizeof(D3D11_DEPTH_STENCILOP_DESC));
+	st_desc.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
+	st_desc.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+	st_desc.StencilFunc = get_api_comparison_func(stencil_func);
+	st_desc.StencilPassOp = get_api_stencil_op(stencil_success_op);
+	desc.StencilEnable = stencil_test_enable;
+	desc.StencilWriteMask = stencil_write_enable ? 0xFF : 0;
+	desc.StencilReadMask = 0xFF;
+	desc.DepthWriteMask = depth_write_enable ? D3D11_DEPTH_WRITE_MASK_ALL : D3D11_DEPTH_WRITE_MASK_ZERO;
+	desc.DepthEnable = depth_test_enable;
+	desc.DepthFunc = get_api_comparison_func(depth_func);
+	desc.FrontFace = st_desc;
+	desc.BackFace = st_desc;
+
+	ID3D11DepthStencilState* new_state = nullptr;
+	g_device->CreateDepthStencilState(&desc, &new_state);
+	return new_state;
 }
 
 void CreateBlendStates()
@@ -1142,7 +1144,7 @@ ID3D11ShaderResourceView * CreateTextureResourceView(ID3D11Resource *text, DXGI_
 	return srV;
 }
 
-ID3D11Texture2D *CreateTexture2D(int width, int height, void *data, DXGI_FORMAT format, UINT creation_flags, int mipmap_count /*= 1*/)
+ID3D11Texture2D *CreateTexture2D(int width, int height, void *data, DXGI_FORMAT format, UINT creation_flags, int msaa_count, int mipmap_count /*= 1*/)
 {
 	D3D11_TEXTURE2D_DESC texDesc;
 	texDesc.Width = width;
@@ -1156,7 +1158,7 @@ ID3D11Texture2D *CreateTexture2D(int width, int height, void *data, DXGI_FORMAT 
 
 	texDesc.ArraySize = 1;
 	texDesc.Format = format;
-	texDesc.SampleDesc.Count = 1;
+	texDesc.SampleDesc.Count = msaa_count;
 	texDesc.SampleDesc.Quality = 0;
 	texDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET;
 
@@ -1425,9 +1427,12 @@ void SetSRV(Texture *texture, shaderType shader_type, int slot)
 	SetSRV(&list, 1, shader_type, slot);
 }
 
-void SetDepthState(int depth_state)
+void SetDepthState(bool depth_test_enable, bool depth_write_enable, device_comparison_func depth_func, bool stencil_test_enable,
+	bool stencil_write_enable, device_comparison_func stencil_func, device_stencil_op stencil_success_op, float stencil_value)
 {
-	g_deviceContext->OMSetDepthStencilState(depth_states[depth_state], 1);
+	g_deviceContext->OMSetDepthStencilState(depth_states[depth_test_enable][depth_write_enable][(int)depth_func]
+		[stencil_test_enable][stencil_write_enable][(int)stencil_func][(int)stencil_success_op]
+		, stencil_value);
 }
 
 void SetBlendState(int blend_state)
@@ -1670,7 +1675,7 @@ void CopyStructureCount(ID3D11Buffer *dest_buffer, int offset, ID3D11UnorderedAc
 
 void TextureOutputToScreenFunctionality::OutputTextureToScreen(ID3D11ShaderResourceView* texture, D3DXVECTOR4 pos, D3DXVECTOR4 scale, int forced_lod, ID3D11PixelShader *enforced_pixel_shader)
 {
-	SetDepthState(depth_state_disable_test_disable_write);
+	SetDepthState(false, false, device_comparison_func::always, false, false, device_comparison_func::always, device_stencil_op::zero, 0);
 	SetSRV(&texture, 1, shaderType::pixel, 0);
 
 	D3DXMATRIX matrix;
@@ -1702,4 +1707,76 @@ TextureOutputToScreenFunctionality::TextureOutputToScreenFunctionality()
 
 	textureOutputVertexShader = CreateVertexShader("direct_vertex_position");
 	textureOutputPixelShader = CreatePixelShader("texture_output_p");
+}
+
+D3D11_STENCIL_OP get_api_stencil_op(device_stencil_op op)
+{
+	switch (op)
+	{
+	case device_stencil_op::keep:
+		return D3D11_STENCIL_OP_KEEP;
+	case device_stencil_op::zero:
+		return D3D11_STENCIL_OP_ZERO;
+	case device_stencil_op::replace:
+		return D3D11_STENCIL_OP_REPLACE;
+	case device_stencil_op::increase_clamp:
+		return D3D11_STENCIL_OP_INCR_SAT;
+	case device_stencil_op::decrease_clamp:
+		return D3D11_STENCIL_OP_DECR_SAT;
+	case device_stencil_op::invert:
+		return D3D11_STENCIL_OP_INVERT;
+	case device_stencil_op::increase:
+		return D3D11_STENCIL_OP_INCR;
+	case device_stencil_op::decrease:
+		return D3D11_STENCIL_OP_DECR;
+	default:
+		return D3D11_STENCIL_OP_KEEP;
+	}
+}
+
+D3D11_COMPARISON_FUNC get_api_comparison_func(device_comparison_func op)
+{
+	switch (op)
+	{
+	case device_comparison_func::never:
+		return D3D11_COMPARISON_NEVER;
+	case device_comparison_func::less:
+		return D3D11_COMPARISON_LESS;
+	case device_comparison_func::equal:
+		return D3D11_COMPARISON_EQUAL;
+	case device_comparison_func::less_equal:
+		return D3D11_COMPARISON_LESS_EQUAL;
+	case device_comparison_func::greater:
+		return D3D11_COMPARISON_GREATER;
+	case device_comparison_func::not_equal:
+		return D3D11_COMPARISON_NOT_EQUAL;
+	case device_comparison_func::greater_equal:
+		return D3D11_COMPARISON_GREATER_EQUAL;
+	case device_comparison_func::always:
+		return D3D11_COMPARISON_ALWAYS;
+	default:
+		return D3D11_COMPARISON_NEVER;
+	}
+}
+
+ScopeProfiler::ScopeProfiler(const char* Name, int Line)
+{
+	const WCHAR *pwcsName;
+	// required size
+	int nChars = MultiByteToWideChar(CP_ACP, 0, Name, -1, NULL, 0);
+	// allocate it
+	pwcsName = new WCHAR[nChars];
+	MultiByteToWideChar(CP_ACP, 0, Name, -1, (LPWSTR)pwcsName, nChars);
+	// use it....
+
+	// delete it
+
+	pPerf->BeginEvent(pwcsName);
+
+	delete[] pwcsName;
+}
+
+ScopeProfiler::~ScopeProfiler()
+{
+	pPerf->EndEvent();
 }

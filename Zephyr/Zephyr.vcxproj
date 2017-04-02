@@ -134,7 +134,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>DXUT.lib;DXUTOpt.lib;dxerr.lib;dxguid.lib;comctl32.lib;dxgi.lib;d3d11.lib;d3dx11d.lib;libnoise.lib;d3dcompiler.lib;d3dx9d.lib;winmm.lib;D3DCompiler.lib;libfbxsdk-md.lib;FreeImage.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>DXUT.lib;DXUTOpt.lib;dxerr.lib;dxguid.lib;comctl32.lib;dxgi.lib;d3d11.lib;libnoise.lib;d3dcompiler.lib;winmm.lib;D3DCompiler.lib;libfbxsdk-md.lib;FreeImage.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
   </ItemDefinitionGroup>
@@ -150,7 +150,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>DXUT.lib;DXUTOpt.lib;dxerr.lib;dxguid.lib;comctl32.lib;dxgi.lib;d3d11.lib;d3dx11d.lib;libnoise.lib;d3dcompiler.lib;d3dx9d.lib;winmm.lib;D3DCompiler.lib;libfbxsdk-md.lib;FreeImage.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>DXUT.lib;DXUTOpt.lib;dxerr.lib;dxguid.lib;comctl32.lib;dxgi.lib;d3d11.lib;libnoise.lib;d3dcompiler.lib;winmm.lib;D3DCompiler.lib;libfbxsdk-md.lib;FreeImage.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
   </ItemDefinitionGroup>
@@ -167,7 +167,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>DXUT.lib;DXUTOpt.lib;dxerr.lib;dxguid.lib;comctl32.lib;dxgi.lib;d3d11.lib;d3dx11d.lib;libnoise.lib;d3dcompiler.lib;d3dx9d.lib;winmm.lib;D3DCompiler.lib;libfbxsdk-md.lib;FreeImage.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>DXUT.lib;DXUTOpt.lib;dxerr.lib;dxguid.lib;comctl32.lib;dxgi.lib;d3d11.lib;libnoise.lib;d3dcompiler.lib;winmm.lib;D3DCompiler.lib;libfbxsdk-md.lib;FreeImage.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
   </ItemDefinitionGroup>
@@ -184,7 +184,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>DXUT.lib;DXUTOpt.lib;dxerr.lib;dxguid.lib;comctl32.lib;dxgi.lib;d3d11.lib;d3dx11d.lib;libnoise.lib;d3dcompiler.lib;d3dx9d.lib;winmm.lib;D3DCompiler.lib;libfbxsdk-md.lib;FreeImage.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>DXUT.lib;DXUTOpt.lib;dxerr.lib;dxguid.lib;comctl32.lib;dxgi.lib;d3d11.lib;libnoise.lib;d3dcompiler.lib;winmm.lib;D3DCompiler.lib;libfbxsdk-md.lib;FreeImage.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
   </ItemDefinitionGroup>
@@ -204,7 +204,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>DXUT.lib;DXUTOpt.lib;dxerr.lib;dxguid.lib;comctl32.lib;dxgi.lib;d3d11.lib;d3dx11d.lib;libnoise.lib;d3dcompiler.lib;d3dx9d.lib;winmm.lib;D3DCompiler.lib;libfbxsdk-md.lib;FreeImage.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>DXUT.lib;DXUTOpt.lib;dxerr.lib;dxguid.lib;comctl32.lib;dxgi.lib;d3d11.lib;libnoise.lib;d3dcompiler.lib;winmm.lib;D3DCompiler.lib;libfbxsdk-md.lib;FreeImage.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
   </ItemDefinitionGroup>
@@ -224,7 +224,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>DXUT.lib;DXUTOpt.lib;dxerr.lib;dxguid.lib;comctl32.lib;dxgi.lib;d3d11.lib;d3dx11d.lib;libnoise.lib;d3dcompiler.lib;d3dx9d.lib;winmm.lib;D3DCompiler.lib;libfbxsdk-md.lib;FreeImage.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>DXUT.lib;DXUTOpt.lib;dxerr.lib;dxguid.lib;comctl32.lib;dxgi.lib;d3d11.lib;libnoise.lib;d3dcompiler.lib;winmm.lib;D3DCompiler.lib;libfbxsdk-md.lib;FreeImage.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
   </ItemDefinitionGroup>
@@ -238,6 +238,7 @@
     <ClCompile Include="CatmullClark_Demo.cpp" />
     <ClCompile Include="d11.cpp" />
     <ClCompile Include="Demo.cpp" />
+    <ClCompile Include="DepthTexture.cpp" />
     <ClCompile Include="FBXSceneImporter.cpp" />
     <ClCompile Include="FreeCameraController.cpp" />
     <ClCompile Include="globals.cpp" />
@@ -288,6 +289,7 @@
     <ClInclude Include="CatmullClark_Demo.h" />
     <ClInclude Include="d11.h" />
     <ClInclude Include="Demo.h" />
+    <ClInclude Include="DepthTexture.h" />
     <ClInclude Include="FBXSceneImporter.h" />
     <ClInclude Include="FreeCameraController.h" />
     <ClInclude Include="GPUBasedPipeline.h" />
@@ -414,6 +416,28 @@
       </TreatWarningAsError>
       <TreatWarningAsError Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
       </TreatWarningAsError>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)..\Shaders\Assemblies\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)..\Shaders\Assemblies\%(Filename).cso</ObjectFileOutput>
+    </FxCompile>
+    <FxCompile Include="..\Shaders\full_deferred_diffuse_lighting_per_msaa_sample.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='DebugFast|Win32'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='DebugFast|Win32'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='DebugFast|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='DebugFast|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)..\Shaders\Assemblies\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='DebugFast|Win32'">$(ProjectDir)..\Shaders\Assemblies\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectDir)..\Shaders\Assemblies\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)..\Shaders\Assemblies\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='DebugFast|x64'">$(ProjectDir)..\Shaders\Assemblies\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)..\Shaders\Assemblies\%(Filename).cso</ObjectFileOutput>
     </FxCompile>
     <FxCompile Include="..\Shaders\gbuffer_pixel.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='DebugFast|Win32'">Pixel</ShaderType>
@@ -574,6 +598,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Shaders\Definitions.hlsli" />
+    <None Include="..\Shaders\deferred_shading_functions.hlsli" />
     <None Include="..\Shaders\shared_functions.hlsli" />
     <None Include="..\Shaders\ssr_helpers.hlsli" />
     <None Include="..\Shaders\vct_helpers.hlsli" />

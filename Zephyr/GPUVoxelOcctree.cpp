@@ -14,9 +14,9 @@ GPUVoxelOcctree::GPUVoxelOcctree(const D3DXVECTOR3 &resolution)
 	resolution_ = resolution;
 	my_scene_ = nullptr;
 
-	x_render_texture_ = new Texture( D3DXVECTOR3(resolution.z, resolution.y, 1), NULL, DXGI_FORMAT_R32G32B32A32_FLOAT, 0);
-	y_render_texture_ = new Texture( D3DXVECTOR3(resolution.x, resolution.z, 1), NULL, DXGI_FORMAT_R32G32B32A32_FLOAT, 0);
-	z_render_texture_ = new Texture( D3DXVECTOR3(resolution.x, resolution.y, 1), NULL, DXGI_FORMAT_R32G32B32A32_FLOAT, 0);
+	x_render_texture_ = new Texture( D3DXVECTOR3(resolution.z, resolution.y, 1), NULL, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 1);
+	y_render_texture_ = new Texture( D3DXVECTOR3(resolution.x, resolution.z, 1), NULL, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 1);
+	z_render_texture_ = new Texture( D3DXVECTOR3(resolution.x, resolution.y, 1), NULL, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 1);
 
 	const int max_requests = resolution.x * resolution.y;
 	node_allocate_requests_buffer_ = new GPUBuffer(sizeof(NodeAllocationRequest), max_requests, NULL, 
@@ -38,7 +38,7 @@ GPUVoxelOcctree::GPUVoxelOcctree(const D3DXVECTOR3 &resolution)
 	int pixel_count = max_bricks * 3 * 3 * 1.5 * max_bricks;
 	float *initial_data = new float[pixel_count * 4];
 	memset(initial_data, 0 , pixel_count * 4 * sizeof(float));
-	leaf_bricks_3d = new Texture(D3DXVECTOR3( 3 * 4 , 3 * 4 , 1.5 * max_bricks), initial_data, DXGI_FORMAT_R32G32B32A32_FLOAT , (UINT)CreationFlags::structured_buffer);
+	leaf_bricks_3d = new Texture(D3DXVECTOR3( 3 * 4 , 3 * 4 , 1.5 * max_bricks), initial_data, DXGI_FORMAT_R32G32B32A32_FLOAT , (UINT)CreationFlags::structured_buffer, 1);
 	delete[] initial_data;
 }
 

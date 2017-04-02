@@ -11,18 +11,18 @@ Texture::Texture()
 	dimension_ = D3DXVECTOR3 (-1 , -1 , -1);
 }
 
-Texture::Texture(const D3DXVECTOR3 &dimension, void *data, DXGI_FORMAT format, UINT creation_flags, int mipmap_count /*= 1*/)
+Texture::Texture(const D3DXVECTOR3 &dimension, void *data, DXGI_FORMAT format, UINT creation_flags, int msaa_count, int mipmap_count /*= 1*/)
 {
-	create(dimension, data, format, creation_flags, mipmap_count);
+	create(dimension, data, format, creation_flags, msaa_count, mipmap_count);
 }
 
-void Texture::create(const D3DXVECTOR3 &dimension, void *data, DXGI_FORMAT format, UINT creation_flags, int mipmap_count /*= 1*/)
+void Texture::create(const D3DXVECTOR3 &dimension, void *data, DXGI_FORMAT format, UINT creation_flags, int msaa_count, int mipmap_count /*= 1*/)
 {
 	dimension_type_ = dimension.z == 1 ? Dim_2D : Dim_3D;
 
 	if (dimension_type_ == Dim_2D)
 	{
-		texture_object_ = CreateTexture2D(dimension.x, dimension.y, data, format, creation_flags, mipmap_count);
+		texture_object_ = CreateTexture2D(dimension.x, dimension.y, data, format, creation_flags, msaa_count, mipmap_count);
 	}
 	else
 	{
@@ -31,6 +31,11 @@ void Texture::create(const D3DXVECTOR3 &dimension, void *data, DXGI_FORMAT forma
 
 	D3D_SRV_DIMENSION device_srv_dim_type = dimension_type_ == Dim_3D ? D3D_SRV_DIMENSION_TEXTURE3D : D3D_SRV_DIMENSION_TEXTURE2D;
 	D3D11_RTV_DIMENSION device_rtv_dim_type = dimension_type_ == Dim_3D ? D3D11_RTV_DIMENSION_TEXTURE3D : D3D11_RTV_DIMENSION_TEXTURE2D;
+
+	if (msaa_count > 1)
+	{
+		device_srv_dim_type = D3D_SRV_DIMENSION_TEXTURE2DMS; 
+	}
 
 	if (!(creation_flags & CreationFlags::staging))
 	{
@@ -132,7 +137,7 @@ void Texture::get_data(void * data, int length)
 {
 	if (data_accesor_staging_texture_ == nullptr)
 	{
-		data_accesor_staging_texture_ = new Texture(dimension_, nullptr, format_, (UINT)CreationFlags::staging);
+		data_accesor_staging_texture_ = new Texture(dimension_, nullptr, format_, (UINT)CreationFlags::staging, 1);
 	}
 
 	CopySubResource(texture_object_, data_accesor_staging_texture_->get_texture_object(), dimension_, 0, 0);

@@ -10,6 +10,7 @@ struct Gbuffer_output
 	float4 specular_gloss	:	SV_Target2;
 };
 
+Texture2D diffuse_texture : register(t0);
 
 Gbuffer_output main(PixelInputType input) : SV_TARGET
 {
