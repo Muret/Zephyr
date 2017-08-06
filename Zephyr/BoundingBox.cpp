@@ -70,3 +70,22 @@ void BoundingBox::get_points(vector<D3DXVECTOR4>& get_points) const
 	get_points.push_back(mid + D3DXVECTOR4(dif.x *+1.0f, dif.y *-1.0f, dif.z *+1.0f, 0));
 	get_points.push_back(mid + D3DXVECTOR4(dif.x *+1.0f, dif.y *+1.0f, dif.z *+1.0f, 0));
 }
+
+void BoundingBox::transform_by_matrix(const D3DXMATRIX & matrix)
+{
+	BoundingBox new_bb;
+
+	vector<D3DXVECTOR4> points;
+	get_points(points);
+
+	for (int i = 0; i < points.size(); i++)
+	{
+		D3DXVECTOR4 new_pos;
+		D3DXVec4Transform(&new_pos, &points[i], &matrix);
+
+		new_bb.enlarge_bb_with_point(new_pos);
+	}
+
+	min_ = new_bb.min_;
+	max_ = new_bb.max_;
+}

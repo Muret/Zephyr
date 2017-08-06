@@ -3,8 +3,19 @@
 #define _D11_H_
 
 #include "includes.h"
+#include "pix3.h"
 
 class Texture;
+
+#define GPU_EVENT(A) PixEvent p_event(A)
+
+struct PixEvent
+{
+	PixEvent(const char * format, ...);
+
+	~PixEvent();
+};
+
 
 
 

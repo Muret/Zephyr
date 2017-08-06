@@ -24,6 +24,11 @@ Texture* TextureLoader::create_texture_from_file()
 	unsigned int width(0), height(0);
 	//OpenGL's image ID to map to
 
+	if (filename_.find("earth_large_16") != -1)
+	{
+		int a = 5;
+	}
+
 	//check the file signature and deduce its format
 	fif = FreeImage_GetFileType(filename_.c_str(), 0);
 	//if still unknown, try to guess the file format from the file extension
@@ -44,37 +49,47 @@ Texture* TextureLoader::create_texture_from_file()
 
 	FREE_IMAGE_TYPE type = FreeImage_GetImageType(dib);
 
-	if (type != FIT_BITMAP)
+	if (type == FIT_BITMAP)
 	{
-		int a = 5;
-		return nullptr;
+		unsigned red_mask, green_mask, blue_mask;
+		red_mask = FreeImage_GetRedMask(dib);
+		green_mask = FreeImage_GetGreenMask(dib);
+		blue_mask = FreeImage_GetBlueMask(dib);
+
+		int x = FreeImage_GetBPP(dib);
+
+		FIBITMAP *rgba_dib = FreeImage_ConvertToType(dib, FIT_RGBAF);
+
+		int x2 = FreeImage_GetBPP(rgba_dib);
+
+		//retrieve the image data
+		bits = FreeImage_GetBits(rgba_dib);
+		//get the image width and height
+		width = FreeImage_GetWidth(rgba_dib);
+		height = FreeImage_GetHeight(rgba_dib);
+
+		if (bits == nullptr)
+		{
+			return nullptr;
+		}
+
+		Texture *text = new Texture();
+		text->create(D3DXVECTOR3(width, height, 1), bits, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 1);
+
+		return text;
 	}
-
-	unsigned red_mask, green_mask, blue_mask;
-	red_mask = FreeImage_GetRedMask(dib);
-	green_mask = FreeImage_GetGreenMask(dib);
-	blue_mask = FreeImage_GetBlueMask(dib);
-
-	int x = FreeImage_GetBPP(dib);
-
-	FIBITMAP *rgba_dib = FreeImage_ConvertToType(dib, FIT_RGBAF);
-
-	int x2 = FreeImage_GetBPP(rgba_dib);
-
-	//retrieve the image data
-	bits = FreeImage_GetBits(rgba_dib);
-	//get the image width and height
-	width = FreeImage_GetWidth(rgba_dib);
-	height = FreeImage_GetHeight(rgba_dib);
-
-	if (bits == nullptr)
+	else if (type == FIT_UINT16)
 	{
-		return nullptr;
+		//retrieve the image data
+		bits = FreeImage_GetBits(dib);
+		//get the image width and height
+		width = FreeImage_GetWidth(dib);
+		height = FreeImage_GetHeight(dib);
+
+		Texture *text = new Texture();
+		text->create(D3DXVECTOR3(width, height, 1), bits, DXGI_FORMAT_R16_UINT, 0, 1);
+
+		return text;
 	}
-
-	Texture *text = new Texture();
-	text->create(D3DXVECTOR3(width, height, 1), bits, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 1);
-
-	return text;
 }
 

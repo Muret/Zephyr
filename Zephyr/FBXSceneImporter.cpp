@@ -12,6 +12,11 @@
 
 FBXSceneImporter::FBXSceneImporter(std::string file_name)
 {
+	if (file_name == "..\Resources/thesis_scenes/kktm_bike_scene.fbx")
+	{
+		int a = 5;
+	}
+
 	std::string log_file_name = file_name;
 	log_file_name.append("log.txt");
 	myfile.open(log_file_name.c_str());
@@ -611,29 +616,42 @@ void FBXSceneImporter::read_camera(FbxNode *pNode, FbxCamera* pCamera)
 	float far_v = pCamera->GetFarPlane();
 	string name = pCamera->GetName();
 
-	D3DMATRIX cam_frame;
-	cam_frame._11 = frame[0][0];
-	cam_frame._12 = frame[0][1];
-	cam_frame._13 = frame[0][2];
-	cam_frame._14 = frame[0][3];
+	D3DXVECTOR4 cam_pos(pCamera->Position.Get()[0], pCamera->Position.Get()[1], pCamera->Position.Get()[2], 1);
+	D3DXVECTOR3 cam_up(pCamera->UpVector.Get()[0], pCamera->UpVector.Get()[1], pCamera->UpVector.Get()[2]);
+	D3DXVec3Normalize(&cam_up, &cam_up);
+	D3DXVECTOR4 cam_target(pCamera->InterestPosition.Get()[0], pCamera->InterestPosition.Get()[1], pCamera->InterestPosition.Get()[2], 1);
+	
+	D3DXVECTOR3 cam_gaze = cam_target - cam_pos;
+	D3DXVec3Normalize(&cam_gaze, &cam_gaze);
+	D3DXVECTOR3 cam_right;
+	D3DXVec3Cross(&cam_right, &cam_gaze, &cam_up);
+	D3DXVec3Normalize(&cam_right, &cam_right);
 
-	cam_frame._21 = frame[1][0];
-	cam_frame._22 = frame[1][1];
-	cam_frame._23 = frame[1][2];
-	cam_frame._24 = frame[1][3];
-
-	cam_frame._31 = frame[2][0];
-	cam_frame._32 = frame[2][1];
-	cam_frame._33 = frame[2][2];
-	cam_frame._34 = frame[2][3];
-
-	cam_frame._41 = frame[3][0];
-	cam_frame._42 = frame[3][1];
-	cam_frame._43 = frame[3][2];
-	cam_frame._44 = frame[3][3];
+	//D3DMATRIX cam_frame;
+	//cam_frame._11 = frame[0][0];
+	//cam_frame._12 = frame[0][1];
+	//cam_frame._13 = frame[0][2];
+	//cam_frame._14 = frame[0][3];
+	//
+	//cam_frame._21 = frame[1][0];
+	//cam_frame._22 = frame[1][1];
+	//cam_frame._23 = frame[1][2];
+	//cam_frame._24 = frame[1][3];
+	//
+	//cam_frame._31 = frame[2][0];
+	//cam_frame._32 = frame[2][1];
+	//cam_frame._33 = frame[2][2];
+	//cam_frame._34 = frame[2][3];
+	//
+	//cam_frame._41 = cam_pos[0];
+	//cam_frame._42 = cam_pos[1];
+	//cam_frame._43 = cam_pos[2];
+	//cam_frame._44 = 1;
 
 	Camera *new_camera = new Camera();
-	new_camera->set_frame(cam_frame);
+	new_camera->set_position(cam_pos);
+	new_camera->set_directions(D3DXVECTOR4(cam_gaze, 0),
+		D3DXVECTOR4(cam_up, 0), D3DXVECTOR4(cam_right, 0));
 	new_camera->set_near(near_v);
 	new_camera->set_far(far_v);
 	new_camera->set_fov(fov_v);

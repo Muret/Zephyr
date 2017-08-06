@@ -1,0 +1,12 @@
+<node name= KTM:polySurface1
+	<attribute type= mesh name=  />
+</node>
+<node name= directionalLight1
+	<attribute type= light name=  />
+</node>
+<node name= nurbsPlane1
+	<attribute type= mesh name=  />
+</node>
+<node name= camera1
+	<attribute type= camera name= camera1 />
+</node>

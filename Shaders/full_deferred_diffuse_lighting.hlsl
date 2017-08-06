@@ -21,5 +21,8 @@ OUTPUT main(PixelInputType input)
 
 	shade_pixel_deferred(input.tex_coord, world_position, albedo_color, normal, output);
 
+	//output.color = float4(normal * 0.5 + 0.5, 1);
+	//output.color = float4(1,0,1, 1);
+
 	return output;
 }

@@ -96,6 +96,7 @@ TextureQuadTree::Tile TextureQuadTree::get_tile(int requested_size)
 	}
 	
 	Tile tile;
+	tile.owner_node = nullptr;
 	tile.size = 0;
 	return tile;
 }
@@ -107,7 +108,10 @@ Texture * TextureQuadTree::get_atlas_texture() const
 
 void TextureQuadTree::return_tile(const Tile & tile)
 {
-	tile.owner_node->free_flags_[tile.tile_location_in_chunk] = true;
+	if (tile.owner_node && tile.tile_location_in_chunk != -1)
+	{
+		tile.owner_node->free_flags_[tile.tile_location_in_chunk] = true;
+	}
 }
 
 TextureQuadTree::TreeNode * TextureQuadTree::construct_tree_node_recursive(D3DXVECTOR2 start_position, int current_size)

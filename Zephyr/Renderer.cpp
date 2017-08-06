@@ -14,12 +14,7 @@
 #include "GPUBuffer.h"
 #include "DepthTexture.h"
 
-//#define USE_TILED_RENDERING
-//#define USE_TILED_LIGHT_SHADOW_RENDERING
-#define USE_MSAA_DEFERRED_RENDERER
-
-#define LIGHT_SHADOW_RESOLUTION 512
-#define LIGHT_SHADOW_ATLAS_SIZE (LIGHT_SHADOW_RESOLUTION * 32)
+#include <cstdio>
 
 Renderer *renderer = NULL;
 
@@ -38,6 +33,8 @@ Renderer::Renderer()
 	gbuffer_normal_texture = new Texture  (D3DXVECTOR3( g_screenWidth, g_screenHeight,1), nullptr, DXGI_FORMAT_R32G32B32A32_FLOAT , 0, gbuffer_sample_count);
 	gbuffer_specular_texture = new Texture(D3DXVECTOR3( g_screenWidth, g_screenHeight,1), nullptr, DXGI_FORMAT_R8G8B8A8_UNORM , 0, gbuffer_sample_count);
 	gbuffer_albedo_texture = new Texture  (D3DXVECTOR3( g_screenWidth, g_screenHeight,1), nullptr, DXGI_FORMAT_R8G8B8A8_UNORM , 0, gbuffer_sample_count);
+
+	msaa_gbuffer_resolve_texture = new Texture(D3DXVECTOR3(g_screenWidth, g_screenHeight, 1), nullptr, DXGI_FORMAT_R8G8B8A8_UNORM, 0, 1);
 
 	scene_depth_target_ = new DepthTexture(D3DXVECTOR2(g_screenWidth, g_screenHeight), nullptr, DXGI_FORMAT_D24_UNORM_S8_UINT, gbuffer_sample_count);
 
@@ -61,11 +58,11 @@ Renderer::Renderer()
 
 	full_deferred_diffuse_lighting_shader = new Shader("direct_vertex_position", "full_deferred_diffuse_lighting");
 
-#ifdef USE_TILED_LIGHT_SHADOW_RENDERING
-	light_shadow_shader = new Shader("tiled_gbuffer_vertex", "tiled_gbuffer_pixel");
-#else
+//#ifdef USE_TILED_LIGHT_SHADOW_RENDERING
+//	light_shadow_shader = new Shader("tiled_gbuffer_vertex", "tiled_gbuffer_pixel");
+//#else
 	light_shadow_shader = new Shader("gbuffer_vertex", "");
-#endif	
+//#endif	
 	
 	use_postfx = false;
 	camera_ = nullptr;
@@ -80,9 +77,11 @@ Renderer::Renderer()
 
 	draw_one_by_one_index_ = 1000;
 
+#ifndef USE_TILED_LIGHT_SHADOW_RENDERING
 	creaate_light_shadow_depth_texture();
+#endif
 
-#ifdef USE_TILED_LIGHT_SHADOW_RENDERING
+#ifdef USE_TILED_LIGHT_SHADOW_RENDERING || USE_TILED_RENDERING
 	initialize_tiled_shadow_renderer();
 #endif
 
@@ -97,15 +96,15 @@ void Renderer::initialize_msaa_deferred_renderer()
 	full_deferred_diffuse_lighting_shader_per_msaa_sample = new Shader("direct_vertex_position", "full_deferred_diffuse_lighting_per_msaa_sample");
 }
 
+#ifdef USE_TILED_LIGHT_SHADOW_RENDERING
 void Renderer::initialize_tiled_shadow_renderer()
 {
 	//tile info
-	tile_size_ = 16;
-	gbuffer_render_quad_tree_[0] = new TextureQuadTree(LIGHT_SHADOW_ATLAS_SIZE, tile_size_ * 8);
-	gbuffer_render_quad_tree_[1] = new TextureQuadTree(LIGHT_SHADOW_ATLAS_SIZE, tile_size_ * 8);
+	gbuffer_render_quad_tree_[0] = new TextureQuadTree(LIGHT_SHADOW_ATLAS_SIZE, LIGHT_TILE_MAX_SIZE);
+	gbuffer_render_quad_tree_[1] = new TextureQuadTree(LIGHT_SHADOW_ATLAS_SIZE, LIGHT_TILE_MAX_SIZE);
 
-	tile_count_x_ = LIGHT_SHADOW_RESOLUTION / tile_size_;
-	tile_count_y_ = LIGHT_SHADOW_RESOLUTION / tile_size_;
+	tile_count_x_ = TILE_COUNT;
+	tile_count_y_ = TILE_COUNT;
 
 	score_per_tile_ = new float[tile_count_x_ * tile_count_y_];
 
@@ -113,7 +112,7 @@ void Renderer::initialize_tiled_shadow_renderer()
 	{
 		for (int j = 0; j < tile_count_x_; j++)
 		{
-			score_per_tile_[j + i * tile_count_x_] = 6;
+			score_per_tile_[j + i * tile_count_x_] = log2(LIGHT_TILE_SIZE);
 		}
 	}
 
@@ -134,7 +133,9 @@ void Renderer::initialize_tiled_shadow_renderer()
 
 	do_flicker = false;
 }
+#endif
 
+#ifndef USE_TILED_LIGHT_SHADOW_RENDERING
 void Renderer::creaate_light_shadow_depth_texture()
 {
 	D3D11_TEXTURE2D_DESC depthBufferDesc;
@@ -168,6 +169,7 @@ void Renderer::creaate_light_shadow_depth_texture()
 	// Create the depth stencil view.
 	result = g_device->CreateDepthStencilView(light_depth_texture_, &depthStencilViewDesc, &light_depth_texture_view_);
 }
+#endif
 
 void Renderer::render_frame()
 {
@@ -253,6 +255,7 @@ void Renderer::refresh_tile_resolutions()
 					int current_index = i + j * tile_count_x_;
 					frame_constans_buffer_cpu.screen_tile_info[current_index] = D3DXVECTOR4(new_tile.start.x, new_tile.start.y,
 						new_tile.normalized_size.x, new_tile.normalized_size.y);
+					int a = 5;
 				}
 				else
 				{
@@ -290,7 +293,7 @@ void Renderer::tick_tilesets()
 
 	for (int i = 0; i < mesh_count && i < draw_one_by_one_index_; i++)
 	{
-		if (i == 0)
+		if (i == 1)
 		{
 			continue;
 		}
@@ -298,26 +301,18 @@ void Renderer::tick_tilesets()
 		DrawRecord &cur_draw_record = cur_frame_rendered_meshes_[i];
 		const D3DXMATRIX &frame = cur_frame_rendered_meshes_[i].frame;
 		Mesh *cur_mesh = cur_frame_rendered_meshes_[i].mesh;
-		const BoundingBox &mesh_bb = cur_mesh->get_bb();
+		BoundingBox mesh_bb = cur_mesh->get_bb();
+		//mesh_bb.transform_by_matrix(frame);
 
-		D3DXVECTOR4 bb_radius = (mesh_bb.get_max() - mesh_bb.get_min()) * 0.5f;
+		vector<D3DXVECTOR4> points;
+		mesh_bb.get_points(points);
 
 		D3DXVECTOR2 min_screen_point = D3DXVECTOR2(1e6, 1e6);
 		D3DXVECTOR2 max_screen_point = D3DXVECTOR2(-1e6, -1e6);
-		D3DXVECTOR4 mesh_location = D3DXVECTOR4(frame.m[3][0], frame.m[3][1], frame.m[3][2], 1);
 
-		for (int i = 0; i < 8; i++)
+		for (int i = 0; i < points.size(); i++)
 		{
-			int first_axis = (i % 2);
-			int second_axis = (i >> 1) % 2;
-			int third_axis = (i >> 2) % 2;
-
-			first_axis = first_axis * 2 - 1;
-			second_axis = second_axis * 2 - 1;
-			third_axis = third_axis * 2 - 1;
-
-			D3DXVECTOR4 current_displacement = D3DXVECTOR4(first_axis * bb_radius.x, second_axis * bb_radius.y, third_axis * bb_radius.z, 0);
-			D3DXVECTOR4 current_bb_point = mesh_location + current_displacement;
+			D3DXVECTOR4 current_bb_point = points[i];
 			D3DXVECTOR4 ss_position;
 			D3DXVec4Transform(&ss_position, &current_bb_point, &view_proj_matrix);
 
@@ -353,20 +348,16 @@ void Renderer::tick_tilesets()
 		min_screen_point = min_screen_point * 0.5 + D3DXVECTOR2(0.5, 0.5);
 		max_screen_point = max_screen_point * 0.5 + D3DXVECTOR2(0.5, 0.5);
 
-		min_screen_point.y = 1.0f - min_screen_point.y;
-		max_screen_point.y = 1.0f - max_screen_point.y;
-
-		float temp = max_screen_point.y;
-		max_screen_point.y = min_screen_point.y;
-		min_screen_point.y = temp;
-
-		D3DXVECTOR4 distance_vector = mesh_location - camera_->get_position();
-
-		float distance_to_mesh = sqrt(D3DXVec4Dot(&distance_vector, &distance_vector));
-		float grid_multiplier = pow(2, distance_to_mesh / 0.5f);
+		//min_screen_point.y = 1.0f - min_screen_point.y;
+		//max_screen_point.y = 1.0f - max_screen_point.y;
+		//
+		//float temp = max_screen_point.y;
+		//max_screen_point.y = min_screen_point.y;
+		//min_screen_point.y = temp;
 
 		int min_x = min_screen_point.x * (tile_count_x_);
 		int min_y = min_screen_point.y * (tile_count_y_);
+
 
 		int max_x = min(max_screen_point.x * (tile_count_x_), tile_count_x_ - 1);
 		int max_y = min(max_screen_point.y * (tile_count_y_), tile_count_y_ - 1);
@@ -416,7 +407,7 @@ void Renderer::tick_tilesets()
 				const TextureQuadTree::Tile &new_tile = it->second;
 
 				int current_index = i + j * tile_count_x_;
-				frame_constans_buffer_cpu.screen_tile_info[current_index + 64] = D3DXVECTOR4(new_tile.start.x, new_tile.start.y,
+				frame_constans_buffer_cpu.screen_tile_info[current_index + tile_count_x_ * tile_count_y_] = D3DXVECTOR4(new_tile.start.x, new_tile.start.y,
 					new_tile.normalized_size.x, new_tile.normalized_size.y);
 			}
 		}
@@ -474,8 +465,10 @@ void Renderer::show_imgui()
 		refresh_tile_resolutions();
 	}
 
+#ifdef USE_TILED_LIGHT_SHADOW_RENDERING
 	if (do_change)
 	{
+		int max_tile_size = log2(LIGHT_TILE_MAX_SIZE);
 		for (int i = 0; i < tile_count_x_; i++)
 		{
 			for (int j = 0; j < tile_count_y_; j++)
@@ -488,13 +481,14 @@ void Renderer::show_imgui()
 					score_per_tile_[i + j * tile_count_y_] -= 1;
 				}
 
-				if (ratio > 0.02 && score_per_tile_[i + j * tile_count_y_] < 7)
+				if (ratio > 0.02 && score_per_tile_[i + j * tile_count_y_] < max_tile_size)
 				{
 					score_per_tile_[i + j * tile_count_y_] += 1;
 				}
 			}
 		}
 	}
+#endif
 }
 
 void Renderer::gbuffer_render()
@@ -506,7 +500,7 @@ void Renderer::gbuffer_render()
 	scene_depth_target_->set_as_depth_stencil_view();
 
 #ifdef USE_TILED_RENDERING
-	gbuffer_render_quad_tree_->get_atlas_texture()->set_as_render_target(0);
+	gbuffer_render_quad_tree_[current_tile_index_]->get_atlas_texture()->set_as_render_target(0);
 #else
 	gbuffer_albedo_texture->set_as_render_target(0);
 	gbuffer_normal_texture->set_as_render_target(1);
@@ -732,6 +726,7 @@ void Renderer::begin_frame()
 
 	ImGui::Begin("Renderer Stats");
 	ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+	ImGui::Text("Debug Vector %.2f %.2f %.2f %.2f", Utilities::get_debug_vector().x, Utilities::get_debug_vector().y, Utilities::get_debug_vector().z, Utilities::get_debug_vector().w);
 	ImGui::Text("Camera pos %f %f %f", camera_->get_position().x, camera_->get_position().y, camera_->get_position().z);
 	ImGui::Text("Camera gaze %f %f %f", camera_->get_forward_vector().x, camera_->get_forward_vector().y, camera_->get_forward_vector().z);
 	ImGui::Text("Camera up %f %f %f", camera_->get_up_vector().x, camera_->get_up_vector().y, camera_->get_up_vector().z);
@@ -841,12 +836,23 @@ void Renderer::full_deferred_rendering_pipeline()
 
 	//set gbuffer textures
 #ifdef USE_TILED_RENDERING
-	gbuffer_render_quad_tree_->get_atlas_texture()->set_srv_to_shader(shaderType::pixel, 1);
+	gbuffer_render_quad_tree_[current_tile_index_]->get_atlas_texture()->set_srv_to_shader(shaderType::pixel, 1);
 #else
 	gbuffer_albedo_texture->set_srv_to_shader(shaderType::pixel, 0);
 	gbuffer_normal_texture->set_srv_to_shader(shaderType::pixel, 1);
 	gbuffer_specular_texture->set_srv_to_shader(shaderType::pixel, 2);
 #endif
+
+	
+#ifdef USE_MSAA_DEFERRED_RENDERER
+	g_deviceContext->ResolveSubresource(msaa_gbuffer_resolve_texture->get_texture_object(), 0, 
+		gbuffer_albedo_texture->get_texture_object(), 0, DXGI_FORMAT_R8G8B8A8_UNORM);
+	msaa_gbuffer_resolve_texture->set_srv_to_shader(shaderType::pixel, 3);
+#endif
+
+	SetConstantBufferToSlot(0, frame_constans_buffer_gpu);
+	SetConstantBufferToSlot(1, mesh_constants_buffer_gpu);
+	SetConstantBufferToSlot(2, lighting_constants_buffer_gpu);
 
 #ifdef USE_TILED_LIGHT_SHADOW_RENDERING
 	SetSRV(&gbuffer_render_quad_tree_[current_tile_index_]->depth_atlas_texture_srv_, 1, shaderType::pixel, 5);
@@ -1035,6 +1041,7 @@ void Renderer::set_mesh_primitive_topology(const Mesh * mesh)
 	}
 }
 
+#ifndef USE_TILED_LIGHT_SHADOW_RENDERING
 void Renderer::light_shadow_render()
 {
 	if (scene_to_render->get_lights().size() > 0)
@@ -1066,11 +1073,11 @@ void Renderer::light_shadow_render()
 			D3DXVec3Cross(&up_vector, &right_vector, &gaze_vector);
 			D3DXVec3Cross(&right_vector, &gaze_vector, &up_vector);
 
-			D3DXVECTOR3 light_lookat = scene_to_render->get_bb().get_max();
+			D3DXVECTOR3 light_lookat = scene_to_render->get_bb().get_center();
 			D3DXVECTOR3 light_dir(first_light->get_direction().x, first_light->get_direction().y, first_light->get_direction().z);
 			D3DXVECTOR3 light_position_to_give = light_lookat - light_dir * 500;
 
-			D3DXMatrixLookAtRH(&light_view_matrix, &light_position, &light_lookat, &up_vector);
+			D3DXMatrixLookAtRH(&light_view_matrix, &light_position_to_give, &light_lookat, &up_vector);
 
 			vector<D3DXVECTOR4> bb_points_in_light_space;
 			scene_to_render->get_bb().get_points(bb_points_in_light_space);
@@ -1090,7 +1097,7 @@ void Renderer::light_shadow_render()
 			D3DXVECTOR4 light_max = scene_bb_in_light_space.get_max();
 			D3DXVECTOR4 light_min = scene_bb_in_light_space.get_min();
 
-			D3DXMatrixOrthoRH(&light_projection_matrix, (light_max.x - light_min.x) * 3, (light_max.y - light_min.y) * 3, 0.01f, 1000.0f);
+			D3DXMatrixOrthoRH(&light_projection_matrix, (light_max.x - light_min.x), (light_max.y - light_min.y), 0.01f, 2000.0f);
 		}
 
 
@@ -1105,6 +1112,11 @@ void Renderer::light_shadow_render()
 
 		for (int i = 0; i < cur_frame_rendered_meshes_.size() && i < draw_one_by_one_index_; i++)
 		{
+			if (i == 1)
+			{
+				continue;
+			}
+
 			Mesh *mesh_to_render = cur_frame_rendered_meshes_[i].mesh;
 			DrawRecord &record = cur_frame_rendered_meshes_[i];
 
@@ -1143,7 +1155,75 @@ void Renderer::light_shadow_render()
 
 		UpdateBuffer(&lighting_contants_buffer_cpu, sizeof(LightingConstantsBuffer), lighting_constants_buffer_gpu);
 	}
+}
+#endif
 
+#ifdef USE_TILED_LIGHT_SHADOW_RENDERING
+void Renderer::get_vp_matrix_for_tile(D3DXMATRIX & tile_vp_matrix, int tile_x, int tile_y)
+{
+	if (scene_to_render->get_lights().size() > 0)
+	{
+		SetDepthState(true, true, device_comparison_func::less_equal, false, false, device_comparison_func::always, device_stencil_op::zero, 0);
+
+		Light* first_light = scene_to_render->get_lights()[0];
+		D3DXVECTOR3 light_position = first_light->get_position();
+
+
+		if (first_light->get_type() == Light::type_directional)
+		{
+			D3DXVECTOR3 right_vector(1, 0, 0);
+			D3DXVECTOR3 gaze_vector = first_light->get_direction();
+			D3DXVec3Normalize(&gaze_vector, &gaze_vector);
+			D3DXVECTOR3 up_vector;
+
+			D3DXVec3Cross(&up_vector, &right_vector, &gaze_vector);
+			D3DXVec3Cross(&right_vector, &gaze_vector, &up_vector);
+
+			D3DXVec3Normalize(&up_vector, &up_vector);
+			D3DXVec3Normalize(&right_vector, &right_vector);
+
+			D3DXVECTOR3 light_lookat = scene_to_render->get_bb().get_center();
+			D3DXVECTOR3 light_position_to_give = light_lookat - gaze_vector * 50;
+
+			vector<D3DXVECTOR4> bb_points_in_light_space;
+			scene_to_render->get_bb().get_points(bb_points_in_light_space);
+
+			D3DXMATRIX whole_view_matrix;
+			D3DXMatrixLookAtRH(&whole_view_matrix, &light_position_to_give, &light_lookat, &up_vector);
+
+			for (int i = 0; i < bb_points_in_light_space.size(); i++)
+			{
+				D3DXVec4Transform(&bb_points_in_light_space[i], &bb_points_in_light_space[i], &whole_view_matrix);
+			}
+
+			BoundingBox scene_bb_in_light_space;
+
+			for (int i = 0; i < bb_points_in_light_space.size(); i++)
+			{
+				scene_bb_in_light_space.enlarge_bb_with_point(bb_points_in_light_space[i]);
+			}
+
+			D3DXVECTOR3 light_max = scene_bb_in_light_space.get_max();
+			D3DXVECTOR3 light_min = scene_bb_in_light_space.get_min();
+			D3DXVECTOR2 light_radius = light_max - light_min;
+			D3DXVECTOR2 light_tile_radius = light_radius / TILE_COUNT;
+
+			D3DXVECTOR3 final_pos = scene_to_render->get_bb().get_center();
+			D3DXVECTOR3 displacement_from_center = light_tile_radius.x * ((float)tile_x + 0.5 - TILE_COUNT * 0.5) * right_vector
+				+ light_tile_radius.y * ((float)tile_y + 0.5 - TILE_COUNT * 0.5) * up_vector;
+
+			final_pos += displacement_from_center;
+			light_lookat = final_pos;
+			final_pos -= gaze_vector * 50;
+
+			D3DXMATRIX light_view_matrix;
+			D3DXMatrixLookAtRH(&light_view_matrix, &final_pos, &light_lookat, &up_vector);
+			D3DXMATRIX light_projection_matrix;
+			D3DXMatrixOrthoRH(&light_projection_matrix, light_tile_radius.x, light_tile_radius.y, 0.01f, 100.0f);
+
+			tile_vp_matrix = light_view_matrix * light_projection_matrix;
+		}
+	}
 }
 
 void Renderer::tiled_light_shadow_render()
@@ -1153,20 +1233,6 @@ void Renderer::tiled_light_shadow_render()
 		SetDepthState(true, true, device_comparison_func::less_equal, false, false, device_comparison_func::always, device_stencil_op::zero, 0);
 
 		Light* first_light = scene_to_render->get_lights()[0];
-		D3DXVECTOR3 light_position = first_light->get_position();
-
-		D3DXVECTOR3 gaze_vector(0, -1, 0);
-		D3DXVECTOR3 up_vector(0, 0, -1);
-		D3DXVECTOR3 right_vector(1, 0, 0);
-		D3DXVECTOR3 light_lookat = light_position + gaze_vector;
-
-		D3DXMATRIX light_view_matrix;
-		D3DXMATRIX light_projection_matrix;
-
-		D3DXMatrixLookAtRH(&light_view_matrix, &light_position, &light_lookat, &up_vector);
-		D3DXMatrixPerspectiveFovRH(&light_projection_matrix, (90.0f / 180.0f) * PI, 1, 0.01f, 100.0f);
-
-		D3DXMATRIX light_view_projection_matrix = light_view_matrix * light_projection_matrix;
 
 		SetRenderTargetView(nullptr, 0);
 		SetRenderTargetView(nullptr, 1);
@@ -1184,7 +1250,24 @@ void Renderer::tiled_light_shadow_render()
 			for (int j = 0; j < record.tiles_.size(); j++)
 			{
 				std::pair<int, int> cur_tile = record.tiles_[j];
-				TextureQuadTree::Tile current_tile = current_tile_data_[current_tile_index_][cur_tile];
+				TextureQuadTree::Tile cur_tile_atlas_info = current_tile_data_[current_tile_index_][cur_tile];
+
+				//if (!(cur_tile.first == 9 && cur_tile.second == 5))
+				//{
+				//	continue;
+				//}
+
+				//if (!(cur_tile.first == (int)Utilities::get_debug_vector().x && cur_tile.second == (int)Utilities::get_debug_vector().y))
+				//{
+				//	continue;
+				//}
+
+				char p_e_i[1024];
+				int first_number = cur_tile.first;
+				int second_number = cur_tile.second;
+				sprintf(p_e_i, "Tiled Shadow %d %d", first_number, second_number);
+
+				GPU_EVENT(p_e_i);
 
 				if (mesh_to_render->get_material())
 				{
@@ -1194,7 +1277,10 @@ void Renderer::tiled_light_shadow_render()
 				mesh_constants_buffer_cpu.current_tile_info.x = cur_tile.first;
 				mesh_constants_buffer_cpu.current_tile_info.y = cur_tile.second;
 
-				D3DXMATRIX mesh_world_view_proj_matrix = record.frame * light_view_projection_matrix;
+				D3DXMATRIX cur_tile_vp;
+				get_vp_matrix_for_tile(cur_tile_vp, cur_tile.first, cur_tile.second);
+
+				D3DXMATRIX mesh_world_view_proj_matrix = record.frame * cur_tile_vp;
 				D3DXMatrixTranspose(&mesh_world_view_proj_matrix, &mesh_world_view_proj_matrix);
 				mesh_constants_buffer_cpu.world_view_projection_matrix = mesh_world_view_proj_matrix;
 				UpdateBuffer(&mesh_constants_buffer_cpu, sizeof(MeshConstantsBuffer), mesh_constants_buffer_gpu);
@@ -1205,9 +1291,14 @@ void Renderer::tiled_light_shadow_render()
 				SetVertexBuffer(mesh_to_render->get_vertex_buffer(), sizeof(Mesh::Vertex));
 				SetIndexBuffer(mesh_to_render->get_index_buffer());
 
+				int viewport_start_x = cur_tile_atlas_info.start.x * LIGHT_SHADOW_ATLAS_SIZE;
+				int viewport_start_y = cur_tile_atlas_info.start.y * LIGHT_SHADOW_ATLAS_SIZE;
+				int viewport_size_x = cur_tile_atlas_info.normalized_size.x * LIGHT_SHADOW_ATLAS_SIZE;
+				int viewport_size_y = cur_tile_atlas_info.normalized_size.y * LIGHT_SHADOW_ATLAS_SIZE;
+				SetViewPort(viewport_start_x, viewport_start_y, viewport_size_x, viewport_size_y);
+
 				set_mesh_primitive_topology(mesh_to_render);
 				SetRasterState(raster_state_fill_mode);
-
 
 				SetSamplerState();
 
@@ -1216,6 +1307,9 @@ void Renderer::tiled_light_shadow_render()
 				RenderIndexed(tri_to_render);
 			}
 		}
+
+		D3DXMATRIX light_view_projection_matrix;
+		get_light_shadow_view_proj_matrix(light_view_projection_matrix);
 
 		float determinant;
 		D3DXMATRIX light_view_projection_matrix_inv;
@@ -1229,8 +1323,8 @@ void Renderer::tiled_light_shadow_render()
 
 		UpdateBuffer(&lighting_contants_buffer_cpu, sizeof(LightingConstantsBuffer), lighting_constants_buffer_gpu);
 	}
-
 }
+#endif
 
 void Renderer::get_light_shadow_view_proj_matrix(D3DXMATRIX & lvp)
 {
@@ -1239,16 +1333,54 @@ void Renderer::get_light_shadow_view_proj_matrix(D3DXMATRIX & lvp)
 		Light* first_light = scene_to_render->get_lights()[0];
 		D3DXVECTOR3 light_position = first_light->get_position();
 
-		D3DXVECTOR3 gaze_vector(0, -1, 0);
-		D3DXVECTOR3 up_vector(0, 0, -1);
-		D3DXVECTOR3 right_vector(1, 0, 0);
-		D3DXVECTOR3 light_lookat = light_position + gaze_vector;
-
 		D3DXMATRIX light_view_matrix;
 		D3DXMATRIX light_projection_matrix;
 
-		D3DXMatrixLookAtRH(&light_view_matrix, &light_position, &light_lookat, &up_vector);
-		D3DXMatrixPerspectiveFovRH(&light_projection_matrix, (90.0f / 180.0f) * PI, 1, 0.01f, 100.0f);
+		if (first_light->get_type() == Light::type_pointlight)
+		{
+			D3DXVECTOR3 gaze_vector(0, -1, 0);
+			D3DXVECTOR3 up_vector(0, 0, -1);
+			D3DXVECTOR3 right_vector(1, 0, 0);
+			D3DXVECTOR3 light_lookat = light_position + gaze_vector;
+
+			D3DXMatrixLookAtRH(&light_view_matrix, &light_position, &light_lookat, &up_vector);
+			D3DXMatrixPerspectiveFovRH(&light_projection_matrix, (90.0f / 180.0f) * PI, 1, 0.01f, 1000.0f);
+		}
+		else
+		{
+			D3DXVECTOR3 right_vector(1, 0, 0);
+			D3DXVECTOR3 gaze_vector = first_light->get_direction();
+			D3DXVec3Normalize(&gaze_vector, &gaze_vector);
+			D3DXVECTOR3 up_vector;
+
+			D3DXVec3Cross(&up_vector, &right_vector, &gaze_vector);
+			D3DXVec3Cross(&right_vector, &gaze_vector, &up_vector);
+
+			D3DXVECTOR3 light_lookat = scene_to_render->get_bb().get_center();
+			D3DXVECTOR3 light_position_to_give = light_lookat - gaze_vector * 50;
+
+			D3DXMatrixLookAtRH(&light_view_matrix, &light_position_to_give, &light_lookat, &up_vector);
+
+			vector<D3DXVECTOR4> bb_points_in_light_space;
+			scene_to_render->get_bb().get_points(bb_points_in_light_space);
+
+			for (int i = 0; i < bb_points_in_light_space.size(); i++)
+			{
+				D3DXVec4Transform(&bb_points_in_light_space[i], &bb_points_in_light_space[i], &light_view_matrix);
+			}
+
+			BoundingBox scene_bb_in_light_space;
+
+			for (int i = 0; i < bb_points_in_light_space.size(); i++)
+			{
+				scene_bb_in_light_space.enlarge_bb_with_point(bb_points_in_light_space[i]);
+			}
+
+			D3DXVECTOR4 light_max = scene_bb_in_light_space.get_max();
+			D3DXVECTOR4 light_min = scene_bb_in_light_space.get_min();
+
+			D3DXMatrixOrthoRH(&light_projection_matrix, (light_max.x - light_min.x), (light_max.y - light_min.y), 0.01f, 100.0f);
+		}
 
 		lvp = light_view_matrix * light_projection_matrix;
 	}

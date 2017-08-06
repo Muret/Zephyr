@@ -143,7 +143,7 @@ float Utilities::random_normalized_float(int presicion /*= RAND_MAX*/)
 
 void Utilities::tick()
 {
-	float multiplier = 0.2;
+	float multiplier = 3;
 
 	if (key_chain.key('1'))
 	{

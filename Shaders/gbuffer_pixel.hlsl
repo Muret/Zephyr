@@ -15,8 +15,8 @@ Texture2D diffuse_texture : register(t0);
 Gbuffer_output main(PixelInputType input) : SV_TARGET
 {
 	Gbuffer_output output;
-	//output.albedo = float4(input.color.xyz, 1);
-	output.albedo = /*g_diffuse_color.rgba * input.color **/ float4(diffuse_texture.Sample(LinearSampler, input.tex_coord.xy).rgb, 1);
+	output.albedo = float4(input.color.xyz, 1);
+	//output.albedo = /*g_diffuse_color.rgba * input.color **/ float4(diffuse_texture.Sample(LinearSampler, input.tex_coord.xy).rgb, 1);
 	//output.albedo = /*g_diffuse_color.rgba * input.color **/ float4(diffuse_texture.Sample(LinearSampler, input.tex_coord.xy).rgb, 1);
 
 	//output.albedo = float4(input.tex_coord.xy,0,1);

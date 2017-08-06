@@ -11,6 +11,7 @@
 
 #include "SSR_Demo.h"
 #include "VCT_Demo.h"
+#include "TerrainDemo.h"
 #include "CatmullClark_Demo.h"
 #include "KeyChain.h"
 #include "GPUBasedPipelineDemo.h"
@@ -49,7 +50,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pScmdline,
 
 	string path = ExePath();
 
-	current_demo = new SSRDemo();
+	current_demo = new TerrainDemo();
 	current_demo->initialize();
 
 	MSG msg = {};

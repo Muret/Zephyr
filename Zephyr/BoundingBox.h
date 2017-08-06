@@ -22,6 +22,8 @@ public:
 
 	void get_points(vector<D3DXVECTOR4> &get_points) const;
 
+	void transform_by_matrix(const D3DXMATRIX &matrix);
+
 private:
 
 	D3DXVECTOR4 min_;

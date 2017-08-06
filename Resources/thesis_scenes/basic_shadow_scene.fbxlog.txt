@@ -1,0 +1,12 @@
+<node name= pPlane1
+	<attribute type= mesh name=  />
+</node>
+<node name= pCylinder1
+	<attribute type= mesh name=  />
+</node>
+<node name= directionalLight1
+	<attribute type= light name=  />
+</node>
+<node name= camera1
+	<attribute type= camera name= camera1 />
+</node>

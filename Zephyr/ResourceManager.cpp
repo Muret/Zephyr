@@ -16,6 +16,7 @@ ResourceManager::ResourceManager()
 	texture_extenstions_.push_back("png");
 	texture_extenstions_.push_back("jpg");
 	texture_extenstions_.push_back("tga");
+	texture_extenstions_.push_back("tif");
 
 	mesh_extenstions_.push_back("fbx");
 	mesh_extenstions_.push_back("obj");

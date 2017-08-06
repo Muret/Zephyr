@@ -264,6 +264,7 @@
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="SSR.cpp" />
     <ClCompile Include="SSR_Demo.cpp" />
+    <ClCompile Include="TerrainDemo.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="TextureLoader.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
@@ -314,6 +315,7 @@
     <ClInclude Include="Shader.h" />
     <ClInclude Include="SSR.h" />
     <ClInclude Include="SSR_Demo.h" />
+    <ClInclude Include="TerrainDemo.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="TextureLoader.h" />
     <ClInclude Include="ResourceManager.h" />
@@ -390,6 +392,10 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)..\Shaders\Assemblies\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectDir)..\Shaders\Assemblies\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)..\Shaders\Assemblies\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)..\Shaders\Assemblies\%(Filename).cso</ObjectFileOutput>
     </FxCompile>
     <FxCompile Include="..\Shaders\full_deferred_diffuse_lighting.hlsl">
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='DebugFast|Win32'">$(ProjectDir)..\Shaders\Assemblies\%(Filename).cso</ObjectFileOutput>
@@ -490,6 +496,8 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectDir)..\Shaders\Assemblies\%(Filename).cso</ObjectFileOutput>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)..\Shaders\Assemblies\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)..\Shaders\Assemblies\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)..\Shaders\Assemblies\%(Filename).cso</ObjectFileOutput>
     </FxCompile>
     <FxCompile Include="..\Shaders\gbuffer_temporal_resolve.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
@@ -520,6 +528,10 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='DebugFast|Win32'">$(ProjectDir)..\Shaders\Assemblies\%(Filename).cso</ObjectFileOutput>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='DebugFast|x64'">$(ProjectDir)..\Shaders\Assemblies\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)..\Shaders\Assemblies\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectDir)..\Shaders\Assemblies\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)..\Shaders\Assemblies\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)..\Shaders\Assemblies\%(Filename).cso</ObjectFileOutput>
     </FxCompile>
     <FxCompile Include="..\Shaders\ssr_full_screen_pass.hlsl">
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='DebugFast|Win32'">$(ProjectDir)..\Shaders\Assemblies\%(Filename).cso</ObjectFileOutput>
@@ -602,8 +614,16 @@
     <None Include="..\Shaders\shared_functions.hlsli" />
     <None Include="..\Shaders\ssr_helpers.hlsli" />
     <None Include="..\Shaders\vct_helpers.hlsli" />
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
+    <Import Project="..\packages\WinPixEventRuntime.1.0.170126001\build\WinPixEventRuntime.targets" Condition="Exists('..\packages\WinPixEventRuntime.1.0.170126001\build\WinPixEventRuntime.targets')" />
   </ImportGroup>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\WinPixEventRuntime.1.0.170126001\build\WinPixEventRuntime.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\WinPixEventRuntime.1.0.170126001\build\WinPixEventRuntime.targets'))" />
+  </Target>
 </Project>

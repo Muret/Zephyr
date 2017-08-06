@@ -44,10 +44,6 @@ PixelInputType main(VertexInputType input)
 	float4 position = float4(input.position.xyz, 1);
 	output.position = mul(position, g_world_view_projection_matrix);
 
-	//float2 actual_ss_pos = 0;  
-
-	//calculate_tiled_screen_space_position(output.position, actual_ss_pos);
-
 	output.color = input.color;
 	output.tex_coord = float4(input.tex_coord.xy, 0, 0);
 	output.tangent = input.tangent;

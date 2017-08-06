@@ -25,7 +25,7 @@ void SSRDemo::initialize()
 	//ssr_component = new SSR();
 	//renderer->add_renderer_component(ssr_component);
 
-	Scene *scene = resource_manager.get_scene("sponza"); //new Scene("demo");
+	Scene *scene = resource_manager.get_scene("ktm_bike_scene"); //new Scene("demo");
 	renderer->set_scene_to_render(scene);
 
 	Mesh *lion = scene->get_mesh("Mesh_102");
@@ -34,10 +34,10 @@ void SSRDemo::initialize()
 
 	camera_controller_ = new FreeCameraController();
 
-	camera_controller_->set_frame(start_camera->get_frame());
-	camera_controller_->set_near(start_camera->get_near());
-	camera_controller_->set_far(start_camera->get_far());
-	camera_controller_->set_fov(start_camera->get_fov());
+	//camera_controller_->set_frame(start_camera->get_frame());
+	//camera_controller_->set_near(start_camera->get_near());
+	//camera_controller_->set_far(start_camera->get_far());
+	//camera_controller_->set_fov(start_camera->get_fov());
 
 	renderer->set_camera_controller(camera_controller_);
 

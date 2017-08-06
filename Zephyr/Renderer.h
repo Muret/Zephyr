@@ -7,6 +7,20 @@
 #include "Mesh.h"
 #include "TextureQuadTree.h"
 
+//#define USE_TILED_RENDERING
+#define USE_TILED_LIGHT_SHADOW_RENDERING
+//#define USE_MSAA_DEFERRED_RENDERER
+
+#ifdef USE_TILED_LIGHT_SHADOW_RENDERING
+#define TILE_COUNT 32
+#define LIGHT_TILE_SIZE 32
+#define LIGHT_TILE_MAX_SIZE 256
+#define LIGHT_SHADOW_ATLAS_SIZE (LIGHT_TILE_MAX_SIZE * 40)
+#else
+#define LIGHT_SHADOW_RESOLUTION 4096
+#endif
+
+
 class RenderComponent;
 class Shader;
 class Scene;
@@ -35,7 +49,7 @@ struct FrameConstantsBuffer
 	D3DXVECTOR4 debug_vector;
 
 	D3DXVECTOR4 screen_tile_size;
-	D3DXVECTOR4 screen_tile_info[128];
+	D3DXVECTOR4 screen_tile_info[TILE_COUNT * TILE_COUNT * 2];
 };
 
 struct MeshConstantsBuffer
@@ -80,9 +94,15 @@ public:
 
 	void initialize_msaa_deferred_renderer();
 
+#ifdef USE_TILED_LIGHT_SHADOW_RENDERING
 	void initialize_tiled_shadow_renderer();
+#endif
 
+	void initialize_tiled_gbuffer_renderer();
+
+#ifndef USE_TILED_LIGHT_SHADOW_RENDERING
 	void creaate_light_shadow_depth_texture();
+#endif
 
 	void render_frame();
 
@@ -96,9 +116,14 @@ public:
 
 	void set_mesh_primitive_topology(const Mesh* mesh);
 
+#ifndef USE_TILED_LIGHT_SHADOW_RENDERING
 	void light_shadow_render();
+#endif
 
+#ifdef USE_TILED_LIGHT_SHADOW_RENDERING
+	void get_vp_matrix_for_tile(D3DXMATRIX &tile_vp_matrix, int tile_x, int tile_y);
 	void tiled_light_shadow_render();
+#endif
 
 	void get_light_shadow_view_proj_matrix(D3DXMATRIX &lvp);
 
@@ -139,6 +164,8 @@ protected:
 	Texture *gbuffer_normal_texture;
 	Texture *gbuffer_albedo_texture;
 	Texture *gbuffer_specular_texture;
+
+	Texture *msaa_gbuffer_resolve_texture;
 
 	ID3D11DepthStencilView* light_depth_texture_view_;
 	ID3D11ShaderResourceView* light_depth_texture_srv_;
